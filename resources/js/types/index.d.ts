@@ -7,6 +7,37 @@ export interface User {
     email_verified_at?: string;
 }
 
+export interface Movie {
+    id: number;
+    title: string;
+    director: string;
+    duration_seconds: number;
+    description: string;
+    poster_image: string;
+    release_date: string;
+    age_rating: string;
+    genre: string;
+}
+
+export interface Paginated<T> {
+    data: T[];
+    links: {
+        first: string;
+        last: string;
+        prev: string;
+        next: string;
+    };
+    meta: {
+        current_page: number;
+        from: number;
+        last_page: number;
+        path: string;
+        per_page: number;
+        to: number;
+        total: number;
+    };
+}
+
 export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>
 > = T & {
