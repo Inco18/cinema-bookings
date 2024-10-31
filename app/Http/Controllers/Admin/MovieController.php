@@ -15,15 +15,21 @@ class MovieController extends Controller {
      * Display a listing of the resource.
      */
     public function index(Request $request): Response {
-        $rowCount = Movie::count();
         $page = $request->get('page') ?? 1;
         $sortBy = $request->get('sortBy');
         $sortDesc = $request->get('sortDesc');
+        $search = $request->get('search');
         $movies = Movie::query();
+
+        if ($search) {
+            $movies->whereAny(['title', 'director'], 'ilike', "%$search%");
+        }
 
         if ($sortBy) {
             $movies->orderBy($sortBy, $sortDesc ? 'desc' : 'asc');
         }
+
+        $rowCount = $movies->count();
 
         $movies = $movies->paginate(10);
 
@@ -32,7 +38,8 @@ class MovieController extends Controller {
             'rowCount' => $rowCount,
             'page' => $page,
             'sortBy' => $sortBy,
-            'sortDesc' => $sortDesc
+            'sortDesc' => $sortDesc,
+            'search' => $search
         ]);
     }
 

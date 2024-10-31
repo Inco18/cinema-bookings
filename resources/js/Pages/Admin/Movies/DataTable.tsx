@@ -18,6 +18,7 @@ import { Button } from "@/Components/ui/button";
 import { RxDoubleArrowLeft, RxDoubleArrowRight } from "react-icons/rx";
 import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
 import { router } from "@inertiajs/react";
+import { Input } from "@/Components/ui/input";
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
@@ -53,7 +54,6 @@ const DataTable = <TData, TValue>({
         manualSorting: true,
         rowCount: rowCount,
         onPaginationChange: (updateFn) => {
-            // @ts-ignore
             if (typeof updateFn !== "function") return;
             const newState = updateFn(pagination);
             router.get(
@@ -68,9 +68,9 @@ const DataTable = <TData, TValue>({
         onSortingChange: (updateFn) => {
             if (typeof updateFn !== "function") return;
             const newState = updateFn(sorting);
-            console.log(sorting, newState);
             router.get(
                 route("movies", {
+                    ...route().params,
                     page: 1,
                     sortBy: newState[0]?.id || null,
                     sortDesc: newState[0]?.desc || null,
@@ -83,7 +83,7 @@ const DataTable = <TData, TValue>({
     });
 
     return (
-        <div className="rounded-md border max-w-screen-2xl m-auto bg-white mt-2 overflow-y-auto">
+        <div className="rounded-md border max-w-screen-2xl mt-2 m-auto bg-white overflow-y-auto">
             <Table>
                 <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (
@@ -132,7 +132,7 @@ const DataTable = <TData, TValue>({
                                 colSpan={columns.length}
                                 className="h-24 text-center"
                             >
-                                No results.
+                                Nic nie znaleziono
                             </TableCell>
                         </TableRow>
                     )}
@@ -140,7 +140,7 @@ const DataTable = <TData, TValue>({
             </Table>
             <div className="flex items-center justify-end space-x-2 p-4">
                 <p className="text-sm mr-5">
-                    Strona {page} z {table.getPageCount()}
+                    Strona {page} z {table.getPageCount() || 1}
                 </p>
                 <Button
                     variant="outline"

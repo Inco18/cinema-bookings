@@ -1,6 +1,6 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Movie, Paginated } from "@/types";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
     ColumnDef,
     getCoreRowModel,
@@ -8,8 +8,9 @@ import {
 } from "@tanstack/react-table";
 import DataTable from "./DataTable";
 import { Button } from "@/Components/ui/button";
-import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
-import { Head } from "@inertiajs/react";
+import { ArrowDown, ArrowUp, ArrowUpDown, Search } from "lucide-react";
+import { Head, router } from "@inertiajs/react";
+import { Input } from "@/Components/ui/input";
 
 type Props = {
     movies: Paginated<Movie>;
@@ -17,6 +18,7 @@ type Props = {
     page: number;
     sortBy: string;
     sortDesc: number;
+    search: string;
 };
 
 const columns: ColumnDef<Movie>[] = [
@@ -133,13 +135,48 @@ const columns: ColumnDef<Movie>[] = [
     },
 ];
 
-const MoviesIndex = ({ movies, rowCount, page, sortBy, sortDesc }: Props) => {
+const MoviesIndex = ({
+    movies,
+    rowCount,
+    page,
+    sortBy,
+    sortDesc,
+    search,
+}: Props) => {
+    const [searchValue, setSearchValue] = useState<string>(search || "");
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            router.get(
+                route("movies", {
+                    search: searchValue || null,
+                }),
+                {},
+                { preserveState: true }
+            );
+        }, 500);
+
+        return () => clearTimeout(timeout);
+    }, [searchValue]);
+
     return (
         <AuthenticatedLayout
             header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Filmy
-                </h2>
+                <>
+                    <h2 className="text-xl font-semibold leading-tight text-gray-800">
+                        Filmy
+                    </h2>
+                    <div className="flex items-center ml-8 min-w-56">
+                        <Input
+                            placeholder="Wyszukaj tytuł lub reżysera..."
+                            className="max-w-sm m-0"
+                            value={searchValue}
+                            onChange={(e) => {
+                                setSearchValue(e.target.value);
+                            }}
+                        />
+                    </div>
+                </>
             }
         >
             <Head title="Filmy" />
