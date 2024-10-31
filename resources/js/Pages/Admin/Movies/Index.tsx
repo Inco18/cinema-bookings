@@ -11,6 +11,7 @@ import DataTable from "./DataTable";
 type Props = {
     movies: Paginated<Movie>;
     rowCount: number;
+    page: number;
 };
 
 const columns: ColumnDef<Movie>[] = [
@@ -51,7 +52,7 @@ const columns: ColumnDef<Movie>[] = [
     },
 ];
 
-const MoviesIndex = ({ movies, rowCount }: Props) => {
+const MoviesIndex = ({ movies, rowCount, page }: Props) => {
     return (
         <AuthenticatedLayout
             header={
@@ -64,6 +65,7 @@ const MoviesIndex = ({ movies, rowCount }: Props) => {
                 columns={columns}
                 data={movies.data}
                 rowCount={rowCount}
+                page={page}
             />
         </AuthenticatedLayout>
     );

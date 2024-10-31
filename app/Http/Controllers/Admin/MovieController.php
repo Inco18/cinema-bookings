@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreMovieRequest;
 use App\Http\Requests\UpdateMovieRequest;
 use App\Models\Movie;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -13,13 +14,15 @@ class MovieController extends Controller {
     /**
      * Display a listing of the resource.
      */
-    public function index(): Response {
+    public function index(Request $request): Response {
         $movies = Movie::orderBy('id')->paginate(10);
         $rowCount = Movie::count();
+        $page = $request->get('page');
 
         return Inertia::render('Admin/Movies/Index', [
             'movies' => $movies,
-            'rowCount' => $rowCount
+            'rowCount' => $rowCount,
+            'page' => $page,
         ]);
     }
 

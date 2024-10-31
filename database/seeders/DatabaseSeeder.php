@@ -13,6 +13,14 @@ class DatabaseSeeder extends Seeder {
      */
     public function run(): void {
         User::factory(35)->create();
+        User::create([
+            'first_name' => 'Admin',
+            'last_name' => 'Adminowy',
+            'email' => 'admin@admin.com',
+            'role' => 'admin',
+            'password' => '12345678',
+        ]);
         Movie::factory(105)->create();
+
     }
 }

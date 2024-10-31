@@ -16,34 +16,25 @@ import {
 import { Button } from "@/Components/ui/button";
 import { RxDoubleArrowLeft, RxDoubleArrowRight } from "react-icons/rx";
 import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
-import { useEffect, useState } from "react";
 import { router } from "@inertiajs/react";
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
     rowCount: number;
+    page: number;
 }
 
 const DataTable = <TData, TValue>({
     columns,
     data,
     rowCount,
+    page,
 }: DataTableProps<TData, TValue>) => {
-    const [pagination, setPagination] = useState({
-        pageIndex: 0, //initial page index
-        pageSize: 10, //default page size
-    });
-
-    useEffect(() => {
-        router.get(
-            route("movies", {
-                page: pagination.pageIndex + 1,
-            }),
-            {},
-            { preserveState: true }
-        );
-    }, [pagination]);
+    const pagination = {
+        pageIndex: Number(page - 1),
+        pageSize: 10,
+    };
 
     const table = useReactTable({
         enableColumnResizing: false,
@@ -52,13 +43,17 @@ const DataTable = <TData, TValue>({
         getCoreRowModel: getCoreRowModel(),
         manualPagination: true,
         rowCount: rowCount,
-        initialState: {
-            pagination: {
-                pageIndex: 0,
-                pageSize: 10,
-            },
+        onPaginationChange: (updateFn) => {
+            // @ts-ignore
+            const newState = updateFn(pagination);
+            router.get(
+                route("movies", {
+                    page: newState.pageIndex + 1,
+                }),
+                {},
+                { preserveState: true }
+            );
         },
-        onPaginationChange: setPagination,
         state: { pagination },
     });
 
@@ -120,7 +115,7 @@ const DataTable = <TData, TValue>({
             </Table>
             <div className="flex items-center justify-end space-x-2 p-4">
                 <p className="text-sm mr-5">
-                    Strona {pagination.pageIndex + 1} z {table.getPageCount()}
+                    Strona {page} z {table.getPageCount()}
                 </p>
                 <Button
                     variant="outline"
