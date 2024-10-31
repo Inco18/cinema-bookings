@@ -1,5 +1,5 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Movie, Paginated } from "@/types";
+import { Paginated, User } from "@/types";
 import React, { useEffect, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import DataTable from "../../../Components/DataTable";
@@ -27,7 +27,7 @@ import {
 import { toast } from "react-toastify";
 
 type Props = {
-    movies: Paginated<Movie>;
+    users: Paginated<User>;
     rowCount: number;
     page: number;
     sortBy: string;
@@ -35,13 +35,33 @@ type Props = {
     search: string;
 };
 
-const columns: ColumnDef<Movie>[] = [
+const columns: ColumnDef<User>[] = [
     {
-        accessorKey: "title",
+        accessorKey: "first_name",
         header: ({ column }) => {
             return (
                 <Button variant="ghost" onClick={() => column.toggleSorting()}>
-                    Tytuł
+                    Imię
+                    {column.getIsSorted() === "asc" && (
+                        <ArrowDown className="ml-2 h-4 w-4" />
+                    )}
+                    {column.getIsSorted() === "desc" && (
+                        <ArrowUp className="ml-2 h-4 w-4" />
+                    )}
+                    {!column.getIsSorted() && (
+                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                    )}
+                </Button>
+            );
+        },
+        size: 20,
+    },
+    {
+        accessorKey: "last_name",
+        header: ({ column }) => {
+            return (
+                <Button variant="ghost" onClick={() => column.toggleSorting()}>
+                    Nazwisko
                     {column.getIsSorted() === "asc" && (
                         <ArrowDown className="ml-2 h-4 w-4" />
                     )}
@@ -57,11 +77,11 @@ const columns: ColumnDef<Movie>[] = [
         size: 250,
     },
     {
-        accessorKey: "director",
+        accessorKey: "email",
         header: ({ column }) => {
             return (
                 <Button variant="ghost" onClick={() => column.toggleSorting()}>
-                    Reżyser
+                    Email
                     {column.getIsSorted() === "asc" && (
                         <ArrowDown className="ml-2 h-4 w-4" />
                     )}
@@ -73,41 +93,16 @@ const columns: ColumnDef<Movie>[] = [
                     )}
                 </Button>
             );
-        },
-        size: 200,
-    },
-    {
-        accessorKey: "duration_seconds",
-        header: ({ column }) => {
-            return (
-                <Button variant="ghost" onClick={() => column.toggleSorting()}>
-                    Czas trwania
-                    {column.getIsSorted() === "asc" && (
-                        <ArrowDown className="ml-2 h-4 w-4" />
-                    )}
-                    {column.getIsSorted() === "desc" && (
-                        <ArrowUp className="ml-2 h-4 w-4" />
-                    )}
-                    {!column.getIsSorted() && (
-                        <ArrowUpDown className="ml-2 h-4 w-4" />
-                    )}
-                </Button>
-            );
-        },
-        cell: ({ row }) => {
-            return new Date((row.getValue("duration_seconds") as number) * 1000)
-                .toISOString()
-                .substring(11, 16);
         },
         sortDescFirst: false,
-        maxSize: 100,
+        maxSize: 200,
     },
     {
-        accessorKey: "release_date",
+        accessorKey: "role",
         header: ({ column }) => {
             return (
                 <Button variant="ghost" onClick={() => column.toggleSorting()}>
-                    Data premiery
+                    Rola
                     {column.getIsSorted() === "asc" && (
                         <ArrowDown className="ml-2 h-4 w-4" />
                     )}
@@ -121,31 +116,6 @@ const columns: ColumnDef<Movie>[] = [
             );
         },
         maxSize: 100,
-    },
-    {
-        accessorKey: "age_rating",
-        header: ({ column }) => {
-            return (
-                <Button variant="ghost" onClick={() => column.toggleSorting()}>
-                    Ograniczenia wiekowe
-                    {column.getIsSorted() === "asc" && (
-                        <ArrowDown className="ml-2 h-4 w-4" />
-                    )}
-                    {column.getIsSorted() === "desc" && (
-                        <ArrowUp className="ml-2 h-4 w-4" />
-                    )}
-                    {!column.getIsSorted() && (
-                        <ArrowUpDown className="ml-2 h-4 w-4" />
-                    )}
-                </Button>
-            );
-        },
-        size: 100,
-    },
-    {
-        accessorKey: "genre",
-        header: "Gatunek",
-        size: 150,
     },
     {
         id: "actions",
@@ -153,15 +123,17 @@ const columns: ColumnDef<Movie>[] = [
         cell: ({ row }) => {
             const [isDeleting, setIsDeleting] = useState(false);
             const [modalOpen, setModalOpen] = useState(false);
-            const movie = row.original;
-            const deleteMovie = () => {
-                setIsDeleting(false);
-                router.delete(route("movies.destroy", { movie }), {
+            const user = row.original;
+            const deleteUser = () => {
+                setIsDeleting(true);
+                router.delete(route("users.destroy", { user }), {
                     preserveScroll: true,
                     onSuccess: () =>
-                        toast.success("Wybrany film został usunięty"),
+                        toast.success("Wybrany użytkownik został usunięty"),
                     onError: () =>
-                        toast.error("Nie udało się usunąć wybranego filmu"),
+                        toast.error(
+                            "Nie udało się usunąć wybranego użytkownika"
+                        ),
                     onFinish: () => {
                         setIsDeleting(false);
                         setModalOpen(false);
@@ -181,7 +153,7 @@ const columns: ColumnDef<Movie>[] = [
                         <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Akcje</DropdownMenuLabel>
                             <DropdownMenuItem asChild>
-                                <Link href={route("movies.edit", { movie })}>
+                                <Link href={route("users.edit", { user })}>
                                     Edytuj
                                 </Link>
                             </DropdownMenuItem>
@@ -193,12 +165,12 @@ const columns: ColumnDef<Movie>[] = [
                     <DialogContent>
                         <DialogHeader>
                             <DialogTitle>
-                                Czy jesteś pewny że chcesz usunąć film:{" "}
-                                {movie.title}
+                                Czy jesteś pewny że chcesz usunąć użytkonika:{" "}
+                                {user.first_name} {user.last_name}
                             </DialogTitle>
                             <DialogDescription>
                                 Tej czynności nie można cofnąć. Czy na pewno
-                                chcesz trwale usunąć ten film?
+                                chcesz trwale usunąć tego użytkownika?
                             </DialogDescription>
                         </DialogHeader>
                         <DialogFooter>
@@ -210,7 +182,7 @@ const columns: ColumnDef<Movie>[] = [
                             <Button
                                 type="submit"
                                 variant={"destructive"}
-                                onClick={deleteMovie}
+                                onClick={deleteUser}
                                 disabled={isDeleting}
                             >
                                 Usuń
@@ -227,8 +199,8 @@ const columns: ColumnDef<Movie>[] = [
     },
 ];
 
-const MoviesIndex = ({
-    movies,
+const UsersIndex = ({
+    users,
     rowCount,
     page,
     sortBy,
@@ -241,7 +213,7 @@ const MoviesIndex = ({
         if ((!search && !searchValue) || search === searchValue) return;
         const timeout = setTimeout(() => {
             router.get(
-                route("movies.index", {
+                route("users.index", {
                     search: searchValue || null,
                 }),
                 {},
@@ -257,11 +229,11 @@ const MoviesIndex = ({
             header={
                 <>
                     <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                        Filmy
+                        Użytkownicy
                     </h2>
-                    <div className="flex items-center ml-8 min-w-56">
+                    <div className="flex items-center ml-8 min-w-64">
                         <Input
-                            placeholder="Wyszukaj tytuł lub reżysera..."
+                            placeholder="Wyszukaj imię, nazwisko lub email..."
                             className="max-w-sm m-0"
                             value={searchValue}
                             onChange={(e) => {
@@ -272,18 +244,18 @@ const MoviesIndex = ({
                 </>
             }
         >
-            <Head title="Filmy" />
+            <Head title="Użytkownicy" />
             <DataTable
                 columns={columns}
-                data={movies.data}
+                data={users.data}
                 rowCount={rowCount}
                 page={page}
                 sortBy={sortBy}
                 sortDesc={sortDesc}
-                routeName="movies.index"
+                routeName="users.index"
             />
         </AuthenticatedLayout>
     );
 };
 
-export default MoviesIndex;
+export default UsersIndex;

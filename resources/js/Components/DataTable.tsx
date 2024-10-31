@@ -27,6 +27,7 @@ interface DataTableProps<TData, TValue> {
     page: number;
     sortBy: string;
     sortDesc: number;
+    routeName: string;
 }
 
 const DataTable = <TData, TValue>({
@@ -36,6 +37,7 @@ const DataTable = <TData, TValue>({
     page,
     sortBy,
     sortDesc,
+    routeName,
 }: DataTableProps<TData, TValue>) => {
     const pagination = {
         pageIndex: Number(page - 1),
@@ -57,7 +59,7 @@ const DataTable = <TData, TValue>({
             if (typeof updateFn !== "function") return;
             const newState = updateFn(pagination);
             router.get(
-                route("movies.index", {
+                route(routeName, {
                     ...route().params,
                     page: newState.pageIndex + 1,
                 }),
@@ -69,7 +71,7 @@ const DataTable = <TData, TValue>({
             if (typeof updateFn !== "function") return;
             const newState = updateFn(sorting);
             router.get(
-                route("movies.index", {
+                route(routeName, {
                     ...route().params,
                     page: 1,
                     sortBy: newState[0]?.id || null,
@@ -151,7 +153,7 @@ const DataTable = <TData, TValue>({
                 </TableBody>
             </Table>
             <div className="flex items-center justify-end space-x-2 p-4">
-                <p className="text-sm mr-5">
+                <p className="text-sm mr-5 text-muted-foreground">
                     Strona {page} z {table.getPageCount() || 1}
                 </p>
                 <Button

@@ -43,6 +43,16 @@ export default function Authenticated({
                                     )}
                                     {user.role == "admin" && (
                                         <NavLink
+                                            href={route("users.index")}
+                                            active={route().current(
+                                                "users.index"
+                                            )}
+                                        >
+                                            Użytkownicy
+                                        </NavLink>
+                                    )}
+                                    {user.role == "admin" && (
+                                        <NavLink
                                             href={route("movies.index")}
                                             active={route().current("movies.*")}
                                         >
@@ -153,6 +163,14 @@ export default function Authenticated({
                                     active={route().current("dashboard")}
                                 >
                                     Panel kontrolny
+                                </ResponsiveNavLink>
+                            )}
+                            {user.role == "admin" && (
+                                <ResponsiveNavLink
+                                    href={route("users.index")}
+                                    active={route().current("users.*")}
+                                >
+                                    Użytkownicy
                                 </ResponsiveNavLink>
                             )}
                             {user.role == "admin" && (
