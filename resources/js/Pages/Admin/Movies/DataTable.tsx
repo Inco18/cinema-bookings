@@ -2,6 +2,7 @@ import {
     ColumnDef,
     flexRender,
     getCoreRowModel,
+    SortingState,
     useReactTable,
 } from "@tanstack/react-table";
 
@@ -23,6 +24,8 @@ interface DataTableProps<TData, TValue> {
     data: TData[];
     rowCount: number;
     page: number;
+    sortBy: string;
+    sortDesc: number;
 }
 
 const DataTable = <TData, TValue>({
@@ -30,31 +33,53 @@ const DataTable = <TData, TValue>({
     data,
     rowCount,
     page,
+    sortBy,
+    sortDesc,
 }: DataTableProps<TData, TValue>) => {
     const pagination = {
         pageIndex: Number(page - 1),
         pageSize: 10,
     };
 
+    const sorting: SortingState = [
+        { id: sortBy, desc: Boolean(Number(sortDesc)) },
+    ];
     const table = useReactTable({
         enableColumnResizing: false,
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
         manualPagination: true,
+        manualSorting: true,
         rowCount: rowCount,
         onPaginationChange: (updateFn) => {
             // @ts-ignore
+            if (typeof updateFn !== "function") return;
             const newState = updateFn(pagination);
             router.get(
                 route("movies", {
+                    ...route().params,
                     page: newState.pageIndex + 1,
                 }),
                 {},
                 { preserveState: true }
             );
         },
-        state: { pagination },
+        onSortingChange: (updateFn) => {
+            if (typeof updateFn !== "function") return;
+            const newState = updateFn(sorting);
+            console.log(sorting, newState);
+            router.get(
+                route("movies", {
+                    page: 1,
+                    sortBy: newState[0]?.id || null,
+                    sortDesc: newState[0]?.desc || null,
+                }),
+                {},
+                { preserveState: true }
+            );
+        },
+        state: { pagination, sorting },
     });
 
     return (

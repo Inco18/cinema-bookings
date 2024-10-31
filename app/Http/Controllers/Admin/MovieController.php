@@ -15,14 +15,24 @@ class MovieController extends Controller {
      * Display a listing of the resource.
      */
     public function index(Request $request): Response {
-        $movies = Movie::orderBy('id')->paginate(10);
         $rowCount = Movie::count();
-        $page = $request->get('page');
+        $page = $request->get('page') ?? 1;
+        $sortBy = $request->get('sortBy');
+        $sortDesc = $request->get('sortDesc');
+        $movies = Movie::query();
+
+        if ($sortBy) {
+            $movies->orderBy($sortBy, $sortDesc ? 'desc' : 'asc');
+        }
+
+        $movies = $movies->paginate(10);
 
         return Inertia::render('Admin/Movies/Index', [
             'movies' => $movies,
             'rowCount' => $rowCount,
             'page' => $page,
+            'sortBy' => $sortBy,
+            'sortDesc' => $sortDesc
         ]);
     }
 
