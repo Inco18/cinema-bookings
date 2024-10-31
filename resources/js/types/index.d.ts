@@ -45,3 +45,9 @@ export type PageProps<
         user: User;
     };
 };
+
+declare module "@tanstack/react-table" {
+    interface ColumnMeta<TData extends RowData, TValue> {
+        myCustomClass: string;
+    }
+}

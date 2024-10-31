@@ -1,16 +1,30 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Movie, Paginated } from "@/types";
 import React, { useEffect, useState } from "react";
-import {
-    ColumnDef,
-    getCoreRowModel,
-    useReactTable,
-} from "@tanstack/react-table";
-import DataTable from "./DataTable";
+import { ColumnDef } from "@tanstack/react-table";
+import DataTable from "../../../Components/DataTable";
 import { Button } from "@/Components/ui/button";
-import { ArrowDown, ArrowUp, ArrowUpDown, Search } from "lucide-react";
-import { Head, router } from "@inertiajs/react";
+import { ArrowDown, ArrowUp, ArrowUpDown, MoreVertical } from "lucide-react";
+import { Head, Link, router } from "@inertiajs/react";
 import { Input } from "@/Components/ui/input";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuTrigger,
+} from "@/Components/ui/dropdown-menu";
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/Components/ui/dialog";
+import { toast } from "react-toastify";
 
 type Props = {
     movies: Paginated<Movie>;
@@ -133,6 +147,79 @@ const columns: ColumnDef<Movie>[] = [
         header: "Gatunek",
         size: 150,
     },
+    {
+        id: "actions",
+        enableHiding: false,
+        cell: ({ row }) => {
+            const [isDeleting, setIsDeleting] = useState(false);
+            const [modalOpen, setModalOpen] = useState(false);
+            const movie = row.original;
+            const deleteMovie = () => {
+                router.delete(route("movies.destroy", { movie }), {
+                    preserveScroll: true,
+                    onSuccess: () =>
+                        toast.success("Wybrany film został usunięty"),
+                    onError: () =>
+                        toast.error("Nie udało się usunąć wybranego filmu"),
+                    onFinish: () => setModalOpen(false),
+                });
+            };
+
+            return (
+                <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Otwórz menu</span>
+                                <MoreVertical className="h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Akcje</DropdownMenuLabel>
+                            <DropdownMenuItem asChild>
+                                <Link href={route("movies.edit", { movie })}>
+                                    Edytuj
+                                </Link>
+                            </DropdownMenuItem>
+                            <DialogTrigger asChild>
+                                <DropdownMenuItem>Usuń</DropdownMenuItem>
+                            </DialogTrigger>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>
+                                Czy jesteś pewny że chcesz usunąć film:{" "}
+                                {movie.title}
+                            </DialogTitle>
+                            <DialogDescription>
+                                Tej czynności nie można cofnąć. Czy na pewno
+                                chcesz trwale usunąć ten film?
+                            </DialogDescription>
+                        </DialogHeader>
+                        <DialogFooter>
+                            <DialogClose asChild>
+                                <Button type="button" variant="secondary">
+                                    Anuluj
+                                </Button>
+                            </DialogClose>
+                            <Button
+                                type="submit"
+                                variant={"destructive"}
+                                onClick={deleteMovie}
+                            >
+                                Usuń
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+            );
+        },
+        size: 50,
+        meta: {
+            myCustomClass: "py-0",
+        },
+    },
 ];
 
 const MoviesIndex = ({
@@ -146,9 +233,10 @@ const MoviesIndex = ({
     const [searchValue, setSearchValue] = useState<string>(search || "");
 
     useEffect(() => {
+        if ((!search && !searchValue) || search === searchValue) return;
         const timeout = setTimeout(() => {
             router.get(
-                route("movies", {
+                route("movies.index", {
                     search: searchValue || null,
                 }),
                 {},

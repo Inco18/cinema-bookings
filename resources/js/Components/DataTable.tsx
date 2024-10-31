@@ -57,7 +57,7 @@ const DataTable = <TData, TValue>({
             if (typeof updateFn !== "function") return;
             const newState = updateFn(pagination);
             router.get(
-                route("movies", {
+                route("movies.index", {
                     ...route().params,
                     page: newState.pageIndex + 1,
                 }),
@@ -69,7 +69,7 @@ const DataTable = <TData, TValue>({
             if (typeof updateFn !== "function") return;
             const newState = updateFn(sorting);
             router.get(
-                route("movies", {
+                route("movies.index", {
                     ...route().params,
                     page: 1,
                     sortBy: newState[0]?.id || null,
@@ -80,6 +80,10 @@ const DataTable = <TData, TValue>({
             );
         },
         state: { pagination, sorting },
+        getRowId: (row, relativeIndex, parent) => {
+            //@ts-ignore
+            return row.id;
+        },
     });
 
     return (
@@ -106,26 +110,34 @@ const DataTable = <TData, TValue>({
                 </TableHeader>
                 <TableBody>
                     {table.getRowModel().rows?.length ? (
-                        table.getRowModel().rows.map((row) => (
-                            <TableRow
-                                key={row.id}
-                                data-state={row.getIsSelected() && "selected"}
-                            >
-                                {row.getVisibleCells().map((cell) => (
-                                    <TableCell
-                                        key={cell.id}
-                                        style={{
-                                            width: cell.column.getSize(),
-                                        }}
-                                    >
-                                        {flexRender(
-                                            cell.column.columnDef.cell,
-                                            cell.getContext()
-                                        )}
-                                    </TableCell>
-                                ))}
-                            </TableRow>
-                        ))
+                        table.getRowModel().rows.map((row) => {
+                            return (
+                                <TableRow
+                                    key={row.id}
+                                    data-state={
+                                        row.getIsSelected() && "selected"
+                                    }
+                                >
+                                    {row.getVisibleCells().map((cell) => (
+                                        <TableCell
+                                            key={cell.id}
+                                            style={{
+                                                width: cell.column.getSize(),
+                                            }}
+                                            className={
+                                                cell.column.columnDef.meta
+                                                    ?.myCustomClass ?? ""
+                                            }
+                                        >
+                                            {flexRender(
+                                                cell.column.columnDef.cell,
+                                                cell.getContext()
+                                            )}
+                                        </TableCell>
+                                    ))}
+                                </TableRow>
+                            );
+                        })
                     ) : (
                         <TableRow>
                             <TableCell

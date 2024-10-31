@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 
-Route::get('/movies', [MovieController::class, 'index'])->middleware(['auth', 'admin'])->name('movies');
+Route::resource('/movies', MovieController::class)->except(['show'])->middleware(['auth', 'admin']);
 
 
 require __DIR__ . '/auth.php';
