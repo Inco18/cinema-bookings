@@ -25,8 +25,6 @@ const UserForm = ({ user }: Props) => {
             role: user?.role || "client",
         });
 
-    console.log(errors);
-
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
         if (user) {

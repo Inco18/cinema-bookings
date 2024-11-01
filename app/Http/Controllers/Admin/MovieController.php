@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreMovieRequest;
-use App\Http\Requests\UpdateMovieRequest;
+use App\Http\Requests\Admin\UpdateMovieRequest;
+use App\Models\Genre;
 use App\Models\Movie;
 use Error;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -52,34 +53,67 @@ class MovieController extends Controller {
      * Show the form for creating a new resource.
      */
     public function create() {
-        //
+        $genres = Genre::all();
+        return Inertia::render('Admin/Movies/Form', ['genres' => $genres]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreMovieRequest $request) {
-        //
+    public function store(UpdateMovieRequest $request) {
+        dd($request->all());
+        $path = $request->file('poster_image')->store('posters');
+        Movie::create([...$request->except(['poster_image', 'removePoster']), 'poster_image' => $path]);
+
+        return redirect(route('movies.index'))->with([
+            'message' => "Film został dodany",
+            'messageType' => 'success'
+        ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
     public function edit(Movie $movie) {
-        //
+        $genres = Genre::all();
+        return Inertia::render('Admin/Movies/Form', ['movie' => $movie, 'genres' => $genres]);
     }
 
     /**
      * Update the specified resource in storage.
      */
     public function update(UpdateMovieRequest $request, Movie $movie) {
-        //
+        $oldPoster = $movie['poster_image'];
+        $newPoster = $request->file('poster_image');
+        $removePoster = $request->input('removePoster');
+        $path = $oldPoster;
+
+        if (($oldPoster && $newPoster) || ($oldPoster && $removePoster)) {
+            Storage::delete($oldPoster);
+            $path = "";
+        }
+
+        if ($newPoster) {
+            $path = $request->file('poster_image')->store('posters');
+        }
+
+        $movie->update(
+            [...$request->except(['poster_image', 'removePoster']), 'poster_image' => $path]
+        );
+        return redirect(route('movies.index'))->with([
+            'message' => "Film został zaktualizowany",
+            'messageType' => 'success'
+        ]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Movie $movie) {
+        $oldPoster = $movie['poster_image'];
+        if ($oldPoster) {
+            Storage::delete($oldPoster);
+        }
         $movie->delete();
     }
 }

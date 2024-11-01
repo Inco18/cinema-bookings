@@ -16,7 +16,8 @@ export interface Movie {
     poster_image: string;
     release_date: string;
     age_rating: string;
-    genre: Genre;
+    genre_id: number;
+    genre?: Genre;
 }
 
 export interface Genre {
