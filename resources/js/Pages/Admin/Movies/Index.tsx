@@ -143,7 +143,7 @@ const columns: ColumnDef<Movie>[] = [
         size: 100,
     },
     {
-        accessorKey: "genre",
+        accessorKey: "genre.name",
         header: "Gatunek",
         size: 150,
     },
@@ -252,6 +252,7 @@ const MoviesIndex = ({
         return () => clearTimeout(timeout);
     }, [searchValue]);
 
+    console.log(movies);
     return (
         <AuthenticatedLayout
             header={

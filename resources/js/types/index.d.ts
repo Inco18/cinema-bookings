@@ -16,7 +16,12 @@ export interface Movie {
     poster_image: string;
     release_date: string;
     age_rating: string;
-    genre: string;
+    genre: Genre;
+}
+
+export interface Genre {
+    id: number;
+    name: string;
 }
 
 export interface Paginated<T> {

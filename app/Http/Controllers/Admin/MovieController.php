@@ -19,7 +19,7 @@ class MovieController extends Controller {
         $sortBy = $request->get('sortBy');
         $sortDesc = $request->get('sortDesc');
         $search = $request->get('search');
-        $movies = Movie::query();
+        $movies = Movie::with('genre');
 
         if ($search) {
             $movies->whereAny(['title', 'director'], 'ilike', "%$search%");

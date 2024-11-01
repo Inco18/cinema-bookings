@@ -11,6 +11,7 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('movies', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('genre_id')->constrained();
             $table->string('title');
             $table->string('director');
             $table->integer('duration_seconds');
@@ -18,7 +19,6 @@ return new class extends Migration {
             $table->string('poster_image');
             $table->date('release_date');
             $table->tinyInteger('age_rating');
-            $table->string('genre');
             $table->timestamps();
         });
     }

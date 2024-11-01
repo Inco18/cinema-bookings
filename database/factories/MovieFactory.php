@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Genre;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,6 +19,7 @@ class MovieFactory extends Factory {
         $faker->addProvider(new \Xylis\FakerCinema\Provider\Movie($faker));
         $faker->addProvider(new \Xylis\FakerCinema\Provider\Person($faker));
         $durationArr = explode(':', $faker->runtime);
+        $genres = Genre::pluck('id')->toArray();
         return [
             'title' => $faker->movie,
             'director' => $faker->director,
@@ -26,7 +28,7 @@ class MovieFactory extends Factory {
             'poster_image' => '',
             'release_date' => $faker->date(),
             'age_rating' => $faker->numberBetween(3, 18),
-            'genre' => $faker->movieGenre
+            'genre_id' => $faker->randomElement($genres)
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Genre;
 use App\Models\Movie;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -20,6 +21,7 @@ class DatabaseSeeder extends Seeder {
             'role' => 'admin',
             'password' => '12345678',
         ]);
+        Genre::factory(10)->create();
         Movie::factory(105)->create();
 
     }
