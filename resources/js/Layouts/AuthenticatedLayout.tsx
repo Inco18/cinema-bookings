@@ -44,9 +44,7 @@ export default function Authenticated({
                                     {user.role == "admin" && (
                                         <NavLink
                                             href={route("users.index")}
-                                            active={route().current(
-                                                "users.index"
-                                            )}
+                                            active={route().current("users.*")}
                                         >
                                             Użytkownicy
                                         </NavLink>

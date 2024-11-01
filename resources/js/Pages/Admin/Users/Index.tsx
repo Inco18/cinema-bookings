@@ -4,8 +4,15 @@ import React, { useEffect, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import DataTable from "../../../Components/DataTable";
 import { Button } from "@/Components/ui/button";
-import { ArrowDown, ArrowUp, ArrowUpDown, MoreVertical } from "lucide-react";
-import { Head, Link, router } from "@inertiajs/react";
+import {
+    ArrowDown,
+    ArrowUp,
+    ArrowUpDown,
+    MoreVertical,
+    Plus,
+    X,
+} from "lucide-react";
+import { Head, Link, router, usePage } from "@inertiajs/react";
 import { Input } from "@/Components/ui/input";
 import {
     DropdownMenu,
@@ -153,7 +160,12 @@ const columns: ColumnDef<User>[] = [
                         <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Akcje</DropdownMenuLabel>
                             <DropdownMenuItem asChild>
-                                <Link href={route("users.edit", { user })}>
+                                <Link
+                                    href={route("users.edit", {
+                                        user,
+                                        ...route().queryParams,
+                                    })}
+                                >
                                     Edytuj
                                 </Link>
                             </DropdownMenuItem>
@@ -208,6 +220,13 @@ const UsersIndex = ({
     search,
 }: Props) => {
     const [searchValue, setSearchValue] = useState<string>(search || "");
+    const { flash }: any = usePage().props;
+
+    useEffect(() => {
+        if (flash.message) {
+            if (flash.type === "success") toast.success(flash.message);
+        }
+    }, []);
 
     useEffect(() => {
         if ((!search && !searchValue) || search === searchValue) return;
@@ -231,16 +250,31 @@ const UsersIndex = ({
                     <h2 className="text-xl font-semibold leading-tight text-gray-800">
                         Użytkownicy
                     </h2>
-                    <div className="flex items-center ml-8 min-w-64">
+                    <div className="flex items-center ml-8 min-w-80 gap-1">
                         <Input
                             placeholder="Wyszukaj imię, nazwisko lub email..."
-                            className="max-w-sm m-0"
+                            className="max-w-sm m-0 w-full"
                             value={searchValue}
                             onChange={(e) => {
                                 setSearchValue(e.target.value);
                             }}
                         />
+                        <Button
+                            variant={"ghost"}
+                            size={"icon"}
+                            className={`aspect-square ${
+                                searchValue ? "visible" : "invisible"
+                            }`}
+                            onClick={() => setSearchValue("")}
+                        >
+                            <X />
+                        </Button>
                     </div>
+                    <Button className="ml-auto" asChild>
+                        <Link href={route("users.create")}>
+                            <Plus /> Dodaj
+                        </Link>
+                    </Button>
                 </>
             }
         >

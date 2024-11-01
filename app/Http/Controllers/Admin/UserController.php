@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\UpdateUserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 
 class UserController extends Controller {
@@ -23,6 +25,8 @@ class UserController extends Controller {
 
         if ($sortBy) {
             $users->orderBy($sortBy, $sortDesc ? 'desc' : 'asc');
+        } else {
+            $users->orderBy("id");
         }
 
         $rowCount = $users->count();
@@ -48,35 +52,38 @@ class UserController extends Controller {
      * Show the form for creating a new resource.
      */
     public function create() {
-        //
+        return Inertia::render('Admin/Users/Form');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request) {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(User $user) {
-        //
+    public function store(UpdateUserRequest $request) {
+        User::create([...$request->all(), 'password' => Hash::make("12345678")]);
+        return redirect(route('users.index'))->with([
+            'message' => "Użytkownik został dodany",
+            'messageType' => 'success'
+        ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
     public function edit(User $user) {
-        //
+        return Inertia::render('Admin/Users/Form', ['user' => $user]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user) {
-        //
+    public function update(UpdateUserRequest $request, User $user) {
+        $user->update(
+            $request->all()
+        );
+        return redirect(route('users.index'))->with([
+            'message' => "Użytkownik został zaktualizowany",
+            'messageType' => 'success'
+        ]);
     }
 
     /**
