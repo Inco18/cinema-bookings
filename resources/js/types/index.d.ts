@@ -1,11 +1,30 @@
-export interface User {
+export interface Booking {
     id: number;
-    first_name: string;
-    last_name: string;
-    role: "admin" | "client";
-    email: string;
-    email_verified_at?: string;
+    showing_id: number;
+    user_id?: number;
+    num_people: number;
+    price: any;
+    created_at?: string;
+    updated_at?: string;
+    showing?: Showing;
+    user?: User;
+    seats?: Seat[];
 }
+
+export interface Genre {
+    id: number;
+    name: string;
+}
+
+export type Hall = {
+    id: number;
+    number: string;
+    type: "normal" | "3D" | "IMAX" | "VIP";
+    created_at?: string;
+    updated_at?: string;
+    seats?: Seat[];
+    showings?: Showing[];
+};
 
 export interface Movie {
     id: number;
@@ -18,11 +37,46 @@ export interface Movie {
     age_rating: string;
     genre_id: number;
     genre?: Genre;
+    showings?: Showing[];
+    created_at?: string;
+    updated_at?: string;
 }
 
-export interface Genre {
+export type Seat = {
     id: number;
-    name: string;
+    hall_id: number;
+    type: "normal" | "wide" | "disabled" | "vip";
+    row: number;
+    column: number;
+    number: number;
+    created_at?: string;
+    updated_at?: string;
+    hall?: Hall;
+    bookings?: Booking[];
+};
+
+export type Showing = {
+    id: number;
+    movie_id: number;
+    hall_id: number;
+    start_time: any;
+    end_time: any;
+    created_at?: string;
+    updated_at?: string;
+    hall?: Hall;
+    movie?: Movie;
+    bookings?: Booking[];
+};
+
+export interface User {
+    id: number;
+    first_name: string;
+    last_name: string;
+    role: "admin" | "client";
+    email: string;
+    email_verified_at?: string;
+    created_at?: string;
+    updated_at?: string;
 }
 
 export interface Paginated<T> {

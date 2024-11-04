@@ -4,7 +4,8 @@
     "scripts": {
         "build": "tsc && vite build",
         "dev": "vite",
-        "zodgen": "laravel-zodgen"
+        "zodgen": "laravel-zodgen",
+        "typegen": "laravel-typegen"
     },
     "devDependencies": {
         "@7nohe/laravel-zodgen": "^0.2.2",
