@@ -230,9 +230,6 @@ const MovieForm = ({ movie, genres }: Props) => {
                                     </SelectItem>
                                 );
                             })}
-                            <SelectItem key={765} value={String(765)}>
-                                Zła
-                            </SelectItem>
                         </SelectContent>
                     </Select>
                     {errors.genre_id && (
