@@ -61,8 +61,10 @@ class MovieController extends Controller {
      * Store a newly created resource in storage.
      */
     public function store(UpdateMovieRequest $request) {
-        dd($request->all());
-        $path = $request->file('poster_image')->store('posters');
+        $path = "";
+        if ($request->file('poster_image')) {
+            $path = $request->file('poster_image')->store('posters');
+        }
         Movie::create([...$request->except(['poster_image', 'removePoster']), 'poster_image' => $path]);
 
         return redirect(route('movies.index'))->with([
