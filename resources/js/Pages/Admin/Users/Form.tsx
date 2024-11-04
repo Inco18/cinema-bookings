@@ -9,32 +9,88 @@ import {
     SelectValue,
 } from "@/Components/ui/select";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { UpdateUserRequest } from "@/schema";
 import { User } from "@/types";
 import { Head, router, useForm } from "@inertiajs/react";
-import React, { FormEventHandler } from "react";
+import React, { FormEventHandler, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
+import { ZodIssue } from "zod";
 
 type Props = { user?: User };
 
 const UserForm = ({ user }: Props) => {
-    const { data, setData, patch, post, errors, clearErrors, processing } =
-        useForm({
-            first_name: user?.first_name || "",
-            last_name: user?.last_name || "",
-            email: user?.email || "",
-            role: user?.role || "client",
+    const {
+        data,
+        setData,
+        patch,
+        post,
+        errors,
+        clearErrors,
+        setError,
+        processing,
+    } = useForm({
+        first_name: user?.first_name || "",
+        last_name: user?.last_name || "",
+        email: user?.email || "",
+        role: user?.role || "client",
+    });
+    const [didFail, setDidFail] = useState(false);
+    const inputsRef = useRef<{
+        first_name: HTMLInputElement | null;
+        last_name: HTMLInputElement | null;
+        email: HTMLInputElement | null;
+        role: HTMLInputElement | null;
+    }>({ first_name: null, last_name: null, email: null, role: null });
+
+    const validateInputs = () => {
+        const parsed = UpdateUserRequest.safeParse(data);
+        const zodErrors =
+            parsed?.error?.flatten((issue: ZodIssue) => ({
+                message: issue.message,
+                errorCode: issue.code,
+            })).fieldErrors || {};
+        Object.keys(data).forEach((key) => {
+            if (zodErrors[key as keyof typeof zodErrors]) {
+                setError(
+                    key as keyof typeof zodErrors,
+                    //@ts-ignore
+                    zodErrors[key as keyof typeof zodErrors][0].message
+                );
+            } else {
+                clearErrors(key as keyof typeof zodErrors);
+            }
         });
+        return zodErrors;
+    };
+
+    useEffect(() => {
+        if (!didFail) return;
+        validateInputs();
+    }, [data]);
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
+        const zodErrors = validateInputs();
+        if (Object.keys(zodErrors).length !== 0) {
+            inputsRef.current[
+                Object.keys(zodErrors)[0] as keyof typeof zodErrors
+            ]?.focus();
+            setDidFail(true);
+            return;
+        }
         if (user) {
             patch(route("users.update", { user }), {
-                onError: () =>
-                    toast.error("Nie udało się zaktualizować użytkownika"),
+                onError: () => {
+                    setDidFail(true);
+                    toast.error("Nie udało się zaktualizować użytkownika");
+                },
             });
         } else {
             post(route("users.store"), {
-                onError: () => toast.error("Nie udało się dodać użytkownika"),
+                onError: () => {
+                    setDidFail(true);
+                    toast.error("Nie udało się dodać użytkownika");
+                },
             });
         }
     };
@@ -60,17 +116,27 @@ const UserForm = ({ user }: Props) => {
                 className="mt-2 space-y-6 max-w-lg m-auto bg-background p-4 sm:rounded-lg sm:p-8 border"
             >
                 <div>
-                    <Label htmlFor="first_name">Imię</Label>
+                    <Label
+                        htmlFor="first_name"
+                        className={`${
+                            errors.first_name ? "!text-destructive" : ""
+                        }`}
+                    >
+                        Imię
+                    </Label>
                     <Input
                         type="text"
+                        ref={(ref) =>
+                            (inputsRef.current.first_name =
+                                ref as HTMLInputElement)
+                        }
                         id="first_name"
                         value={data.first_name}
                         onChange={(e) => {
-                            clearErrors("first_name");
                             setData("first_name", e.target.value);
                         }}
                         className={`${
-                            errors.first_name ? "border-destructive" : ""
+                            errors.first_name ? "!border-destructive" : ""
                         }`}
                     />
                     {errors.first_name && (
@@ -80,17 +146,27 @@ const UserForm = ({ user }: Props) => {
                     )}
                 </div>
                 <div>
-                    <Label htmlFor="last_name">Nazwisko</Label>
+                    <Label
+                        htmlFor="last_name"
+                        className={`${
+                            errors.last_name ? "!text-destructive" : ""
+                        }`}
+                    >
+                        Nazwisko
+                    </Label>
                     <Input
                         type="text"
+                        ref={(ref) =>
+                            (inputsRef.current.last_name =
+                                ref as HTMLInputElement)
+                        }
                         id="last_name"
                         value={data.last_name}
                         onChange={(e) => {
-                            clearErrors("last_name");
                             setData("last_name", e.target.value);
                         }}
                         className={`${
-                            errors.last_name ? "border-destructive" : ""
+                            errors.last_name ? "!border-destructive" : ""
                         }`}
                     />
                     {errors.last_name && (
@@ -100,17 +176,24 @@ const UserForm = ({ user }: Props) => {
                     )}
                 </div>
                 <div>
-                    <Label htmlFor="email">Email</Label>
+                    <Label
+                        htmlFor="email"
+                        className={`${errors.email ? "!text-destructive" : ""}`}
+                    >
+                        Email
+                    </Label>
                     <Input
                         type="email"
+                        ref={(ref) =>
+                            (inputsRef.current.email = ref as HTMLInputElement)
+                        }
                         id="email"
                         value={data.email}
                         onChange={(e) => {
-                            clearErrors("email");
                             setData("email", e.target.value);
                         }}
                         className={`${
-                            errors.email ? "border-destructive" : ""
+                            errors.email ? "!border-destructive" : ""
                         }`}
                     />
                     {errors.email && (
@@ -128,7 +211,12 @@ const UserForm = ({ user }: Props) => {
                             }
                             defaultValue={data.role}
                         >
-                            <SelectTrigger>
+                            <SelectTrigger
+                                ref={(ref) =>
+                                    (inputsRef.current.role =
+                                        ref as HTMLInputElement)
+                                }
+                            >
                                 <SelectValue placeholder="Wybierz rolę" />
                             </SelectTrigger>
                             <SelectContent>
