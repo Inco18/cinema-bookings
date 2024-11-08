@@ -15,6 +15,9 @@ return new class extends Migration {
             $table->foreignId('user_id')->nullable()->constrained();
             $table->tinyInteger('num_people');
             $table->decimal('price');
+            $table->string("first_name");
+            $table->string('last_name');
+            $table->string('email');
             $table->timestamps();
         });
     }

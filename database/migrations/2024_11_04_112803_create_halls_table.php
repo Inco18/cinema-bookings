@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\HallType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,7 +13,7 @@ return new class extends Migration {
         Schema::create('halls', function (Blueprint $table) {
             $table->id();
             $table->string('number');
-            $table->enum('type', ["normal", "3D", "IMAX", "VIP"]);
+            $table->enum('type', HallType::toArray());
             $table->timestamps();
         });
     }

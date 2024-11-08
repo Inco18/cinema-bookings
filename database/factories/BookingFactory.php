@@ -24,7 +24,10 @@ class BookingFactory extends Factory {
             'showing_id' => fake()->randomElement($showings),
             'user_id' => fake()->randomElement($users),
             'num_people' => fake()->numberBetween(1, 5),
-            'price' => fake()->randomFloat(2, 10, 500)
+            'price' => fake()->randomFloat(2, 10, 500),
+            'first_name' => fake()->firstName(),
+            'last_name' => fake()->lastName(),
+            'email' => fake()->email()
         ];
     }
 
