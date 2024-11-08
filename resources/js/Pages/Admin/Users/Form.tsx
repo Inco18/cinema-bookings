@@ -1,24 +1,20 @@
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/Components/ui/select";
+import { MultiSelect } from "@/Components/ui/multiple-select";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { UpdateUserRequest } from "@/schema";
+import { UserRequest } from "@/schema";
 import { User } from "@/types";
 import { Head, router, useForm } from "@inertiajs/react";
 import React, { FormEventHandler, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { ZodIssue } from "zod";
+import { RoleType } from "@/types/enums";
+import { translatedRoles } from "@/lib/utils";
 
-type Props = { user?: User };
+type Props = { user?: User; roles: RoleType[] };
 
-const UserForm = ({ user }: Props) => {
+const UserForm = ({ user, roles }: Props) => {
     const {
         data,
         setData,
@@ -32,18 +28,18 @@ const UserForm = ({ user }: Props) => {
         first_name: user?.first_name || "",
         last_name: user?.last_name || "",
         email: user?.email || "",
-        role: user?.role || "client",
+        roles: user?.roles?.map((role) => role.name) || [],
     });
     const [didFail, setDidFail] = useState(false);
     const inputsRef = useRef<{
         first_name: HTMLInputElement | null;
         last_name: HTMLInputElement | null;
         email: HTMLInputElement | null;
-        role: HTMLInputElement | null;
-    }>({ first_name: null, last_name: null, email: null, role: null });
+        roles: HTMLInputElement | null;
+    }>({ first_name: null, last_name: null, email: null, roles: null });
 
     const validateInputs = () => {
-        const parsed = UpdateUserRequest.safeParse(data);
+        const parsed = UserRequest.safeParse(data);
         const zodErrors =
             parsed?.error?.flatten((issue: ZodIssue) => ({
                 message: issue.message,
@@ -203,28 +199,38 @@ const UserForm = ({ user }: Props) => {
                     )}
                 </div>
                 <div>
-                    <Label>
-                        Rola
-                        <Select
-                            onValueChange={(val) =>
-                                setData("role", val as "client" | "admin")
-                            }
-                            defaultValue={data.role}
-                        >
-                            <SelectTrigger
-                                ref={(ref) =>
-                                    (inputsRef.current.role =
-                                        ref as HTMLInputElement)
-                                }
-                            >
-                                <SelectValue placeholder="Wybierz rolę" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="client">Klient</SelectItem>
-                                <SelectItem value="admin">Admin</SelectItem>
-                            </SelectContent>
-                        </Select>
+                    <Label
+                        className={`${errors.roles ? "!text-destructive" : ""}`}
+                        htmlFor="roles"
+                    >
+                        Role
                     </Label>
+                    <MultiSelect
+                        onValueChange={(value) =>
+                            setData("roles", value as RoleType[])
+                        }
+                        id="roles"
+                        ref={(ref) =>
+                            (inputsRef.current.roles = ref as HTMLInputElement)
+                        }
+                        className={`${
+                            errors.roles ? "!border-destructive" : ""
+                        }`}
+                        defaultValue={data.roles}
+                        placeholder="Wybierz role"
+                        variant="inverted"
+                        options={roles.map((role) => {
+                            return {
+                                value: role,
+                                label: translatedRoles[role],
+                            };
+                        })}
+                    />
+                    {errors["roles"] && (
+                        <p className="text-sm text-destructive mt-1">
+                            {errors.roles}
+                        </p>
+                    )}
                 </div>
                 <div className="flex justify-end gap-2">
                     <Button

@@ -1,5 +1,6 @@
 import { z } from "zod";
-export const UpdateUserRequest = z.object({
+import { RoleType } from "./types/enums";
+export const UserRequest = z.object({
     first_name: z
         .string()
         .min(1, { message: "To pole jest wymagane" })
@@ -19,9 +20,17 @@ export const UpdateUserRequest = z.object({
         .min(1, { message: "To pole jest wymagane" })
         .email({ message: "Podaj poprawny adres email" })
         .max(255, { message: "Przekroczono maksymalną długość pola" }),
-    role: z.enum(["client", "admin"], {
-        message: "To pole może mieć wartość: Klient lub Admin",
-    }),
+    roles: z
+        .string()
+        .array()
+        .nonempty({ message: "Użytkownik musi posiadać przynajmniej 1 rolę" })
+        .refine(
+            (val) =>
+                val.every((role) =>
+                    Object.values(RoleType).includes(role as RoleType)
+                ),
+            { message: "Pole posiada niepoprawną wartość" }
+        ),
 });
 
 const ACCEPTED_IMAGE_MIME_TYPES = [
@@ -30,7 +39,7 @@ const ACCEPTED_IMAGE_MIME_TYPES = [
     "image/png",
     "image/webp",
 ];
-export const UpdateMovieRequest = z.object({
+export const MovieRequest = z.object({
     title: z.string().min(1, { message: "To pole jest wymagane" }),
     director: z
         .string()

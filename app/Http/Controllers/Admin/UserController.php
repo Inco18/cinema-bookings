@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\UpdateUserRequest;
+use App\Http\Requests\Admin\UserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller {
     /**
@@ -36,7 +37,7 @@ class UserController extends Controller {
         if ($page < 1)
             $page = 1;
 
-        $users = $users->paginate(10, ['*'], 'page', $page);
+        $users = $users->with('roles')->paginate(10, ['*'], 'page', $page);
 
         return Inertia::render('Admin/Users/Index', [
             'users' => $users,
@@ -52,14 +53,16 @@ class UserController extends Controller {
      * Show the form for creating a new resource.
      */
     public function create() {
-        return Inertia::render('Admin/Users/Form');
+        $roles = Role::all()->pluck('name');
+        return Inertia::render('Admin/Users/Form', ['roles' => $roles]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(UpdateUserRequest $request) {
-        User::create([...$request->all(), 'password' => Hash::make("12345678")]);
+    public function store(UserRequest $request) {
+        $user = User::create([...$request->except('roles'), 'password' => Hash::make("12345678")]);
+        $user->syncRoles($request->input('roles'));
         return redirect(route('users.index'))->with([
             'message' => "Użytkownik został dodany",
             'messageType' => 'success'
@@ -70,16 +73,18 @@ class UserController extends Controller {
      * Show the form for editing the specified resource.
      */
     public function edit(User $user) {
-        return Inertia::render('Admin/Users/Form', ['user' => $user]);
+        $roles = Role::all()->pluck('name');
+        return Inertia::render('Admin/Users/Form', ['user' => $user->load('roles'), 'roles' => $roles]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateUserRequest $request, User $user) {
+    public function update(UserRequest $request, User $user) {
         $user->update(
-            $request->all()
+            $request->except('roles')
         );
+        $user->syncRoles($request->input('roles'));
         return redirect(route('users.index'))->with([
             'message' => "Użytkownik został zaktualizowany",
             'messageType' => 'success'

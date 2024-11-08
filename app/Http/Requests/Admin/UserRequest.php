@@ -2,15 +2,18 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Enums\RoleType;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class UpdateUserRequest extends FormRequest {
+class UserRequest extends FormRequest {
     /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array {
+        $allowedValues = RoleType::toArray();
         return [
             'first_name' => ['required', 'regex:/^[\pL\s-]*$/u', 'max:255'],
             'last_name' => ['required', 'regex:/^[\pL\s-]*$/u', 'max:255'],
@@ -20,7 +23,14 @@ class UpdateUserRequest extends FormRequest {
                 'email',
                 'max:255',
             ],
-            'role' => ['in:client,admin']
+            'roles' => ['required',
+                function ($attribute, $value, $fail) use ($allowedValues) {
+                    foreach ($value as $item) {
+                        if (!in_array($item, $allowedValues)) {
+                            $fail("Pole posiada niepoprawną wartość");
+                        }
+                    }
+                },],
         ];
     }
 
@@ -30,7 +40,7 @@ class UpdateUserRequest extends FormRequest {
             'regex' => "To pole może składać się tylko z liter",
             'max' => "Przekroczono maksymalną długość pola",
             'email' => "Podaj poprawny adres email",
-            "role.in" => "To pole może mieć wartość: Klient lub Admin"
+            'roles.required' => "Użytkownik musi posiadać przynajmniej 1 rolę",
         ];
     }
 }

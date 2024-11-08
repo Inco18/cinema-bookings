@@ -2,6 +2,8 @@ import ApplicationLogo from "@/Components/ApplicationLogo";
 import Dropdown from "@/Components/Dropdown";
 import NavLink from "@/Components/NavLink";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
+import { hasRole } from "@/lib/utils";
+import { RoleType } from "@/types/enums";
 import { Link, usePage } from "@inertiajs/react";
 import { PropsWithChildren, ReactNode, useState } from "react";
 import { ToastContainer } from "react-toastify";
@@ -31,7 +33,7 @@ export default function Authenticated({
                                 </div>
 
                                 <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                    {user.role == "admin" && (
+                                    {hasRole(user, RoleType.ADMIN) && (
                                         <NavLink
                                             href={route("dashboard")}
                                             active={route().current(
@@ -41,7 +43,7 @@ export default function Authenticated({
                                             Panel kontrolny
                                         </NavLink>
                                     )}
-                                    {user.role == "admin" && (
+                                    {hasRole(user, RoleType.ADMIN) && (
                                         <NavLink
                                             href={route("users.index")}
                                             active={route().current("users.*")}
@@ -49,7 +51,7 @@ export default function Authenticated({
                                             Użytkownicy
                                         </NavLink>
                                     )}
-                                    {user.role == "admin" && (
+                                    {hasRole(user, RoleType.ADMIN) && (
                                         <NavLink
                                             href={route("movies.index")}
                                             active={route().current("movies.*")}
@@ -155,7 +157,7 @@ export default function Authenticated({
                         }
                     >
                         <div className="space-y-1 pb-3 pt-2">
-                            {user.role == "admin" && (
+                            {hasRole(user, RoleType.ADMIN) && (
                                 <ResponsiveNavLink
                                     href={route("dashboard")}
                                     active={route().current("dashboard")}
@@ -163,7 +165,7 @@ export default function Authenticated({
                                     Panel kontrolny
                                 </ResponsiveNavLink>
                             )}
-                            {user.role == "admin" && (
+                            {hasRole(user, RoleType.ADMIN) && (
                                 <ResponsiveNavLink
                                     href={route("users.index")}
                                     active={route().current("users.*")}
@@ -171,7 +173,7 @@ export default function Authenticated({
                                     Użytkownicy
                                 </ResponsiveNavLink>
                             )}
-                            {user.role == "admin" && (
+                            {hasRole(user, RoleType.ADMIN) && (
                                 <ResponsiveNavLink
                                     href={route("movies.index")}
                                     active={route().current("movies.*")}

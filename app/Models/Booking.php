@@ -32,6 +32,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Booking whereShowingId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Booking whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Booking whereUserId($value)
+ * @property string $first_name
+ * @property string $last_name
+ * @property string $email
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Booking whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Booking whereFirstName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Booking whereLastName($value)
  * @mixin \Eloquent
  */
 class Booking extends Model {

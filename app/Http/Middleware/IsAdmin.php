@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\RoleType;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,7 +16,7 @@ class IsAdmin {
     public function handle(Request $request, Closure $next): Response {
         $user = $request->user();
 
-        if (!$user || $user->role != 'admin') {
+        if (!$user || !$user->hasRole(RoleType::ADMIN->value)) {
             abort(403, 'Unauthorized');
         }
 

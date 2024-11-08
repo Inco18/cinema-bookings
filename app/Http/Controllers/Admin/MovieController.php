@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\UpdateMovieRequest;
+use App\Http\Requests\Admin\MovieRequest;
 use App\Models\Genre;
 use App\Models\Movie;
 use Error;
@@ -60,7 +60,7 @@ class MovieController extends Controller {
     /**
      * Store a newly created resource in storage.
      */
-    public function store(UpdateMovieRequest $request) {
+    public function store(MovieRequest $request) {
         $path = "";
         if ($request->file('poster_image')) {
             $path = $request->file('poster_image')->store('posters');
@@ -84,7 +84,7 @@ class MovieController extends Controller {
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateMovieRequest $request, Movie $movie) {
+    public function update(MovieRequest $request, Movie $movie) {
         $oldPoster = $movie['poster_image'];
         $newPoster = $request->file('poster_image');
         $removePoster = $request->input('removePoster');

@@ -1,5 +1,5 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Paginated, User } from "@/types";
+import { Paginated, Role, User } from "@/types";
 import React, { useEffect, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import DataTable from "../../../Components/DataTable";
@@ -32,6 +32,7 @@ import {
     DialogTrigger,
 } from "@/Components/ui/dialog";
 import { toast } from "react-toastify";
+import { translatedRoles } from "@/lib/utils";
 
 type Props = {
     users: Paginated<User>;
@@ -105,22 +106,12 @@ const columns: ColumnDef<User>[] = [
         maxSize: 200,
     },
     {
-        accessorKey: "role",
-        header: ({ column }) => {
-            return (
-                <Button variant="ghost" onClick={() => column.toggleSorting()}>
-                    Rola
-                    {column.getIsSorted() === "asc" && (
-                        <ArrowDown className="ml-2 h-4 w-4" />
-                    )}
-                    {column.getIsSorted() === "desc" && (
-                        <ArrowUp className="ml-2 h-4 w-4" />
-                    )}
-                    {!column.getIsSorted() && (
-                        <ArrowUpDown className="ml-2 h-4 w-4" />
-                    )}
-                </Button>
-            );
+        accessorKey: "roles",
+        header: "Role",
+        cell: ({ row }) => {
+            return (row.getValue("roles") as Role[])
+                .map((value) => translatedRoles[value.name])
+                .join(", ");
         },
         maxSize: 100,
     },

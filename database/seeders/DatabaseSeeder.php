@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\RoleType;
 use App\Models\Booking;
 use App\Models\Genre;
 use App\Models\Hall;
@@ -17,14 +18,9 @@ class DatabaseSeeder extends Seeder {
      * Seed the application's database.
      */
     public function run(): void {
-        User::factory(35)->create();
-        User::create([
-            'first_name' => 'Admin',
-            'last_name' => 'Adminowy',
-            'email' => 'admin@admin.com',
-            'role' => 'admin',
-            'password' => '12345678',
-        ]);
+        $this->call(PermissionSeeder::class);
+        $this->call(RoleSeeder::class);
+        $this->call(UserSeeder::class);
         Genre::factory(10)->create();
         Movie::factory(105)->create();
         Hall::factory(9)->create();

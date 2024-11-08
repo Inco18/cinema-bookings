@@ -1,3 +1,5 @@
+import { RoleType } from "./enums";
+
 export interface Booking {
     id: number;
     showing_id: number;
@@ -72,11 +74,19 @@ export interface User {
     id: number;
     first_name: string;
     last_name: string;
-    role: "admin" | "client";
+    roles?: Role[];
     email: string;
     email_verified_at?: string;
     created_at?: string;
     updated_at?: string;
+}
+
+export interface Role {
+    id: number;
+    name: RoleType;
+    guard_name: string;
+    created_at: string;
+    updated_at: string;
 }
 
 export interface Paginated<T> {

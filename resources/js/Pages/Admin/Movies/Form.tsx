@@ -19,7 +19,7 @@ import {
 import { Textarea } from "@/Components/ui/textarea";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { cn } from "@/lib/utils";
-import { UpdateMovieRequest } from "@/schema";
+import { MovieRequest } from "@/schema";
 import { Genre, Movie } from "@/types";
 import { Head, router, useForm } from "@inertiajs/react";
 import { format } from "date-fns";
@@ -67,7 +67,7 @@ const MovieForm = ({ movie, genres }: Props) => {
     });
 
     const validateInputs = () => {
-        const parsed = UpdateMovieRequest.safeParse(data);
+        const parsed = MovieRequest.safeParse(data);
         const zodErrors =
             parsed?.error?.flatten((issue: ZodIssue) => ({
                 message: issue.message,
