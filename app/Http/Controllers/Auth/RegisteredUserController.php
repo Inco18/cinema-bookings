@@ -38,14 +38,14 @@ class RegisteredUserController extends Controller {
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'email' => $request->email,
-            'role' => 'client',
             'password' => Hash::make($request->password),
         ]);
+        $user->assignRole('client');
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect(route('index', absolute: false));
     }
 }
