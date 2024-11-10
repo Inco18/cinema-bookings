@@ -33,6 +33,8 @@ import {
 } from "@/Components/ui/dialog";
 import { toast } from "react-toastify";
 import { translatedRoles } from "@/lib/utils";
+import { MultiSelect } from "@/Components/ui/multiple-select";
+import { RoleType } from "@/types/enums";
 
 type Props = {
     users: Paginated<User>;
@@ -41,6 +43,7 @@ type Props = {
     sortBy: string;
     sortDesc: number;
     search: string;
+    rolesFilter: RoleType[];
 };
 
 const columns: ColumnDef<User>[] = [
@@ -209,6 +212,7 @@ const UsersIndex = ({
     sortBy,
     sortDesc,
     search,
+    rolesFilter,
 }: Props) => {
     const [searchValue, setSearchValue] = useState<string>(search || "");
     const { flash }: any = usePage().props;
@@ -260,6 +264,28 @@ const UsersIndex = ({
                         >
                             <X />
                         </Button>
+                    </div>
+                    <div className="ml-1">
+                        <MultiSelect
+                            onValueChange={(value) =>
+                                router.get(
+                                    route("users.index", {
+                                        roles: value || null,
+                                    }),
+                                    {},
+                                    { preserveState: true }
+                                )
+                            }
+                            defaultValue={rolesFilter || []}
+                            placeholder="Filtruj wg. ról"
+                            variant="inverted"
+                            options={Object.values(RoleType).map((role) => {
+                                return {
+                                    label: translatedRoles[role],
+                                    value: role,
+                                };
+                            })}
+                        />
                     </div>
                     <Button className="ml-auto" asChild>
                         <Link href={route("users.create")}>

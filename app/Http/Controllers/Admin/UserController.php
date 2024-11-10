@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\RoleType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UserRequest;
 use App\Models\User;
@@ -18,12 +19,18 @@ class UserController extends Controller {
         $sortBy = $request->get('sortBy');
         $sortDesc = $request->get('sortDesc');
         $search = $request->get('search');
-        $users = User::query();
+        $rolesFilter = $request->get('roles');
+        $users = User::with('roles');
 
         if ($search) {
             $users->whereAny(['first_name', 'last_name', 'email'], 'ilike', "%$search%");
         }
 
+        if ($rolesFilter) {
+            $users->whereHas('roles', function ($role) use ($rolesFilter) {
+                $role->whereIn('name', $rolesFilter);
+            });
+        }
         if ($sortBy) {
             $users->orderBy($sortBy, $sortDesc ? 'desc' : 'asc');
         } else {
@@ -37,7 +44,7 @@ class UserController extends Controller {
         if ($page < 1)
             $page = 1;
 
-        $users = $users->with('roles')->paginate(10, ['*'], 'page', $page);
+        $users = $users->paginate(10, ['*'], 'page', $page);
 
         return Inertia::render('Admin/Users/Index', [
             'users' => $users,
@@ -45,7 +52,8 @@ class UserController extends Controller {
             'page' => $page,
             'sortBy' => $sortBy,
             'sortDesc' => $sortDesc,
-            'search' => $search
+            'search' => $search,
+            'rolesFilter' => $rolesFilter
         ]);
     }
 
