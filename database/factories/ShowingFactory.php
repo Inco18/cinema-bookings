@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\ShowingType;
 use App\Models\Hall;
 use App\Models\Movie;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -24,7 +25,11 @@ class ShowingFactory extends Factory {
             'movie_id' => $randomMovie['id'],
             'hall_id' => fake()->randomElement($halls),
             'start_time' => now()->addDays($addDays),
-            'end_time' => now()->addDays($addDays)->addSeconds($randomMovie['duration_seconds'])
+            'end_time' => now()->addDays($addDays)->addSeconds($randomMovie['duration_seconds']),
+            'speech_lang' => fake()->randomElement(['PL', 'ENG']),
+            'subtitles_lang' => fake()->randomElement(['PL', null]),
+            'dubbing_lang' => fake()->randomElement(['PL', null]),
+            'type' => fake()->randomElement(ShowingType::toArray())
         ];
     }
 }

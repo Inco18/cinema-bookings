@@ -17,7 +17,7 @@ import {
     SelectValue,
 } from "@/Components/ui/select";
 import { Textarea } from "@/Components/ui/textarea";
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import AuthenticatedLayout from "@/Layouts/AdminLayout";
 import { cn } from "@/lib/utils";
 import { MovieRequest } from "@/schema";
 import { Genre, Movie } from "@/types";

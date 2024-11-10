@@ -10,7 +10,7 @@ import { ToastContainer } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
 
-export default function Authenticated({
+export default function Admin({
     header,
     children,
 }: PropsWithChildren<{ header?: ReactNode }>) {

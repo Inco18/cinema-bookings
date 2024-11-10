@@ -2,7 +2,7 @@ import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
 import { MultiSelect } from "@/Components/ui/multiple-select";
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import AuthenticatedLayout from "@/Layouts/AdminLayout";
 import { UserRequest } from "@/schema";
 import { User } from "@/types";
 import { Head, router, useForm } from "@inertiajs/react";

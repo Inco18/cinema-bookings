@@ -1,16 +1,11 @@
 import AuthenticatedLayout from "@/Layouts/AdminLayout";
+import MainLayout from "@/Layouts/MainLayout";
 import { Head } from "@inertiajs/react";
 
 export default function Dashboard() {
     return (
-        <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Panel kontrolny
-                </h2>
-            }
-        >
-            <Head title="Panel kontrolny" />
+        <MainLayout>
+            <Head title="Repertuar" />
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -21,6 +16,6 @@ export default function Dashboard() {
                     </div>
                 </div>
             </div>
-        </AuthenticatedLayout>
+        </MainLayout>
     );
 }

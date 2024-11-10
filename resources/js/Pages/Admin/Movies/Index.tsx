@@ -1,4 +1,4 @@
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import AuthenticatedLayout from "@/Layouts/AdminLayout";
 import { Movie, Paginated } from "@/types";
 import React, { useEffect, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
