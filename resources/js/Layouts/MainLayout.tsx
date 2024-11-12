@@ -17,7 +17,6 @@ export default function MainLayout({
     header,
 }: PropsWithChildren<{ header?: ReactNode }>) {
     const user = usePage().props.auth.user;
-    console.log(user);
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
@@ -25,8 +24,8 @@ export default function MainLayout({
     return (
         <>
             <div className="min-h-screen bg-gray-100">
-                <nav className="bg-white">
-                    <div className="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8">
+                <nav className="bg-white z-50 sticky top-0">
+                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                         <div className="flex h-16 justify-between">
                             <div className="flex">
                                 <div className="flex shrink-0 items-center">
@@ -37,9 +36,11 @@ export default function MainLayout({
 
                                 <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                     <Link
-                                        href={route("main.showings")}
+                                        href={route("main.showings.index")}
                                         className={`inline-flex items-center hover:text-indigo-700 transition ${
-                                            route().current("main.showings")
+                                            route().current(
+                                                "main.showings.index"
+                                            )
                                                 ? "text-indigo-700 font-semibold"
                                                 : ""
                                         }`}
@@ -181,8 +182,8 @@ export default function MainLayout({
                     >
                         <div className="space-y-1 pb-3 pt-2">
                             <ResponsiveNavLink
-                                href={route("main.showings")}
-                                active={route().current("main.showings")}
+                                href={route("main.showings.index")}
+                                active={route().current("main.showings.index")}
                             >
                                 Repertuar
                             </ResponsiveNavLink>

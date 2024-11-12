@@ -61,8 +61,12 @@ export type Showing = {
     id: number;
     movie_id: number;
     hall_id: number;
-    start_time: any;
-    end_time: any;
+    start_time: string;
+    end_time: string;
+    speech_lang: string;
+    dubbing_lang?: string;
+    subtitles_lang?: string;
+    type: string;
     created_at?: string;
     updated_at?: string;
     hall?: Hall;

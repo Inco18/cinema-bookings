@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder {
         $this->call(RoleSeeder::class);
         $this->call(UserSeeder::class);
         Genre::factory(10)->create();
-        Movie::factory(105)->create();
+        Movie::factory(10)->create();
         Hall::factory(9)->create();
         for ($i = 1; $i < 3; $i++) {
             for ($j = 1; $j < 16; $j++) {
@@ -36,7 +36,7 @@ class DatabaseSeeder extends Seeder {
                 }
             }
         }
-        Showing::factory(10)->create();
+        Showing::factory(100)->create();
         Booking::factory(10)->create();
     }
 }

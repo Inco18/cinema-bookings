@@ -31,3 +31,8 @@ export enum SeatType {
     DISABLED = "disabled",
     VIP = "vip",
 }
+
+export enum ShowingType {
+    TWO_D = "2d",
+    THREE_D = "3d",
+}

@@ -19,13 +19,15 @@ class ShowingFactory extends Factory {
     public function definition(): array {
         $halls = Hall::pluck('id')->toArray();
         $movies = Movie::all()->toArray();
-        $addDays = fake()->numberBetween(10, 30);
+        $addDays = fake()->numberBetween(0, 8);
+        $randomHour = fake()->numberBetween(0, 23);
+        $randomMinute = fake()->numberBetween(0, 59);
         $randomMovie = fake()->randomElement($movies);
         return [
             'movie_id' => $randomMovie['id'],
             'hall_id' => fake()->randomElement($halls),
-            'start_time' => now()->addDays($addDays),
-            'end_time' => now()->addDays($addDays)->addSeconds($randomMovie['duration_seconds']),
+            'start_time' => now()->addDays($addDays)->setHour($randomHour)->setMinute($randomMinute),
+            'end_time' => now()->addDays($addDays)->setHour($randomHour)->setMinute($randomMinute)->addSeconds($randomMovie['duration_seconds']),
             'speech_lang' => fake()->randomElement(['PL', 'ENG']),
             'subtitles_lang' => fake()->randomElement(['PL', null]),
             'dubbing_lang' => fake()->randomElement(['PL', null]),
