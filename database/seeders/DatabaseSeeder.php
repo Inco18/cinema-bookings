@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder {
         Genre::factory(10)->create();
         Movie::factory(10)->create();
         Hall::factory(9)->create();
-        for ($i = 1; $i < 3; $i++) {
+        for ($i = 1; $i < 10; $i++) {
             for ($j = 1; $j < 16; $j++) {
                 for ($k = 1; $k < 31; $k++) {
                     Seat::factory()->create([

@@ -1,6 +1,7 @@
 import { Badge } from "@/Components/ui/badge";
 import { Separator } from "@/Components/ui/separator";
 import { Showing } from "@/types";
+import { Link } from "@inertiajs/react";
 import { format } from "date-fns";
 import React from "react";
 
@@ -9,7 +10,6 @@ type Props = {
 };
 
 const ShowingsList = ({ showings }: Props) => {
-    console.log(showings);
     return (
         <div className="flex flex-col gap-2 mt-5">
             {Object.entries(showings).map(([movieId, showingArr]) => {
@@ -52,23 +52,35 @@ const ShowingsList = ({ showings }: Props) => {
                             <Separator className="my-3" />
                             <div className="gap-2 max-w-full grid grid-cols-[repeat(auto-fill,_minmax(160px,_1fr))]">
                                 {showingArr.map((showing) => (
-                                    <div
+                                    <Link
+                                        href={route("main.bookings.create", {
+                                            showing_id: showing.id,
+                                        })}
                                         key={showing.id}
                                         className="h-24 w-full border-[1px] border-foreground/20 rounded-md py-1 px-2 flex flex-col hover:bg-indigo-700 hover:text-primary-foreground cursor-pointer transition"
                                     >
-                                        <p className="font-medium text-nowrap">
-                                            {format(
-                                                new Date(showing.start_time),
-                                                "HH:mm"
-                                            )}{" "}
-                                            <span className="font-normal text-sm opacity-60">
-                                                -{" "}
+                                        <div className="flex items-center justify-between">
+                                            <p className="font-medium text-nowrap">
                                                 {format(
-                                                    new Date(showing.end_time),
+                                                    new Date(
+                                                        showing.start_time
+                                                    ),
                                                     "HH:mm"
-                                                )}
-                                            </span>
-                                        </p>
+                                                )}{" "}
+                                                <span className="font-normal text-sm opacity-60">
+                                                    -{" "}
+                                                    {format(
+                                                        new Date(
+                                                            showing.end_time
+                                                        ),
+                                                        "HH:mm"
+                                                    )}
+                                                </span>
+                                            </p>
+                                            <Badge variant={"secondary"}>
+                                                {showing.type.toUpperCase()}
+                                            </Badge>
+                                        </div>
                                         <p className="text-sm opacity-75">
                                             Sala {showing.hall?.number}
                                         </p>
@@ -82,7 +94,7 @@ const ShowingsList = ({ showings }: Props) => {
                                                 Dubbing: {showing.dubbing_lang}
                                             </p>
                                         )}
-                                    </div>
+                                    </Link>
                                 ))}
                             </div>
                         </div>

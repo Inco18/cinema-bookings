@@ -9,11 +9,12 @@ import {
 import { Separator } from "@/Components/ui/separator";
 import MainLayout from "@/Layouts/MainLayout";
 import { Genre, Showing } from "@/types";
-import { Head, Link, router } from "@inertiajs/react";
+import { Head, Link, router, usePage } from "@inertiajs/react";
 import { format } from "date-fns";
 import { pl } from "date-fns/locale";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import ShowingsList from "./ShowingsList";
+import { toast } from "react-toastify";
 
 function createDays(currentDay = new Date()) {
     return Array.from({ length: 7 }, (v, k) => {
@@ -35,6 +36,12 @@ type Props = {
 };
 
 export default function ShowingsIndex(props: Props) {
+    const { flash }: any = usePage().props;
+    useEffect(() => {
+        if (flash.message) {
+            if (flash.type === "error") toast.error(flash.message);
+        }
+    }, []);
     return (
         <MainLayout>
             <Head title="Repertuar" />

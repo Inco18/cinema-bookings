@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Main\BookingController;
 use App\Http\Controllers\Main\ShowingsController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
@@ -17,6 +18,7 @@ Route::get('/', function () {
 })->name("index");
 
 Route::get('/showings', [ShowingsController::class, 'index'])->name('main.showings.index');
+Route::resource('/bookings', BookingController::class)->names('main.bookings');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
