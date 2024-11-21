@@ -1,13 +1,15 @@
 <?php
 
+use App\Http\Controllers\Admin\GenreController;
+use App\Http\Controllers\Admin\HallController;
 use App\Http\Controllers\Admin\MovieController;
 use App\Http\Controllers\Admin\UserController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 
 Route::resource('/movies', MovieController::class)->except(['show'])->middleware(['auth', 'admin']);
+Route::resource('/genres', GenreController::class)->except(['show'])->middleware(['auth', 'admin']);
+Route::resource('/halls', HallController::class)->except(['show'])->middleware(['auth', 'admin']);
 Route::resource('/users', UserController::class)->except(['show'])->middleware(['auth', 'admin']);
 
 

@@ -21,9 +21,9 @@ class DatabaseSeeder extends Seeder {
         $this->call(PermissionSeeder::class);
         $this->call(RoleSeeder::class);
         $this->call(UserSeeder::class);
-        Genre::factory(10)->create();
+        $this->call(GenreSeeder::class);
         Movie::factory(10)->create();
-        Hall::factory(9)->create();
+        $this->call(HallSeeder::class);
         for ($i = 1; $i < 10; $i++) {
             for ($j = 1; $j < 16; $j++) {
                 for ($k = 1; $k < 31; $k++) {

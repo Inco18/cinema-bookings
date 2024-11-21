@@ -59,6 +59,22 @@ export default function Admin({
                                             Filmy
                                         </NavLink>
                                     )}
+                                    {hasRole(user, RoleType.ADMIN) && (
+                                        <NavLink
+                                            href={route("genres.index")}
+                                            active={route().current("genres.*")}
+                                        >
+                                            Gatunki
+                                        </NavLink>
+                                    )}
+                                    {hasRole(user, RoleType.ADMIN) && (
+                                        <NavLink
+                                            href={route("halls.index")}
+                                            active={route().current("halls.*")}
+                                        >
+                                            Sale
+                                        </NavLink>
+                                    )}
                                 </div>
                             </div>
 
@@ -179,6 +195,22 @@ export default function Admin({
                                     active={route().current("movies.*")}
                                 >
                                     Filmy
+                                </ResponsiveNavLink>
+                            )}
+                            {hasRole(user, RoleType.ADMIN) && (
+                                <ResponsiveNavLink
+                                    href={route("genres.index")}
+                                    active={route().current("genres.*")}
+                                >
+                                    Gatunki
+                                </ResponsiveNavLink>
+                            )}
+                            {hasRole(user, RoleType.ADMIN) && (
+                                <ResponsiveNavLink
+                                    href={route("halls.index")}
+                                    active={route().current("halls.*")}
+                                >
+                                    Sale
                                 </ResponsiveNavLink>
                             )}
                         </div>
