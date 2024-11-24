@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\HallRequest;
 use App\Models\Hall;
+use App\Models\Seat;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
@@ -25,6 +28,8 @@ class HallController extends Controller {
 
         if ($sortBy) {
             $halls->orderBy($sortBy, $sortDesc ? 'desc' : 'asc');
+        } else {
+            $halls->orderBy('number', 'asc');
         }
 
         $rowCount = $halls->count();
@@ -51,13 +56,26 @@ class HallController extends Controller {
      */
     public function create() {
         Gate::authorize('create', Hall::class);
+
+        return Inertia::render('Admin/Halls/Form');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request) {
+    public function store(HallRequest $request) {
         Gate::authorize('create', Hall::class);
+        try {
+            Hall::create($request->only('number', 'type'));
+        } catch (Exception $e) {
+            return redirect()->back()->withErrors([
+                'create' => 'Nie udało się dodać sali'
+            ]);
+        }
+        return redirect(route('halls.index'))->with([
+            'message' => "Sala została dodana",
+            'messageType' => 'success'
+        ]);
     }
 
     /**
@@ -65,13 +83,27 @@ class HallController extends Controller {
      */
     public function edit(Hall $hall) {
         Gate::authorize('update', $hall);
+        return Inertia::render('Admin/Halls/Form', ['hall' => $hall, 'seats' => $hall->seats]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Hall $hall) {
+    public function update(HallRequest $request, Hall $hall) {
         Gate::authorize('update', $hall);
+        try {
+            $hall->update(
+                $request->only('number', 'type')
+            );
+        } catch (Exception $e) {
+            return redirect()->back()->withErrors([
+                'update' => 'Nie udało się zaktualizować wybranej sali'
+            ]);
+        }
+        return redirect(route('halls.index'))->with([
+            'message' => "Sala została zaktualizowana",
+            'messageType' => 'success'
+        ]);
     }
 
     /**
@@ -79,5 +111,12 @@ class HallController extends Controller {
      */
     public function destroy(Hall $hall) {
         Gate::authorize('delete', $hall);
+        try {
+            $hall->delete();
+        } catch (Exception $e) {
+            return redirect()->back()->withErrors([
+                'delete' => 'Nie udało się usunąć wybranej sali'
+            ]);
+        }
     }
 }

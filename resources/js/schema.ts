@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { RoleType } from "./types/enums";
+import { HallType, RoleType } from "./types/enums";
 export const UserRequest = z.object({
     first_name: z
         .string()
@@ -70,4 +70,12 @@ export const MovieRequest = z.object({
 
 export const GenreRequest = z.object({
     name: z.string().min(1, { message: "To pole jest wymagane" }),
+});
+
+export const HallRequest = z.object({
+    number: z.coerce
+        .number()
+        .int({ message: "To pole może zawierać tylko liczby całkowite" })
+        .min(1, { message: "To pole nie może być mniejsze niż 1" }),
+    type: z.nativeEnum(HallType, { message: "Niedopuszczalna zawartość pola" }),
 });

@@ -95,7 +95,7 @@ const columns: ColumnDef<Hall>[] = [
                 router.delete(route("halls.destroy", { hall }), {
                     preserveScroll: true,
                     onSuccess: () =>
-                        toast.success("Wybrana sala został usunięty"),
+                        toast.success("Wybrana sala została usunięta"),
                     onError: () =>
                         toast.error("Nie udało się usunąć wybranej sali"),
                     onFinish: () => {
@@ -235,7 +235,7 @@ const HallsIndex = ({
                 </>
             }
         >
-            <Head title="Gatunki" />
+            <Head title="Sale" />
             <DataTable
                 columns={columns}
                 data={halls.data}

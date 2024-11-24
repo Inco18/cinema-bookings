@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property string $number
@@ -32,6 +32,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Hall extends Model {
     /** @use HasFactory<\Database\Factories\HallFactory> */
     use HasFactory;
+
+    protected $fillable = [
+        'number', 'type'
+    ];
 
     public function seats(): HasMany {
         return $this->hasMany(Seat::class);
