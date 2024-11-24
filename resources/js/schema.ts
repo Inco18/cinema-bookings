@@ -67,3 +67,7 @@ export const MovieRequest = z.object({
         .max(99, { message: "Podaj liczbę z zakresu 0-99" }),
     description: z.string().min(1, { message: "To pole jest wymagane" }),
 });
+
+export const GenreRequest = z.object({
+    name: z.string().min(1, { message: "To pole jest wymagane" }),
+});

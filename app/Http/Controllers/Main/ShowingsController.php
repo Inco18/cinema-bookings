@@ -20,7 +20,7 @@ class ShowingsController extends Controller {
         $speech_lang = $request->input('speech_lang');
         $dubbing_lang = $request->input('dubbing_lang');
         $genre_id = $request->input("genre_id");
-        $genres = Genre::all();
+        $genres = Genre::orderBy('name', 'asc')->get();
         $showings = Showing::with(['movie', 'hall'])->whereDate('start_time', $day);
 
         if ($genre_id)

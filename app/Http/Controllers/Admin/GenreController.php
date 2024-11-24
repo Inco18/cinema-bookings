@@ -3,10 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\GenreRequest;
 use App\Models\Genre;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
+use Session;
 
 class GenreController extends Controller {
     /**
@@ -25,6 +29,8 @@ class GenreController extends Controller {
 
         if ($sortBy) {
             $genres->orderBy($sortBy, $sortDesc ? 'desc' : 'asc');
+        } else {
+            $genres->orderBy('id', 'asc');
         }
 
         $rowCount = $genres->count();
@@ -51,20 +57,26 @@ class GenreController extends Controller {
      */
     public function create() {
         Gate::authorize('create', Genre::class);
+
+        return Inertia::render('Admin/Genres/Form');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request) {
+    public function store(GenreRequest $request) {
         Gate::authorize('create', Genre::class);
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Genre $genre) {
-        //
+        try {
+            Genre::create(['name' => $request->input('name')]);
+        } catch (Exception $e) {
+            return redirect()->back()->withErrors([
+                'create' => 'Nie udało się dodać gatunku'
+            ]);
+        }
+        return redirect(route('genres.index'))->with([
+            'message' => "Gatunek został dodany",
+            'messageType' => 'success'
+        ]);
     }
 
     /**
@@ -72,13 +84,27 @@ class GenreController extends Controller {
      */
     public function edit(Genre $genre) {
         Gate::authorize('update', $genre);
+        return Inertia::render('Admin/Genres/Form', ['genre' => $genre]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Genre $genre) {
+    public function update(GenreRequest $request, Genre $genre) {
         Gate::authorize('update', $genre);
+        try {
+            $genre->update(
+                ['name' => $request->input('name')]
+            );
+        } catch (Exception $e) {
+            return redirect()->back()->withErrors([
+                'update' => 'Nie udało się zaktualizować wybranego gatunku'
+            ]);
+        }
+        return redirect(route('genres.index'))->with([
+            'message' => "Gatunek został zaktualizowany",
+            'messageType' => 'success'
+        ]);
     }
 
     /**
@@ -86,5 +112,12 @@ class GenreController extends Controller {
      */
     public function destroy(Genre $genre) {
         Gate::authorize('delete', $genre);
+        try {
+            $genre->delete();
+        } catch (Exception $e) {
+            return redirect()->back()->withErrors([
+                'delete' => 'Nie udało się usunąć wybranego gatunku'
+            ]);
+        }
     }
 }

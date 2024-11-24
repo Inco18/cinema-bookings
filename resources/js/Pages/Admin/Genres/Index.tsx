@@ -76,7 +76,7 @@ const columns: ColumnDef<Genre>[] = [
                     preserveScroll: true,
                     onSuccess: () =>
                         toast.success("Wybrany gatunek został usunięty"),
-                    onError: () =>
+                    onError: (errors) =>
                         toast.error("Nie udało się usunąć wybranego gatunku"),
                     onFinish: () => {
                         setIsDeleting(false);
@@ -162,8 +162,9 @@ const GenresIndex = ({
     useEffect(() => {
         if (flash.message) {
             if (flash.type === "success") toast.success(flash.message);
+            else if (flash.type === "error") toast.error(flash.message);
         }
-    }, []);
+    }, [flash]);
 
     useEffect(() => {
         if ((!search && !searchValue) || search === searchValue) return;
