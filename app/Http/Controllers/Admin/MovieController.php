@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\MovieRequest;
 use App\Models\Genre;
 use App\Models\Movie;
-use Error;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -17,6 +17,7 @@ class MovieController extends Controller {
      * Display a listing of the resource.
      */
     public function index(Request $request): Response {
+        Gate::authorize('viewAny', Movie::class);
         $sortBy = $request->get('sortBy');
         $sortDesc = $request->get('sortDesc');
         $search = $request->get('search');
@@ -53,6 +54,7 @@ class MovieController extends Controller {
      * Show the form for creating a new resource.
      */
     public function create() {
+        Gate::authorize('create', Movie::class);
         $genres = Genre::all();
         return Inertia::render('Admin/Movies/Form', ['genres' => $genres]);
     }
@@ -61,6 +63,7 @@ class MovieController extends Controller {
      * Store a newly created resource in storage.
      */
     public function store(MovieRequest $request) {
+        Gate::authorize('create', Movie::class);
         $path = "";
         if ($request->file('poster_image')) {
             $path = $request->file('poster_image')->store('posters');
@@ -77,6 +80,7 @@ class MovieController extends Controller {
      * Show the form for editing the specified resource.
      */
     public function edit(Movie $movie) {
+        Gate::authorize('update', $movie);
         $genres = Genre::all();
         return Inertia::render('Admin/Movies/Form', ['movie' => $movie, 'genres' => $genres]);
     }
@@ -85,6 +89,7 @@ class MovieController extends Controller {
      * Update the specified resource in storage.
      */
     public function update(MovieRequest $request, Movie $movie) {
+        Gate::authorize('update', $movie);
         $oldPoster = $movie['poster_image'];
         $newPoster = $request->file('poster_image');
         $removePoster = $request->input('removePoster');
@@ -112,6 +117,7 @@ class MovieController extends Controller {
      * Remove the specified resource from storage.
      */
     public function destroy(Movie $movie) {
+        Gate::authorize('delete', Movie::class);
         $oldPoster = $movie['poster_image'];
         if ($oldPoster) {
             Storage::delete($oldPoster);

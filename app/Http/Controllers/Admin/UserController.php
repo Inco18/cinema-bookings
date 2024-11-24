@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Enums\RoleType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
@@ -16,6 +16,7 @@ class UserController extends Controller {
      * Display a listing of the resource.
      */
     public function index(Request $request) {
+        Gate::authorize('viewAny', User::class);
         $sortBy = $request->get('sortBy');
         $sortDesc = $request->get('sortDesc');
         $search = $request->get('search');
@@ -61,6 +62,7 @@ class UserController extends Controller {
      * Show the form for creating a new resource.
      */
     public function create() {
+        Gate::authorize('create', User::class);
         $roles = Role::all()->pluck('name');
         return Inertia::render('Admin/Users/Form', ['roles' => $roles]);
     }
@@ -69,6 +71,7 @@ class UserController extends Controller {
      * Store a newly created resource in storage.
      */
     public function store(UserRequest $request) {
+        Gate::authorize('create', User::class);
         $user = User::create([...$request->except('roles'), 'password' => Hash::make("12345678")]);
         $user->syncRoles($request->input('roles'));
         return redirect(route('users.index'))->with([
@@ -81,6 +84,7 @@ class UserController extends Controller {
      * Show the form for editing the specified resource.
      */
     public function edit(User $user) {
+        Gate::authorize('update', $user);
         $roles = Role::all()->pluck('name');
         return Inertia::render('Admin/Users/Form', ['user' => $user->load('roles'), 'roles' => $roles]);
     }
@@ -89,6 +93,7 @@ class UserController extends Controller {
      * Update the specified resource in storage.
      */
     public function update(UserRequest $request, User $user) {
+        Gate::authorize('update', $user);
         $user->update(
             $request->except('roles')
         );
@@ -103,6 +108,7 @@ class UserController extends Controller {
      * Remove the specified resource from storage.
      */
     public function destroy(User $user) {
+        Gate::authorize('delete', $user);
         $user->delete();
     }
 }

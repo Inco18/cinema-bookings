@@ -55,5 +55,6 @@ class RoleSeeder extends Seeder {
         $userRole->givePermissionTo(PermissionType::SEAT_ACCESS->value);
         $userRole->givePermissionTo(PermissionType::SHOWING_ACCESS->value);
         $userRole->givePermissionTo(PermissionType::BOOKING_ACCESS->value);
+        $userRole->givePermissionTo(PermissionType::BOOKING_MANAGE->value);
     }
 }
