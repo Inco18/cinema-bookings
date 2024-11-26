@@ -1,5 +1,5 @@
 import AuthenticatedLayout from "@/Layouts/AdminLayout";
-import { Seat, Paginated } from "@/types";
+import { Seat, Paginated, Showing } from "@/types";
 import React, { useEffect, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import DataTable from "../../../Components/DataTable";
@@ -13,7 +13,6 @@ import {
     X,
 } from "lucide-react";
 import { Head, Link, router, usePage } from "@inertiajs/react";
-import { Input } from "@/Components/ui/input";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -33,21 +32,25 @@ import {
 } from "@/Components/ui/dialog";
 import { toast } from "react-toastify";
 import { MultiSelect } from "@/Components/ui/multiple-select";
-import { SeatType } from "@/types/enums";
+import { ShowingType } from "@/types/enums";
+import { FloatingInput, FloatingLabel } from "@/Components/ui/floating-input";
+import Filters from "./Filters";
 
 type Props = {
-    seats: Paginated<Seat>;
+    showings: Paginated<Showing>;
     rowCount: number;
     page: number;
     sortBy: string;
     sortDesc: number;
+    movieSearch: string;
     hallSearch: string;
-    rowSearch: string;
-    colSearch: string;
-    typeFilter: SeatType[];
+    speechSearch: string;
+    dubbingSearch: string;
+    subtitlesSearch: string;
+    typeFilter: ShowingType[];
 };
 
-const columns: ColumnDef<Seat>[] = [
+const columns: ColumnDef<Showing>[] = [
     {
         accessorKey: "hall.number",
         header: "Sala",
@@ -58,14 +61,19 @@ const columns: ColumnDef<Seat>[] = [
                 </Link>
             );
         },
-        size: 1000,
+        size: 100,
     },
     {
-        accessorKey: "row",
+        accessorKey: "movie.title",
+        header: "Film",
+        size: 1500,
+    },
+    {
+        accessorKey: "start_time",
         header: ({ column }) => {
             return (
                 <Button variant="ghost" onClick={() => column.toggleSorting()}>
-                    Rząd
+                    Data rozpoczęcia
                     {column.getIsSorted() === "asc" && (
                         <ArrowDown className="ml-2 h-4 w-4" />
                     )}
@@ -78,14 +86,14 @@ const columns: ColumnDef<Seat>[] = [
                 </Button>
             );
         },
-        size: 1000,
+        size: 500,
     },
     {
-        accessorKey: "column",
+        accessorKey: "end_time",
         header: ({ column }) => {
             return (
                 <Button variant="ghost" onClick={() => column.toggleSorting()}>
-                    Kolumna
+                    Data zakończenia
                     {column.getIsSorted() === "asc" && (
                         <ArrowDown className="ml-2 h-4 w-4" />
                     )}
@@ -98,14 +106,14 @@ const columns: ColumnDef<Seat>[] = [
                 </Button>
             );
         },
-        size: 1000,
+        size: 500,
     },
     {
-        accessorKey: "number",
+        accessorKey: "speech_lang",
         header: ({ column }) => {
             return (
                 <Button variant="ghost" onClick={() => column.toggleSorting()}>
-                    Numer
+                    Mowa
                     {column.getIsSorted() === "asc" && (
                         <ArrowDown className="ml-2 h-4 w-4" />
                     )}
@@ -118,7 +126,47 @@ const columns: ColumnDef<Seat>[] = [
                 </Button>
             );
         },
-        size: 1000,
+        size: 100,
+    },
+    {
+        accessorKey: "dubbing_lang",
+        header: ({ column }) => {
+            return (
+                <Button variant="ghost" onClick={() => column.toggleSorting()}>
+                    Dubbing
+                    {column.getIsSorted() === "asc" && (
+                        <ArrowDown className="ml-2 h-4 w-4" />
+                    )}
+                    {column.getIsSorted() === "desc" && (
+                        <ArrowUp className="ml-2 h-4 w-4" />
+                    )}
+                    {!column.getIsSorted() && (
+                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                    )}
+                </Button>
+            );
+        },
+        size: 100,
+    },
+    {
+        accessorKey: "subtitles_lang",
+        header: ({ column }) => {
+            return (
+                <Button variant="ghost" onClick={() => column.toggleSorting()}>
+                    Napisy
+                    {column.getIsSorted() === "asc" && (
+                        <ArrowDown className="ml-2 h-4 w-4" />
+                    )}
+                    {column.getIsSorted() === "desc" && (
+                        <ArrowUp className="ml-2 h-4 w-4" />
+                    )}
+                    {!column.getIsSorted() && (
+                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                    )}
+                </Button>
+            );
+        },
+        size: 100,
     },
     {
         accessorKey: "type",
@@ -138,7 +186,7 @@ const columns: ColumnDef<Seat>[] = [
                 </Button>
             );
         },
-        size: 1000,
+        size: 100,
     },
     {
         id: "actions",
@@ -146,15 +194,15 @@ const columns: ColumnDef<Seat>[] = [
         cell: ({ row }) => {
             const [isDeleting, setIsDeleting] = useState(false);
             const [modalOpen, setModalOpen] = useState(false);
-            const seat = row.original;
-            const deleteSeat = () => {
+            const showing = row.original;
+            const deleteShowing = () => {
                 setIsDeleting(false);
-                router.delete(route("seats.destroy", { seat }), {
+                router.delete(route("showings.destroy", { showing }), {
                     preserveScroll: true,
                     onSuccess: () =>
-                        toast.success("Wybrane siedzenie zostało usunięte"),
+                        toast.success("Wybrany seans został usunięty"),
                     onError: () =>
-                        toast.error("Nie udało się usunąć wybranego siedzenia"),
+                        toast.error("Nie udało się usunąć wybranego seansu"),
                     onFinish: () => {
                         setIsDeleting(false);
                         setModalOpen(false);
@@ -175,8 +223,8 @@ const columns: ColumnDef<Seat>[] = [
                             <DropdownMenuLabel>Akcje</DropdownMenuLabel>
                             <DropdownMenuItem asChild>
                                 <Link
-                                    href={route("seats.edit", {
-                                        seat,
+                                    href={route("showings.edit", {
+                                        showing,
                                         ...route().queryParams,
                                     })}
                                 >
@@ -191,13 +239,14 @@ const columns: ColumnDef<Seat>[] = [
                     <DialogContent>
                         <DialogHeader>
                             <DialogTitle>
-                                Czy jesteś pewny że chcesz usunąć siedzenie z
-                                rzędu: {seat.row}, kolumny: {seat.column}, z
-                                sali: {seat.hall?.number}
+                                Czy jesteś pewny że chcesz usunąć seans filmu:{" "}
+                                {showing.movie?.title}, na sali:{" "}
+                                {showing.hall?.number} o godzinie:{" "}
+                                {showing.start_time}
                             </DialogTitle>
                             <DialogDescription>
                                 Tej czynności nie można cofnąć. Czy na pewno
-                                chcesz trwale usunąć to siedzenie?
+                                chcesz trwale usunąć ten seans?
                             </DialogDescription>
                         </DialogHeader>
                         <DialogFooter>
@@ -209,7 +258,7 @@ const columns: ColumnDef<Seat>[] = [
                             <Button
                                 type="submit"
                                 variant={"destructive"}
-                                onClick={deleteSeat}
+                                onClick={deleteShowing}
                                 disabled={isDeleting}
                             >
                                 Usuń
@@ -226,26 +275,19 @@ const columns: ColumnDef<Seat>[] = [
     },
 ];
 
-const SeatsIndex = ({
-    seats,
+const ShowingsIndex = ({
+    showings,
     rowCount,
     page,
     sortBy,
     sortDesc,
+    movieSearch,
     hallSearch,
-    rowSearch,
-    colSearch,
+    speechSearch,
+    dubbingSearch,
+    subtitlesSearch,
     typeFilter,
 }: Props) => {
-    const [hallSearchValue, setHallSearchValue] = useState<string>(
-        hallSearch || ""
-    );
-    const [rowSearchValue, setRowSearchValue] = useState<string>(
-        rowSearch || ""
-    );
-    const [colSearchValue, setColSearchValue] = useState<string>(
-        colSearch || ""
-    );
     const { flash }: any = usePage().props;
 
     useEffect(() => {
@@ -254,119 +296,21 @@ const SeatsIndex = ({
         }
     }, []);
 
-    useEffect(() => {
-        if (
-            ((!hallSearch && !hallSearchValue) ||
-                hallSearch === hallSearchValue) &&
-            ((!rowSearch && !rowSearchValue) || rowSearch === rowSearchValue) &&
-            ((!colSearch && !colSearchValue) || colSearch === colSearchValue)
-        )
-            return;
-        const timeout = setTimeout(() => {
-            console.log(typeFilter);
-            router.get(
-                route("seats.index", {
-                    hallSearch: hallSearchValue || null,
-                    rowSearch: rowSearchValue || null,
-                    colSearch: colSearchValue || null,
-                    typeFilter: typeFilter || null,
-                }),
-                {},
-                { preserveState: true }
-            );
-        }, 500);
-
-        return () => clearTimeout(timeout);
-    }, [hallSearchValue, rowSearchValue, colSearchValue]);
-
     return (
         <AuthenticatedLayout
             header={
                 <>
                     <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                        Siedzenia
+                        Seanse
                     </h2>
-                    <div className="flex items-center ml-8 min-w-80 max-w-96 gap-1">
-                        <Input
-                            placeholder="Sala"
-                            className="max-w-sm m-0"
-                            value={hallSearchValue}
-                            onChange={(e) => {
-                                setHallSearchValue(e.target.value);
-                            }}
-                        />
-                        <Button
-                            variant={"ghost"}
-                            size={"icon"}
-                            className={`aspect-square ${
-                                hallSearchValue ? "visible" : "invisible"
-                            }`}
-                            onClick={() => setHallSearchValue("")}
-                        >
-                            <X />
-                        </Button>
-                        <Input
-                            placeholder="Rząd"
-                            className="max-w-sm m-0"
-                            value={rowSearchValue}
-                            onChange={(e) => {
-                                setRowSearchValue(e.target.value);
-                            }}
-                        />
-                        <Button
-                            variant={"ghost"}
-                            size={"icon"}
-                            className={`aspect-square ${
-                                rowSearchValue ? "visible" : "invisible"
-                            }`}
-                            onClick={() => setRowSearchValue("")}
-                        >
-                            <X />
-                        </Button>
-                        <Input
-                            placeholder="Kolumna"
-                            className="max-w-sm m-0"
-                            value={colSearchValue}
-                            onChange={(e) => {
-                                setColSearchValue(e.target.value);
-                            }}
-                        />
-                        <Button
-                            variant={"ghost"}
-                            size={"icon"}
-                            className={`aspect-square ${
-                                colSearchValue ? "visible" : "invisible"
-                            }`}
-                            onClick={() => setColSearchValue("")}
-                        >
-                            <X />
-                        </Button>
-                    </div>
-                    <div>
-                        <MultiSelect
-                            onValueChange={(value) =>
-                                router.get(
-                                    route("seats.index", {
-                                        hallSearch: hallSearchValue || null,
-                                        rowSearch: rowSearchValue || null,
-                                        colSearch: colSearchValue || null,
-                                        typeFilter: value || null,
-                                    }),
-                                    {},
-                                    { preserveState: true }
-                                )
-                            }
-                            value={typeFilter || []}
-                            placeholder="Typ"
-                            variant="inverted"
-                            options={Object.values(SeatType).map((type) => {
-                                return {
-                                    label: type,
-                                    value: type,
-                                };
-                            })}
-                        />
-                    </div>
+                    <Filters
+                        movieSearch={movieSearch}
+                        hallSearch={hallSearch}
+                        speechSearch={speechSearch}
+                        dubbingSearch={dubbingSearch}
+                        subtitlesSearch={subtitlesSearch}
+                        typeFilter={typeFilter}
+                    />
                     <Button className="ml-auto" asChild>
                         <Link href={route("seats.create")}>
                             <Plus /> Dodaj
@@ -375,18 +319,18 @@ const SeatsIndex = ({
                 </>
             }
         >
-            <Head title="Siedzenia" />
+            <Head title="Seanse" />
             <DataTable
                 columns={columns}
-                data={seats.data}
+                data={showings.data}
                 rowCount={rowCount}
                 page={page}
                 sortBy={sortBy}
                 sortDesc={sortDesc}
-                routeName="seats.index"
+                routeName="showings.index"
             />
         </AuthenticatedLayout>
     );
 };
 
-export default SeatsIndex;
+export default ShowingsIndex;

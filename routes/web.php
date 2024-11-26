@@ -20,7 +20,7 @@ Route::get('/', function () {
 Route::get('/showings', [ShowingsController::class, 'index'])->name('main.showings.index');
 Route::resource('/bookings', BookingController::class)->names('main.bookings');
 
-Route::get('/dashboard', function () {
+Route::get('/admin', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified', 'admin'])->name('dashboard');
 
