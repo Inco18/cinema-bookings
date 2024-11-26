@@ -87,6 +87,18 @@ const DataTable = <TData, TValue>({
             return row.id;
         },
     });
+    const currentPage = table.getState().pagination.pageIndex;
+    const totalPages = table.getPageCount();
+    const buttonsToShow = 5;
+    let startPage = Math.max(0, currentPage - 2);
+    let endPage = Math.min(totalPages - 1, currentPage + 2);
+
+    if (currentPage < 2) {
+        endPage = Math.min(totalPages - 1, startPage + buttonsToShow - 1);
+    }
+    if (currentPage > totalPages - 3) {
+        startPage = Math.max(0, endPage - buttonsToShow + 1);
+    }
 
     return (
         <div className="rounded-md border max-w-screen-2xl mt-2 m-auto bg-white">
@@ -174,6 +186,22 @@ const DataTable = <TData, TValue>({
                     <span className="sr-only">Go to previous page</span>
                     <BiChevronLeft className="h-4 w-4" />
                 </Button>
+                <div className="flex items-center gap-2">
+                    {Array.from(
+                        { length: endPage - startPage + 1 },
+                        (_, i) => startPage + i
+                    ).map((pageIndex) => (
+                        <Button
+                            key={pageIndex}
+                            variant="outline"
+                            onClick={() => table.setPageIndex(pageIndex)}
+                            disabled={currentPage === pageIndex}
+                            className="h-8 w-8 flex items-center justify-center"
+                        >
+                            {pageIndex + 1}
+                        </Button>
+                    ))}
+                </div>
                 <Button
                     variant="outline"
                     className="h-8 w-8 p-0"
