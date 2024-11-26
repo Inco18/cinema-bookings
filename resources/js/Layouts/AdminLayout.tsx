@@ -75,6 +75,14 @@ export default function Admin({
                                             Sale
                                         </NavLink>
                                     )}
+                                    {hasRole(user, RoleType.ADMIN) && (
+                                        <NavLink
+                                            href={route("seats.index")}
+                                            active={route().current("seats.*")}
+                                        >
+                                            Siedzenia
+                                        </NavLink>
+                                    )}
                                 </div>
                             </div>
 
@@ -211,6 +219,14 @@ export default function Admin({
                                     active={route().current("halls.*")}
                                 >
                                     Sale
+                                </ResponsiveNavLink>
+                            )}
+                            {hasRole(user, RoleType.ADMIN) && (
+                                <ResponsiveNavLink
+                                    href={route("seats.index")}
+                                    active={route().current("seats.*")}
+                                >
+                                    Siedzenia
                                 </ResponsiveNavLink>
                             )}
                         </div>

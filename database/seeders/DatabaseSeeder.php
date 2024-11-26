@@ -24,18 +24,7 @@ class DatabaseSeeder extends Seeder {
         $this->call(GenreSeeder::class);
         Movie::factory(10)->create();
         $this->call(HallSeeder::class);
-        for ($i = 1; $i < 10; $i++) {
-            for ($j = 1; $j < 16; $j++) {
-                for ($k = 1; $k < 31; $k++) {
-                    Seat::factory()->create([
-                        'hall_id' => $i,
-                        'row' => $j,
-                        'column' => $k,
-                        'number' => $k
-                    ]);
-                }
-            }
-        }
+        $this->call(SeatSeeder::class);
         Showing::factory(100)->create();
         Booking::factory(10)->create();
     }
