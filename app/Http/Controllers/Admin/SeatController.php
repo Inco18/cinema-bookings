@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\SeatRequest;
+use App\Models\Hall;
 use App\Models\Seat;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
@@ -69,41 +72,67 @@ class SeatController extends Controller {
      * Show the form for creating a new resource.
      */
     public function create() {
-        //
+        Gate::authorize('create', Seat::class);
+        $halls = Hall::all();
+        return Inertia::render('Admin/Seats/Form', ['halls' => $halls]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request) {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Seat $seat) {
-        //
+    public function store(SeatRequest $request) {
+        Gate::authorize('create', Seat::class);
+        try {
+            Seat::create($request->validated());
+        } catch (Exception $e) {
+            return redirect()->back()->withErrors([
+                'create' => 'Nie udało się dodać siedzenia'
+            ]);
+        }
+        return redirect(route('seats.index'))->with([
+            'message' => "Siedzenie zostało dodane",
+            'messageType' => 'success'
+        ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
     public function edit(Seat $seat) {
-        //
+        Gate::authorize('update', $seat);
+        $halls = Hall::all();
+        return Inertia::render('Admin/Seats/Form', ['seat' => $seat, 'halls' => $halls]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Seat $seat) {
-        //
+    public function update(SeatRequest $request, Seat $seat) {
+        Gate::authorize('update', $seat);
+        try {
+            $seat->update($request->validated());
+        } catch (Exception $e) {
+            return redirect()->back()->withErrors([
+                'create' => 'Nie udało się zauktalizować wybranego siedzenia'
+            ]);
+        }
+        return redirect(route('seats.index'))->with([
+            'message' => "Siedzenie zostało zaktualizowane",
+            'messageType' => 'success'
+        ]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Seat $seat) {
-        //
+        Gate::authorize('delete', $seat);
+        try {
+            $seat->delete();
+        } catch (Exception $e) {
+            return redirect()->back()->withErrors([
+                'delete' => 'Nie udało się usunąć wybranego siedzenia'
+            ]);
+        }
     }
 }

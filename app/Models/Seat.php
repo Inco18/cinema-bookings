@@ -39,6 +39,10 @@ class Seat extends Model {
     /** @use HasFactory<\Database\Factories\SeatFactory> */
     use HasFactory;
 
+    protected $fillable = [
+        'hall_id', 'type', 'row', 'column', 'number'
+    ];
+
     public function hall(): BelongsTo {
         return $this->belongsTo(Hall::class);
     }

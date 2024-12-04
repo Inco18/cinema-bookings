@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { HallType, RoleType } from "./types/enums";
+import { HallType, RoleType, SeatType } from "./types/enums";
 export const UserRequest = z.object({
     first_name: z
         .string()
@@ -79,3 +79,19 @@ export const HallRequest = z.object({
         .min(1, { message: "To pole nie może być mniejsze niż 1" }),
     type: z.nativeEnum(HallType, { message: "Niedopuszczalna zawartość pola" }),
 });
+
+export const SeatRequest = z.object({
+    row: z.coerce
+    .number()
+    .int({ message: "To pole może zawierać tylko liczby całkowite" })
+        .min(1, { message: "To pole nie może być mniejsze niż 1" }),
+    column: z.coerce
+    .number()
+    .int({ message: "To pole może zawierać tylko liczby całkowite" })
+        .min(1, { message: "To pole nie może być mniejsze niż 1" }),
+    number: z.coerce
+    .number()
+    .int({ message: "To pole może zawierać tylko liczby całkowite" })
+    .min(1, { message: "To pole nie może być mniejsze niż 1" }),
+    type: z.nativeEnum(SeatType, { message: "Niedopuszczalna zawartość pola" }),
+})
