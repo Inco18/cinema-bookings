@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\BookingController;
 use App\Http\Controllers\Admin\GenreController;
 use App\Http\Controllers\Admin\HallController;
 use App\Http\Controllers\Admin\MovieController;
@@ -13,7 +14,8 @@ Route::prefix("admin")->group(function () {
     Route::resource('/genres', GenreController::class)->except(['show'])->middleware(['auth', 'admin']);
     Route::resource('/halls', HallController::class)->except(['show'])->middleware(['auth', 'admin']);
     Route::resource('/seats', SeatController::class)->except(['show'])->middleware(['auth', 'admin']);
-    Route::resource('/showings', ShowingController::class)->except(['show'])->middleware(['auth', 'admin'])->names('showings');
+    Route::resource('/showings', ShowingController::class)->except(['show'])->middleware(['auth', 'admin']);
+    Route::resource('/bookings', BookingController::class)->except(['show'])->middleware(['auth', 'admin']);
     Route::resource('/users', UserController::class)->except(['show'])->middleware(['auth', 'admin']);
 });
 

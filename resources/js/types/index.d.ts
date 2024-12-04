@@ -1,4 +1,4 @@
-import { RoleType } from "./enums";
+import { BookingStatus, RoleType } from "./enums";
 
 export interface Booking {
     id: number;
@@ -6,6 +6,10 @@ export interface Booking {
     user_id?: number;
     num_people: number;
     price: any;
+    first_name: string;
+    last_name: string;
+    email: string;
+    status: BookingStatus;
     created_at?: string;
     updated_at?: string;
     showing?: Showing;

@@ -22,10 +22,10 @@ class DatabaseSeeder extends Seeder {
         $this->call(RoleSeeder::class);
         $this->call(UserSeeder::class);
         $this->call(GenreSeeder::class);
-        Movie::factory(10)->create();
+        $this->call(MovieSeeder::class);
         $this->call(HallSeeder::class);
         $this->call(SeatSeeder::class);
-        Showing::factory(100)->create();
-        Booking::factory(10)->create();
+        $this->call(ShowingSeeder::class);
+        $this->call(BookingSeeder::class);
     }
 }

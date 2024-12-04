@@ -1,5 +1,5 @@
 import AuthenticatedLayout from "@/Layouts/AdminLayout";
-import { Paginated, Showing } from "@/types";
+import { Seat, Paginated, Booking } from "@/types";
 import { useEffect, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import DataTable from "../../../Components/DataTable";
@@ -30,47 +30,36 @@ import {
     DialogTrigger,
 } from "@/Components/ui/dialog";
 import { toast } from "react-toastify";
-import { ShowingType } from "@/types/enums";
-import Filters from "./Filters";
+import { BookingStatus } from "@/types/enums";
+import { Badge } from "@/Components/ui/badge";
+import BookingsFilters from "./Filters";
 
 type Props = {
-    showings: Paginated<Showing>;
+    bookings: Paginated<Booking>;
     rowCount: number;
     page: number;
     sortBy: string;
     sortDesc: number;
+    showingIdSearch: string;
     movieSearch: string;
+    personSearch: string;
     hallSearch: string;
-    speechSearch: string;
-    dubbingSearch: string;
-    subtitlesSearch: string;
-    typeFilter: ShowingType[];
+    statusFilter: BookingStatus[];
 };
 
-const columns: ColumnDef<Showing>[] = [
+const columns: ColumnDef<Booking>[] = [
     {
-        accessorKey: "hall.number",
-        header: "Sala",
-        cell: ({ row }) => {
-            return (
-                <Link href={route("halls.edit", { id: row.original.hall_id })}>
-                    {row.original.hall?.number}
-                </Link>
-            );
-        },
-        size: 100,
-    },
-    {
-        accessorKey: "movie.title",
+        accessorKey: "showing.movie.title",
         header: "Film",
         size: 1500,
     },
     {
-        accessorKey: "start_time",
+        id: "person",
+        accessorFn: (row) => `${row.first_name} ${row.last_name}`,
         header: ({ column }) => {
             return (
                 <Button variant="ghost" onClick={() => column.toggleSorting()}>
-                    Data rozpoczęcia
+                    Osoba rezerwująca
                     {column.getIsSorted() === "asc" && (
                         <ArrowDown className="ml-2 h-4 w-4" />
                     )}
@@ -83,34 +72,15 @@ const columns: ColumnDef<Showing>[] = [
                 </Button>
             );
         },
-        size: 500,
+
+        size: 700,
     },
     {
-        accessorKey: "end_time",
+        accessorKey: "num_people",
         header: ({ column }) => {
             return (
                 <Button variant="ghost" onClick={() => column.toggleSorting()}>
-                    Data zakończenia
-                    {column.getIsSorted() === "asc" && (
-                        <ArrowDown className="ml-2 h-4 w-4" />
-                    )}
-                    {column.getIsSorted() === "desc" && (
-                        <ArrowUp className="ml-2 h-4 w-4" />
-                    )}
-                    {!column.getIsSorted() && (
-                        <ArrowUpDown className="ml-2 h-4 w-4" />
-                    )}
-                </Button>
-            );
-        },
-        size: 500,
-    },
-    {
-        accessorKey: "speech_lang",
-        header: ({ column }) => {
-            return (
-                <Button variant="ghost" onClick={() => column.toggleSorting()}>
-                    Mowa
+                    L. osób
                     {column.getIsSorted() === "asc" && (
                         <ArrowDown className="ml-2 h-4 w-4" />
                     )}
@@ -126,11 +96,31 @@ const columns: ColumnDef<Showing>[] = [
         size: 100,
     },
     {
-        accessorKey: "dubbing_lang",
+        accessorKey: "showing.hall.number",
+        header: "Sala",
+        size: 100,
+    },
+    {
+        accessorKey: "seats",
+        header: "Siedzenia (r/n)",
+        cell: ({ row }) => {
+            return (row.getValue("seats") as Seat[])
+                .map((seat) => `${seat.row}/${seat.number}`)
+                .join(", ");
+        },
+        size: 1000,
+    },
+    {
+        accessorKey: "showing.start_time",
+        header: "Data seansu",
+        size: 700,
+    },
+    {
+        accessorKey: "price",
         header: ({ column }) => {
             return (
                 <Button variant="ghost" onClick={() => column.toggleSorting()}>
-                    Dubbing
+                    Cena
                     {column.getIsSorted() === "asc" && (
                         <ArrowDown className="ml-2 h-4 w-4" />
                     )}
@@ -143,14 +133,17 @@ const columns: ColumnDef<Showing>[] = [
                 </Button>
             );
         },
+        cell: ({ row }) => {
+            return <div className="text-right">{row.getValue("price")} zł</div>;
+        },
         size: 100,
     },
     {
-        accessorKey: "subtitles_lang",
+        accessorKey: "status",
         header: ({ column }) => {
             return (
                 <Button variant="ghost" onClick={() => column.toggleSorting()}>
-                    Napisy
+                    Status
                     {column.getIsSorted() === "asc" && (
                         <ArrowDown className="ml-2 h-4 w-4" />
                     )}
@@ -163,25 +156,32 @@ const columns: ColumnDef<Showing>[] = [
                 </Button>
             );
         },
-        size: 100,
-    },
-    {
-        accessorKey: "type",
-        header: ({ column }) => {
-            return (
-                <Button variant="ghost" onClick={() => column.toggleSorting()}>
-                    Typ
-                    {column.getIsSorted() === "asc" && (
-                        <ArrowDown className="ml-2 h-4 w-4" />
-                    )}
-                    {column.getIsSorted() === "desc" && (
-                        <ArrowUp className="ml-2 h-4 w-4" />
-                    )}
-                    {!column.getIsSorted() && (
-                        <ArrowUpDown className="ml-2 h-4 w-4" />
-                    )}
-                </Button>
-            );
+        cell: ({ row }) => {
+            const booking = row.original;
+            if (booking.status === BookingStatus.RESERVED)
+                return (
+                    <Badge className="bg-red-600 pointer-events-none">
+                        {booking.status}
+                    </Badge>
+                );
+            else if (booking.status === BookingStatus.FILLED)
+                return (
+                    <Badge className="bg-orange-600 pointer-events-none">
+                        {booking.status}
+                    </Badge>
+                );
+            else if (booking.status === BookingStatus.PAID)
+                return (
+                    <Badge className="bg-green-600 pointer-events-none">
+                        {booking.status}
+                    </Badge>
+                );
+            else
+                return (
+                    <Badge className="pointer-events-none">
+                        {booking.status}
+                    </Badge>
+                );
         },
         size: 100,
     },
@@ -191,15 +191,15 @@ const columns: ColumnDef<Showing>[] = [
         cell: ({ row }) => {
             const [isDeleting, setIsDeleting] = useState(false);
             const [modalOpen, setModalOpen] = useState(false);
-            const showing = row.original;
-            const deleteShowing = () => {
+            const booking = row.original;
+            const deleteBooking = () => {
                 setIsDeleting(false);
-                router.delete(route("showings.destroy", { showing }), {
+                router.delete(route("bookings.destroy", { booking }), {
                     preserveScroll: true,
                     onSuccess: () =>
-                        toast.success("Wybrany seans został usunięty"),
+                        toast.success("Wybrana rezerwacja została usunięta"),
                     onError: () =>
-                        toast.error("Nie udało się usunąć wybranego seansu"),
+                        toast.error("Nie udało się usunąć wybranej rezerwacji"),
                     onFinish: () => {
                         setIsDeleting(false);
                         setModalOpen(false);
@@ -220,8 +220,8 @@ const columns: ColumnDef<Showing>[] = [
                             <DropdownMenuLabel>Akcje</DropdownMenuLabel>
                             <DropdownMenuItem asChild>
                                 <Link
-                                    href={route("showings.edit", {
-                                        showing,
+                                    href={route("bookings.edit", {
+                                        booking,
                                         ...route().queryParams,
                                     })}
                                 >
@@ -231,28 +231,18 @@ const columns: ColumnDef<Showing>[] = [
                             <DialogTrigger asChild>
                                 <DropdownMenuItem>Usuń</DropdownMenuItem>
                             </DialogTrigger>
-                            <DropdownMenuItem asChild>
-                                <Link
-                                    href={route("bookings.index", {
-                                        showingIdSearch: showing.id,
-                                    })}
-                                >
-                                    Pokaż rezerwacje
-                                </Link>
-                            </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                     <DialogContent>
                         <DialogHeader>
                             <DialogTitle>
-                                Czy jesteś pewny że chcesz usunąć seans filmu:{" "}
-                                {showing.movie?.title}, na sali:{" "}
-                                {showing.hall?.number} o godzinie:{" "}
-                                {showing.start_time}
+                                Czy jesteś pewny że chcesz usunąć rezerwację
+                                osoby: {booking.first_name} {booking.last_name},
+                                na film: {booking.showing?.movie?.title}?
                             </DialogTitle>
                             <DialogDescription>
                                 Tej czynności nie można cofnąć. Czy na pewno
-                                chcesz trwale usunąć ten seans?
+                                chcesz trwale usunąć tą rezerwację?
                             </DialogDescription>
                         </DialogHeader>
                         <DialogFooter>
@@ -264,7 +254,7 @@ const columns: ColumnDef<Showing>[] = [
                             <Button
                                 type="submit"
                                 variant={"destructive"}
-                                onClick={deleteShowing}
+                                onClick={deleteBooking}
                                 disabled={isDeleting}
                             >
                                 Usuń
@@ -281,18 +271,17 @@ const columns: ColumnDef<Showing>[] = [
     },
 ];
 
-const ShowingsIndex = ({
-    showings,
+const SeatsIndex = ({
+    bookings,
     rowCount,
     page,
     sortBy,
     sortDesc,
+    showingIdSearch,
     movieSearch,
+    personSearch,
     hallSearch,
-    speechSearch,
-    dubbingSearch,
-    subtitlesSearch,
-    typeFilter,
+    statusFilter,
 }: Props) => {
     const { flash }: any = usePage().props;
 
@@ -307,36 +296,35 @@ const ShowingsIndex = ({
             header={
                 <>
                     <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                        Seanse
+                        Rezerwacje
                     </h2>
-                    <Filters
+                    <BookingsFilters
+                        statusFilter={statusFilter}
+                        showingIdSearch={showingIdSearch}
                         movieSearch={movieSearch}
+                        personSearch={personSearch}
                         hallSearch={hallSearch}
-                        speechSearch={speechSearch}
-                        dubbingSearch={dubbingSearch}
-                        subtitlesSearch={subtitlesSearch}
-                        typeFilter={typeFilter}
                     />
                     <Button className="ml-auto" asChild>
-                        <Link href={route("seats.create")}>
+                        <Link href={route("bookings.create")}>
                             <Plus /> Dodaj
                         </Link>
                     </Button>
                 </>
             }
         >
-            <Head title="Seanse" />
+            <Head title="Rezerwacje" />
             <DataTable
                 columns={columns}
-                data={showings.data}
+                data={bookings.data}
                 rowCount={rowCount}
                 page={page}
                 sortBy={sortBy}
                 sortDesc={sortDesc}
-                routeName="showings.index"
+                routeName="bookings.index"
             />
         </AuthenticatedLayout>
     );
 };
 
-export default ShowingsIndex;
+export default SeatsIndex;

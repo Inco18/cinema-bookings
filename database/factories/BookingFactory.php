@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\BookingStatus;
 use App\Models\Booking;
 use App\Models\Seat;
 use App\Models\Showing;
@@ -27,7 +28,8 @@ class BookingFactory extends Factory {
             'price' => fake()->randomFloat(2, 10, 500),
             'first_name' => fake()->firstName(),
             'last_name' => fake()->lastName(),
-            'email' => fake()->email()
+            'email' => fake()->email(),
+            'status' => BookingStatus::PAID
         ];
     }
 

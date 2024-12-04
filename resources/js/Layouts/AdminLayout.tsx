@@ -93,6 +93,16 @@ export default function Admin({
                                             Seanse
                                         </NavLink>
                                     )}
+                                    {hasRole(user, RoleType.ADMIN) && (
+                                        <NavLink
+                                            href={route("bookings.index")}
+                                            active={route().current(
+                                                "bookings.*"
+                                            )}
+                                        >
+                                            Rezerwacje
+                                        </NavLink>
+                                    )}
                                 </div>
                             </div>
 
@@ -245,6 +255,14 @@ export default function Admin({
                                     active={route().current("showings.*")}
                                 >
                                     Seanse
+                                </ResponsiveNavLink>
+                            )}
+                            {hasRole(user, RoleType.ADMIN) && (
+                                <ResponsiveNavLink
+                                    href={route("bookings.index")}
+                                    active={route().current("bookings.*")}
+                                >
+                                    Rezerwacje
                                 </ResponsiveNavLink>
                             )}
                         </div>
