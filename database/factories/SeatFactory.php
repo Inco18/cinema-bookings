@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\SeatType;
 use App\Models\Hall;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,7 +19,7 @@ class SeatFactory extends Factory {
         $halls = Hall::pluck('id')->toArray();
         return [
             'hall_id' => fake()->randomElement($halls),
-            'type' => "normal",
+            'type' => SeatType::NORMAL->value,
             'row' => fake()->numberBetween(1, 15),
             'column' => fake()->numberBetween(1, 30),
             'number' => fake()->numberBetween(1, 30),

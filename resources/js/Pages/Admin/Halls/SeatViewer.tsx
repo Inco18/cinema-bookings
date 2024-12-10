@@ -22,13 +22,8 @@ export default function SeatViewer({ seats }: Props) {
     );
 
     useMemo(() => {
-        let rowShift = grid.map((row, i) => 0);
         seats.forEach((seat) => {
-            grid[seat.row - 1][seat.column - 1 - rowShift[seat.row - 1]] = seat;
-            if (seat.type === SeatType.WIDE) {
-                grid[seat.row - 1].splice(seat.column, 1);
-                rowShift[seat.row - 1] = rowShift[seat.row - 1] + 1;
-            }
+            grid[seat.row - 1][seat.column - 1] = seat;
         });
     }, [seats, grid]);
 
@@ -59,9 +54,13 @@ export default function SeatViewer({ seats }: Props) {
                             return (
                                 <div
                                     key={index}
-                                    className={`bg-indigo-700 ${
-                                        seat.type === SeatType.WIDE
-                                            ? "w-7 md:!w-11 col-span-2"
+                                    className={`bg-indigo-700 relative ${
+                                        seat.type === SeatType.WIDE_TO_RIGHT
+                                            ? "wideToRight after:bg-indigo-700"
+                                            : ""
+                                    } ${
+                                        seat.type === SeatType.WIDE_TO_LEFT
+                                            ? "wideToLeft after:bg-indigo-700"
                                             : ""
                                     } w-3 h-3 md:w-5 md:h-5 pointer-events-none flex items-center justify-center text-xs text-primary-foreground `}
                                 >

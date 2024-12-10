@@ -7,8 +7,9 @@ use App\Traits\EnumToArray;
 enum SeatType: string {
     use EnumToArray;
 
-    case NORMAL = "normal";
-    case WIDE = "wide";
-    case DISABLED = "disabled";
+    case NORMAL = "standard";
+    case WIDE_TO_LEFT = "szerokie_do_lewej";
+    case WIDE_TO_RIGHT = "szerokie_do_prawej";
+    case DISABLED = "wyłączone";
     case VIP = "vip";
 }

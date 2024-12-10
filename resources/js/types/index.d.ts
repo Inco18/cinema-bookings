@@ -1,4 +1,4 @@
-import { BookingStatus, RoleType } from "./enums";
+import { BookingStatus, HallType, RoleType, SeatType } from "./enums";
 
 export interface Booking {
     id: number;
@@ -25,7 +25,7 @@ export interface Genre {
 export type Hall = {
     id: number;
     number: string;
-    type: "normal" | "3D" | "IMAX" | "VIP";
+    type: HallType;
     created_at?: string;
     updated_at?: string;
     seats?: Seat[];
@@ -51,7 +51,7 @@ export interface Movie {
 export type Seat = {
     id: number;
     hall_id: number;
-    type: "normal" | "wide" | "disabled" | "vip";
+    type: SeatType;
     row: number;
     column: number;
     number: number;

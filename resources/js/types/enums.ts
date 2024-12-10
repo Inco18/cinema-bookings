@@ -26,9 +26,10 @@ export enum RoleType {
     CLIENT = "client",
 }
 export enum SeatType {
-    NORMAL = "normal",
-    WIDE = "wide",
-    DISABLED = "disabled",
+    NORMAL = "standard",
+    WIDE_TO_LEFT = "szerokie_do_lewej",
+    WIDE_TO_RIGHT = "szerokie_do_prawej",
+    DISABLED = "wyłączone",
     VIP = "vip",
 }
 
