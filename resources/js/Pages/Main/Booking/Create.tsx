@@ -5,7 +5,7 @@ import { Head } from "@inertiajs/react";
 import { format } from "date-fns";
 import { pl } from "date-fns/locale";
 import React, { useState } from "react";
-import SeatPicker from "./SeatPicker";
+import SeatPicker from "../../../Components/SeatPicker";
 
 type Props = {
     showing: Showing;

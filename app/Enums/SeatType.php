@@ -10,6 +10,6 @@ enum SeatType: string {
     case NORMAL = "standard";
     case WIDE_TO_LEFT = "szerokie_do_lewej";
     case WIDE_TO_RIGHT = "szerokie_do_prawej";
-    case DISABLED = "wyłączone";
+    case DISABLED = "inwalidzi";
     case VIP = "vip";
 }
