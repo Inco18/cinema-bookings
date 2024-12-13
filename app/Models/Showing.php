@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $movie_id
@@ -37,6 +37,17 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Showing extends Model {
     /** @use HasFactory<\Database\Factories\ShowingFactory> */
     use HasFactory;
+
+    protected $fillable = [
+        'hall_id',
+        'movie_id',
+        'start_time',
+        'end_time',
+        'speech_lang',
+        'dubbing_lang',
+        'subtitles_lang',
+        'type'
+    ];
 
     public function hall(): BelongsTo {
         return $this->belongsTo(Hall::class);

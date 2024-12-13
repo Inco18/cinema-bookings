@@ -1,4 +1,10 @@
-import { BookingStatus, HallType, RoleType, SeatType } from "./enums";
+import {
+    BookingStatus,
+    HallType,
+    RoleType,
+    SeatType,
+    ShowingType,
+} from "./enums";
 
 export interface Booking {
     id: number;
@@ -70,7 +76,7 @@ export type Showing = {
     speech_lang: string;
     dubbing_lang?: string;
     subtitles_lang?: string;
-    type: string;
+    type: ShowingType;
     created_at?: string;
     updated_at?: string;
     hall?: Hall;

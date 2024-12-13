@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { HallType, RoleType, SeatType } from "./types/enums";
+import { HallType, RoleType, SeatType, ShowingType } from "./types/enums";
 export const UserRequest = z.object({
     first_name: z
         .string()
@@ -82,16 +82,42 @@ export const HallRequest = z.object({
 
 export const SeatRequest = z.object({
     row: z.coerce
-    .number()
-    .int({ message: "To pole może zawierać tylko liczby całkowite" })
+        .number()
+        .int({ message: "To pole może zawierać tylko liczby całkowite" })
         .min(1, { message: "To pole nie może być mniejsze niż 1" }),
     column: z.coerce
-    .number()
-    .int({ message: "To pole może zawierać tylko liczby całkowite" })
+        .number()
+        .int({ message: "To pole może zawierać tylko liczby całkowite" })
         .min(1, { message: "To pole nie może być mniejsze niż 1" }),
     number: z.coerce
-    .number()
-    .int({ message: "To pole może zawierać tylko liczby całkowite" })
-    .min(1, { message: "To pole nie może być mniejsze niż 1" }),
+        .number()
+        .int({ message: "To pole może zawierać tylko liczby całkowite" })
+        .min(1, { message: "To pole nie może być mniejsze niż 1" }),
     type: z.nativeEnum(SeatType, { message: "Niedopuszczalna zawartość pola" }),
-})
+});
+
+export const ShowingRequest = z
+    .object({
+        start_time: z.coerce
+            .date({ message: "Podaj poprawną datę" })
+            .min(new Date(), { message: "Data nie może być w przeszłości" }),
+        end_time: z.coerce.date({ message: "Podaj poprawną datę" }),
+        speech_lang: z
+            .string()
+            .min(1, { message: "To pole jest wymagane" })
+            .max(3, { message: "Kod języka nie może mieć więcej niż 3 znaki" }),
+        dubbing_lang: z
+            .string()
+            .max(3, { message: "Kod języka nie może mieć więcej niż 3 znaki" }),
+        subtitles_lang: z
+            .string()
+            .max(3, { message: "Kod języka nie może mieć więcej niż 3 znaki" }),
+        type: z.nativeEnum(ShowingType, {
+            message: "Niedopuszczalna zawartość pola",
+        }),
+    })
+    .refine((data) => data.start_time < data.end_time, {
+        message:
+            "Data zakończenia nie może być wcześniejsza niż data rozpoczęcia",
+        path: ["end_time"],
+    });

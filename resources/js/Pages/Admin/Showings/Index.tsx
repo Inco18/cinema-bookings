@@ -318,7 +318,7 @@ const ShowingsIndex = ({
                         typeFilter={typeFilter}
                     />
                     <Button className="ml-auto" asChild>
-                        <Link href={route("seats.create")}>
+                        <Link href={route("showings.create")}>
                             <Plus /> Dodaj
                         </Link>
                     </Button>

@@ -112,9 +112,8 @@ class SeatController extends Controller {
         try {
             $seat->update($request->validated());
         } catch (Exception $e) {
-            dd($e);
             return redirect()->back()->withErrors([
-                'create' => 'Nie udało się zauktalizować wybranego siedzenia ',
+                'create' => 'Nie udało się zaktualizować wybranego siedzenia ',
             ]);
         }
         return redirect(route('seats.index'))->with([

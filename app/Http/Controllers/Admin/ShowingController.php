@@ -3,7 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\ShowingRequest;
+use App\Models\Hall;
+use App\Models\Movie;
 use App\Models\Showing;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
@@ -80,41 +84,70 @@ class ShowingController extends Controller {
      * Show the form for creating a new resource.
      */
     public function create() {
-        //
+        Gate::authorize('create', Showing::class);
+        $halls = Hall::all();
+        $movies = Movie::orderBy('title')->get();
+        return Inertia::render('Admin/Showings/Form', ['halls' => $halls, 'movies' => $movies]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request) {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Showing $showing) {
-        //
+    public function store(ShowingRequest $request) {
+        Gate::authorize('create', Showing::class);
+        try {
+            Showing::create($request->validated());
+        } catch (Exception $e) {
+            return redirect()->back()->withErrors([
+                'create' => 'Nie udało się dodać seansu'
+            ]);
+        }
+        return redirect(route('showings.index'))->with([
+            'message' => "Seans został dodany",
+            'messageType' => 'success'
+        ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
     public function edit(Showing $showing) {
-        //
+        Gate::authorize('create', Showing::class);
+        $halls = Hall::all();
+        $movies = Movie::all();
+        return Inertia::render('Admin/Showings/Form', ['showing' => $showing, 'halls' => $halls, 'movies' => $movies]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Showing $showing) {
-        //
+    public function update(ShowingRequest $request, Showing $showing) {
+        Gate::authorize('update', $showing);
+        try {
+            $showing->update($request->validated());
+        } catch (Exception $e) {
+
+            return redirect()->back()->withErrors([
+                'create' => 'Nie udało się zaktualizować wybranego seansu',
+            ]);
+        }
+        return redirect(route('showings.index'))->with([
+            'message' => "Seans został zaktualizowany",
+            'messageType' => 'success'
+        ]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Showing $showing) {
-        //
+        Gate::authorize('delete', $showing);
+        try {
+            $showing->delete();
+        } catch (Exception $e) {
+            return redirect()->back()->withErrors([
+                'delete' => 'Nie udało się usunąć wybranego seansu'
+            ]);
+        }
     }
 }
