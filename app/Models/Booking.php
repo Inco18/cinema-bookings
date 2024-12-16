@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $showing_id
@@ -43,6 +43,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Booking extends Model {
     /** @use HasFactory<\Database\Factories\BookingFactory> */
     use HasFactory;
+
+    protected $fillable = [
+        'showing_id', 'user_id', 'num_people', 'price', 'first_name', 'last_name', 'email', 'status'
+    ];
 
     public function showing(): BelongsTo {
         return $this->belongsTo(Showing::class);

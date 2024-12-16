@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { HallType, RoleType, SeatType, ShowingType } from "./types/enums";
+import {
+    BookingStatus,
+    HallType,
+    RoleType,
+    SeatType,
+    ShowingType,
+} from "./types/enums";
 export const UserRequest = z.object({
     first_name: z
         .string()
@@ -121,3 +127,35 @@ export const ShowingRequest = z
             "Data zakończenia nie może być wcześniejsza niż data rozpoczęcia",
         path: ["end_time"],
     });
+
+export const BookingRequest = z.object({
+    num_people: z.coerce
+        .number()
+        .int({ message: "To pole może zawierać tylko liczby całkowite" })
+        .min(1, { message: "To pole nie może być mniejsze niż 1" }),
+    price: z.coerce
+        .number()
+        .min(0, { message: "To pole nie może być mniejsze niż 0" }),
+    status: z.nativeEnum(BookingStatus, {
+        message: "Niedopuszczalna zawartość pola",
+    }),
+    first_name: z
+        .string()
+        .min(1, { message: "To pole jest wymagane" })
+        .regex(new RegExp(/^[\p{L}\s-]*$/u), {
+            message: "To pole może składać się tylko z liter",
+        })
+        .max(255, { message: "Przekroczono maksymalną długość pola" }),
+    last_name: z
+        .string()
+        .min(1, { message: "To pole jest wymagane" })
+        .regex(new RegExp(/^[\p{L}\s-]*$/u), {
+            message: "To pole może składać się tylko z liter",
+        })
+        .max(255, { message: "Przekroczono maksymalną długość pola" }),
+    email: z
+        .string()
+        .min(1, { message: "To pole jest wymagane" })
+        .email({ message: "Podaj poprawny adres email" })
+        .max(255, { message: "Przekroczono maksymalną długość pola" }),
+});

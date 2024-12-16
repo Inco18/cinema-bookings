@@ -85,7 +85,7 @@ const ShowingForm = ({ showing, halls, movies }: Props) => {
         });
         return zodErrors;
     };
-    console.log(data);
+
     useEffect(() => {
         if (!didFail) return;
         validateInputs();

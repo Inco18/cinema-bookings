@@ -35,7 +35,7 @@ class BookingFactory extends Factory {
 
     public function configure() {
         return $this->afterCreating(function (Booking $booking) {
-            $booking->seats()->attach(Seat::inRandomOrder()->take(random_int(1, 5))->pluck('id'));
+            $booking->seats()->attach(Seat::where('hall_id', '=', $booking->showing->hall_id)->inRandomOrder()->take(random_int(1, 5))->pluck('id'));
         });
     }
 }

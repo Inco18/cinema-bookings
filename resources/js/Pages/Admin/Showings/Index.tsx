@@ -240,6 +240,15 @@ const columns: ColumnDef<Showing>[] = [
                                     Pokaż rezerwacje
                                 </Link>
                             </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                                <Link
+                                    href={route("bookings.create", {
+                                        showing_id: showing.id,
+                                    })}
+                                >
+                                    Dodaj rezerwację
+                                </Link>
+                            </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                     <DialogContent>

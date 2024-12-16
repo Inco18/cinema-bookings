@@ -263,7 +263,6 @@ const SeatsIndex = ({
         )
             return;
         const timeout = setTimeout(() => {
-            console.log(typeFilter);
             router.get(
                 route("seats.index", {
                     hallSearch: hallSearchValue || null,
