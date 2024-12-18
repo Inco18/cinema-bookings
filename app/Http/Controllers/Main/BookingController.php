@@ -29,7 +29,7 @@ class BookingController extends Controller {
         }
         $showing = Showing::with(['hall.seats' => function ($query) {
             $query->orderBy('row')->orderBy('column');
-        }, 'bookings', 'movie'])->findOrFail($showingId);
+        }, 'bookings.seats', 'movie'])->findOrFail($showingId);
 
         return Inertia::render("Main/Booking/Create", ['showing' => $showing]);
     }
