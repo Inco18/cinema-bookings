@@ -187,11 +187,11 @@ const BookingForm = ({
                                             booking ? "edit" : "create"
                                         }`,
                                         {
+                                            ...route().queryParams,
                                             booking: booking
                                                 ? booking.id
                                                 : null,
                                             showing_id: value,
-                                            ...route().queryParams,
                                         }
                                     ),
                                     {

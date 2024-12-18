@@ -35,6 +35,17 @@ export default function SeatPicker({
         });
     }, [hall.seats, grid]);
 
+    const bookingsSeats = useMemo(
+        () =>
+            showingBookings
+                .map((showing) => {
+                    return showing.seats?.map((seat) => seat.id);
+                })
+                .flat()
+                .filter((seat) => !selectedSeats.includes(seat!)),
+        [showingBookings]
+    );
+
     const flatGrid = grid.flat();
 
     return (
@@ -64,7 +75,13 @@ export default function SeatPicker({
                             return (
                                 <div
                                     key={index}
-                                    onClick={() =>
+                                    onClick={() => {
+                                        if (
+                                            bookingsSeats.includes(seat.id) &&
+                                            !selectedSeats.includes(seat.id)
+                                        )
+                                            return;
+
                                         setSelectedSeats((prev) => {
                                             if (prev.includes(seat.id)) {
                                                 return prev.filter((val) => {
@@ -117,9 +134,15 @@ export default function SeatPicker({
                                                     return [...prev, seat.id];
                                                 }
                                             }
-                                        })
-                                    }
+                                        });
+                                    }}
                                     className={`bg-indigo-700 relative ${
+                                        bookingsSeats.includes(seat.id) &&
+                                        !selectedSeats.includes(seat.id)
+                                            ? "bg-gray-600 cursor-not-allowed"
+                                            : ""
+                                    }
+                                    ${
                                         selectedSeats.includes(seat.id)
                                             ? "bg-red-600 after:bg-red-600"
                                             : ""

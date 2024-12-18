@@ -91,7 +91,7 @@ class BookingController extends Controller {
             'users' => $users,
             'showing_id' => $showing_id,
             'hall' => fn() => Showing::find($showing_id)->hall()->with('seats')->first(),
-            'bookings' => fn() => Showing::find($showing_id)->bookings]);
+            'bookings' => fn() => Showing::find($showing_id)->bookings()->with('seats')->get()]);
     }
 
     /**
@@ -128,7 +128,7 @@ class BookingController extends Controller {
             'users' => $users,
             'showing_id' => $showing_id,
             'hall' => fn() => Showing::find($showing_id)->hall()->with('seats')->first(),
-            'bookings' => fn() => Showing::find($showing_id)->bookings]);
+            'bookings' => fn() => Showing::find($showing_id)->bookings()->with('seats')->get()]);
     }
 
     /**
