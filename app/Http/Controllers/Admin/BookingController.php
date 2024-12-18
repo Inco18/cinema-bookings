@@ -28,7 +28,7 @@ class BookingController extends Controller {
         $statusFilter = $request->get('statusFilter');
         $bookings = Booking::with(['showing', 'showing.movie', 'showing.hall', 'seats']);
 
-        if ($showingIdSearch) {
+        if ($showingIdSearch && is_numeric($showingIdSearch)) {
             $bookings->where('showing_id', '=', $showingIdSearch);
         }
         if ($movieSearch) {
