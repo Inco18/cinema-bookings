@@ -52,10 +52,10 @@ export default function SeatPicker({
     const flatGrid = grid.flat();
 
     return (
-        <div className="bg-background mt-4 shadow-sm lg:rounded-lg py-6 px-6 lg:px-12 lg:pl-6">
+        <div className="bg-background mt-4 shadow-sm lg:rounded-lg py-6 px-6 lg:px-12 lg:pl-4">
             <div className="overflow-x-auto scrollbar pb-1">
                 <div className="w-fit m-auto relative">
-                    <div className="flex flex-col items-center justify-center overflow-visible gap-2 mx-auto w-max">
+                    <div className="flex flex-col items-center justify-center overflow-visible gap-2 mx-auto w-max pl-10">
                         <div className="bg-gray-400 rounded-sm w-[400px] md:w-[500px] h-3"></div>
                         <p className="text-sm font-bold w-full flex justify-center">
                             EKRAN
