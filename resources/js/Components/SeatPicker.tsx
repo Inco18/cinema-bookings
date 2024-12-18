@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { Booking, Hall, Seat } from "@/types";
 import { SeatType } from "@/types/enums";
 import { Accessibility } from "lucide-react";
@@ -46,23 +47,36 @@ export default function SeatPicker({
         [showingBookings]
     );
 
+    const rows = grid.map((row) => row[0].row);
+
     const flatGrid = grid.flat();
 
     return (
-        <div className="bg-background mt-4 shadow-sm lg:rounded-lg py-6 px-6 lg:px-12">
+        <div className="bg-background mt-4 shadow-sm lg:rounded-lg py-6 px-6 lg:px-12 lg:pl-6">
             <div className="overflow-x-auto scrollbar pb-1">
-                <div className="w-fit m-auto">
+                <div className="w-fit m-auto relative">
                     <div className="flex flex-col items-center justify-center overflow-visible gap-2 mx-auto w-max">
                         <div className="bg-gray-400 rounded-sm w-[400px] md:w-[500px] h-3"></div>
                         <p className="text-sm font-bold w-full flex justify-center">
                             EKRAN
                         </p>
                     </div>
+                    <div className="absolute left-0 bottom-[2px] flex flex-col gap-2 text-gray-500">
+                        {rows.map((row) => (
+                            <div
+                                className="flex flex-row items-center gap-1 text-xs w-8 justify-between"
+                                key={row}
+                            >
+                                <p className="flex-1 text-right">{row}</p>
+                                <div className="bg-gray-500 w-4 h-1 rounded-full"></div>
+                            </div>
+                        ))}
+                    </div>
                     <div
                         style={{
                             gridTemplateColumns: `repeat(${hallSize?.cols}, 1fr`,
                         }}
-                        className={`grid gap-1 w-fit m-auto mt-10`}
+                        className={`grid gap-1 w-fit m-auto mt-10 relative pl-10`}
                     >
                         {flatGrid.flat().map((seat: Seat | null, index) => {
                             if (!seat)
@@ -136,25 +150,23 @@ export default function SeatPicker({
                                             }
                                         });
                                     }}
-                                    className={`bg-indigo-700 relative ${
+                                    className={cn(
+                                        "relative w-3 h-3 md:w-5 md:h-5 cursor-pointer flex items-center justify-center text-xs text-primary-foreground",
                                         bookingsSeats.includes(seat.id) &&
-                                        !selectedSeats.includes(seat.id)
-                                            ? "bg-gray-600 cursor-not-allowed"
-                                            : ""
-                                    }
-                                    ${
-                                        selectedSeats.includes(seat.id)
-                                            ? "bg-red-600 after:bg-red-600"
-                                            : ""
-                                    } ${
-                                        seat.type === SeatType.WIDE_TO_RIGHT
-                                            ? "wideToRight after:bg-indigo-700"
-                                            : ""
-                                    } ${
-                                        seat.type === SeatType.WIDE_TO_LEFT
-                                            ? "wideToLeft after:bg-indigo-700"
-                                            : ""
-                                    } w-3 h-3 md:w-5 md:h-5 cursor-pointer flex items-center justify-center text-xs text-primary-foreground `}
+                                            !selectedSeats.includes(seat.id)
+                                            ? "bg-gray-400 cursor-not-allowed"
+                                            : "bg-indigo-700",
+                                        {
+                                            "bg-red-600 after:bg-red-600":
+                                                selectedSeats.includes(seat.id),
+                                            "wideToRight after:bg-indigo-700":
+                                                seat.type ===
+                                                SeatType.WIDE_TO_RIGHT,
+                                            "wideToLeft after:bg-indigo-700":
+                                                seat.type ===
+                                                SeatType.WIDE_TO_LEFT,
+                                        }
+                                    )}
                                 >
                                     {selectedSeats.includes(seat.id) &&
                                         seat.number}
