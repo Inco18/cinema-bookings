@@ -3,6 +3,7 @@ import { Booking, Hall, Seat } from "@/types";
 import { SeatType } from "@/types/enums";
 import { Accessibility } from "lucide-react";
 import React, { Dispatch, SetStateAction, useMemo } from "react";
+import { Separator } from "./ui/separator";
 
 type Props = {
     hall: Hall;
@@ -61,7 +62,7 @@ export default function SeatPicker({
                             EKRAN
                         </p>
                     </div>
-                    <div className="absolute left-0 bottom-[2px] flex flex-col gap-2 text-gray-500">
+                    <div className="absolute left-0 -bottom-[2px] md:bottom-[2px] flex flex-col md:gap-2 text-gray-500">
                         {rows.map((row) => (
                             <div
                                 className="flex flex-row items-center gap-1 text-xs w-8 justify-between"
@@ -177,6 +178,24 @@ export default function SeatPicker({
                                 </div>
                             );
                         })}
+                    </div>
+                </div>
+            </div>
+            <Separator className="my-5" />
+            <div>
+                <h2 className="font-semibold text-xl mb-2">Legenda</h2>
+                <div className="flex items-center gap-4 text-sm md:text-base">
+                    <div className="flex items-center gap-2">
+                        <div className="bg-indigo-700 w-4 h-4 md:w-6 md:h-6 rounded-full"></div>
+                        <p>Wolne</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <div className="bg-gray-400 w-4 h-4 md:w-6 md:h-6 rounded-full"></div>
+                        <p>Zajęte</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <div className="bg-red-600 w-4 h-4 md:w-6 md:h-6 rounded-full"></div>
+                        <p>Wybrane</p>
                     </div>
                 </div>
             </div>

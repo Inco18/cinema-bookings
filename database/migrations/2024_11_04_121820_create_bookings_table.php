@@ -16,9 +16,9 @@ return new class extends Migration {
             $table->foreignId('user_id')->nullable()->constrained();
             $table->tinyInteger('num_people');
             $table->decimal('price');
-            $table->string("first_name");
-            $table->string('last_name');
-            $table->string('email');
+            $table->string("first_name")->nullable();
+            $table->string('last_name')->nullable();
+            $table->string('email')->nullable();
             $table->enum('status', BookingStatus::toArray());
             $table->timestamps();
         });

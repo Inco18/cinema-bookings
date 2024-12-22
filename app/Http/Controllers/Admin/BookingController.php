@@ -103,7 +103,6 @@ class BookingController extends Controller {
             $booking = Booking::create($request->validated());
             $booking->seats()->sync($request->input('seats'));
         } catch (Exception $e) {
-            dd($e);
             return redirect()->back()->withErrors([
                 'create' => 'Nie udało się dodać rezerwacji'
             ]);
@@ -140,7 +139,6 @@ class BookingController extends Controller {
             $booking->update($request->validated());
             $booking->seats()->sync($request->input('seats'));
         } catch (Exception $e) {
-            dd($e);
             return redirect()->back()->withErrors([
                 'update' => 'Nie udało się zaktualizować rezerwacji'
             ]);

@@ -1,11 +1,14 @@
 import { Separator } from "@/Components/ui/separator";
 import MainLayout from "@/Layouts/MainLayout";
 import { Showing } from "@/types";
-import { Head } from "@inertiajs/react";
+import { Head, router } from "@inertiajs/react";
 import { format } from "date-fns";
 import { pl } from "date-fns/locale";
 import React, { useState } from "react";
 import SeatPicker from "../../../Components/SeatPicker";
+import { Button } from "@/Components/ui/button";
+import { MoveRight } from "lucide-react";
+import { toast } from "react-toastify";
 
 type Props = {
     showing: Showing;
@@ -65,6 +68,33 @@ export default function CreateBooking({ showing }: Props) {
                         selectedSeats={selectedSeats}
                         setSelectedSeats={setSelectedSeats}
                     />
+                </div>
+            </div>
+            <div className="sticky bottom-0 w-full bg-background">
+                <div className="mx-auto max-w-7xl px-6 lg:px-8 py-4 w-full flex justify-end">
+                    <Button
+                        size={"lg"}
+                        disabled={selectedSeats.length < 1}
+                        onClick={() => {
+                            router.post(
+                                route("main.bookings.store"),
+                                {
+                                    seats: selectedSeats,
+                                    showing_id: showing.id,
+                                },
+                                {
+                                    preserveScroll: true,
+                                    preserveState: true,
+                                    onError: (error) => {
+                                        toast.error(Object.values(error)[0]);
+                                    },
+                                }
+                            );
+                        }}
+                    >
+                        Dalej
+                        <MoveRight />
+                    </Button>
                 </div>
             </div>
         </MainLayout>

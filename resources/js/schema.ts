@@ -159,3 +159,25 @@ export const BookingRequest = z.object({
         .email({ message: "Podaj poprawny adres email" })
         .max(255, { message: "Przekroczono maksymalną długość pola" }),
 });
+
+export const MainBookingRequest = z.object({
+    first_name: z
+        .string()
+        .min(1, { message: "To pole jest wymagane" })
+        .regex(new RegExp(/^[\p{L}\s-]*$/u), {
+            message: "To pole może składać się tylko z liter",
+        })
+        .max(255, { message: "Przekroczono maksymalną długość pola" }),
+    last_name: z
+        .string()
+        .min(1, { message: "To pole jest wymagane" })
+        .regex(new RegExp(/^[\p{L}\s-]*$/u), {
+            message: "To pole może składać się tylko z liter",
+        })
+        .max(255, { message: "Przekroczono maksymalną długość pola" }),
+    email: z
+        .string()
+        .min(1, { message: "To pole jest wymagane" })
+        .email({ message: "Podaj poprawny adres email" })
+        .max(255, { message: "Przekroczono maksymalną długość pola" }),
+});
