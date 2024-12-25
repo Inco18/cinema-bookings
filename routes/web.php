@@ -19,6 +19,8 @@ Route::get('/', function () {
 
 Route::get('/showings', [ShowingsController::class, 'index'])->name('main.showings.index');
 Route::resource('/bookings', BookingController::class)->names('main.bookings');
+Route::get('/bookings/{booking}/confirmation', [BookingController::class, 'showConfirmation'])->name('main.bookings.confirmation');
+Route::get('/bookings/{booking}/tickets', [BookingController::class, 'downloadTickets'])->name('main.bookings.tickets');
 
 Route::get('/admin', function () {
     return Inertia::render('Dashboard');

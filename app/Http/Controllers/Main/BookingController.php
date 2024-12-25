@@ -11,7 +11,10 @@ use App\Models\Showing;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Inertia\Inertia;
+
+use function Spatie\LaravelPdf\Support\pdf;
 
 class BookingController extends Controller {
     /**
@@ -102,10 +105,41 @@ class BookingController extends Controller {
                 'messageType' => 'error',
             ]);
         }
-        return redirect(route('main.showings.index'))->with([
-            'message' => "Rezerwacja została ukończona",
-            'messageType' => 'success'
+        $encryptedToken = Crypt::encryptString(json_encode(['id' => $booking->id]));
+
+        return redirect(route('main.bookings.confirmation', [
+            'booking' => $booking, 'token' => urlencode($encryptedToken)
+        ]));
+    }
+
+    public function showConfirmation(Request $request, Booking $booking) {
+        try {
+            $decrypted = json_decode(Crypt::decryptString($request->input('token')), true);
+            if ($decrypted['id'] != $booking->id) {
+                abort(403, 'Nieprawidłowy token');
+            }
+        } catch (Exception $e) {
+            abort(403, 'Nieprawidłowy token');
+        }
+        $encryptedToken = Crypt::encryptString(json_encode(['id' => $booking->id]));
+
+        return Inertia::render("Main/Booking/Confirmation", [
+            'booking' => $booking,
+            'token' => urlencode($encryptedToken)
         ]);
+    }
+
+    public function downloadTickets(Request $request, Booking $booking) {
+        try {
+            $decrypted = json_decode(Crypt::decryptString($request->input('token')), true);
+            if ($decrypted['id'] != $booking->id) {
+                abort(403, 'Nieprawidłowy token');
+            }
+        } catch (Exception $e) {
+            abort(403, 'Nieprawidłowy token');
+        }
+
+        return pdf()->view("tickets", ['booking' => $booking->load(['seats', 'showing', 'showing.movie'])])->name("bilety-{$booking->id}.pdf");
     }
 
     /**
