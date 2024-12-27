@@ -2,6 +2,7 @@ import { buttonVariants } from "@/Components/ui/button";
 import MainLayout from "@/Layouts/MainLayout";
 import { Booking } from "@/types";
 import { Head, Link } from "@inertiajs/react";
+import { Download } from "lucide-react";
 
 type Props = { booking: Booking; token: string };
 
@@ -31,6 +32,7 @@ const BookingConfirmation = ({ booking, token }: Props) => {
                         }) + " mt-5"
                     }
                 >
+                    <Download />
                     Pobierz bilety
                 </a>
                 <p className="text-muted-foreground text-sm">

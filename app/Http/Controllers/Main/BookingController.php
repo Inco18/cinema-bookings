@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Inertia\Inertia;
+use Spatie\LaravelPdf\Enums\Unit;
 
 use function Spatie\LaravelPdf\Support\pdf;
 
@@ -139,7 +140,7 @@ class BookingController extends Controller {
             abort(403, 'Nieprawidłowy token');
         }
 
-        return pdf()->view("tickets", ['booking' => $booking->load(['seats', 'showing', 'showing.movie'])])->name("bilety-{$booking->id}.pdf");
+        return pdf()->view("tickets", ['booking' => $booking->load(['seats', 'showing', 'showing.movie', 'showing.hall'])])->margins(5, 5, 5, 5)->name("bilety-{$booking->id}.pdf");
     }
 
     /**
