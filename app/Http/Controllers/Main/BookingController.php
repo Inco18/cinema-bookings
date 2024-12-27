@@ -6,14 +6,15 @@ use App\Enums\BookingStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Main\StoreBookingRequest;
 use App\Http\Requests\Main\UpdateBookingRequest;
+use App\Mail\BookingConfirmation;
 use App\Models\Booking;
 use App\Models\Showing;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
-use Spatie\LaravelPdf\Enums\Unit;
 
 use function Spatie\LaravelPdf\Support\pdf;
 
@@ -97,6 +98,7 @@ class BookingController extends Controller {
                 ...$request->validated(),
                 'status' => BookingStatus::FILLED->value
             ]);
+            Mail::to($booking->email)->queue(new BookingConfirmation($booking));
         } catch (Exception $e) {
             $booking->seats()->detach();
             $booking->delete();
