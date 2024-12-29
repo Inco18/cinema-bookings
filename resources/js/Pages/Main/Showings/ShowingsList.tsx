@@ -1,8 +1,9 @@
 import { Badge } from "@/Components/ui/badge";
 import { Separator } from "@/Components/ui/separator";
+import { cn } from "@/lib/utils";
 import { Showing } from "@/types";
 import { Link } from "@inertiajs/react";
-import { format } from "date-fns";
+import { format, isPast } from "date-fns";
 import React from "react";
 
 type Props = {
@@ -57,7 +58,13 @@ const ShowingsList = ({ showings }: Props) => {
                                             showing_id: showing.id,
                                         })}
                                         key={showing.id}
-                                        className="h-24 w-full border-[1px] border-foreground/20 rounded-md py-1 px-2 flex flex-col hover:bg-indigo-700 hover:text-primary-foreground cursor-pointer transition"
+                                        className={cn(
+                                            "h-24 w-full border-[1px] border-foreground/20 rounded-md py-1 px-2 flex flex-col hover:bg-indigo-700 hover:text-primary-foreground cursor-pointer transition",
+                                            {
+                                                "pointer-events-none opacity-50":
+                                                    isPast(showing.end_time),
+                                            }
+                                        )}
                                     >
                                         <div className="flex items-center justify-between">
                                             <p className="font-medium text-nowrap">

@@ -10,6 +10,7 @@ use App\Http\Requests\Main\UpdateBookingSeatsRequest;
 use App\Mail\BookingConfirmation;
 use App\Models\Booking;
 use App\Models\Showing;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -41,6 +42,10 @@ class BookingController extends Controller {
         $showing = Showing::with(['hall.seats' => function ($query) {
             $query->orderBy('row')->orderBy('column');
         }, 'bookings.seats', 'movie'])->findOrFail($showingId);
+
+        if ((new Carbon($showing->end_time))->isPast()) {
+            return redirect(route("main.showings.index"));
+        }
 
         return Inertia::render("Main/Booking/Create", ['showing' => $showing]);
     }
