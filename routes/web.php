@@ -21,6 +21,8 @@ Route::get('/showings', [ShowingsController::class, 'index'])->name('main.showin
 Route::resource('/bookings', BookingController::class)->names('main.bookings');
 Route::get('/bookings/{booking}/confirmation', [BookingController::class, 'showConfirmation'])->name('main.bookings.confirmation');
 Route::get('/bookings/{booking}/tickets', [BookingController::class, 'downloadTickets'])->name('main.bookings.tickets');
+Route::get('/bookings/{booking}/edit_seats', [BookingController::class, 'editSeats'])->name('main.bookings.edit_seats');
+Route::patch('/bookings/{booking}/update_seats', [BookingController::class, 'updateSeats'])->name('main.bookings.update_seats');
 
 Route::get('/admin', function () {
     return Inertia::render('Dashboard');

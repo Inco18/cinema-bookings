@@ -6,6 +6,7 @@ use App\Enums\BookingStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Main\StoreBookingRequest;
 use App\Http\Requests\Main\UpdateBookingRequest;
+use App\Http\Requests\Main\UpdateBookingSeatsRequest;
 use App\Mail\BookingConfirmation;
 use App\Models\Booking;
 use App\Models\Showing;
@@ -73,6 +74,40 @@ class BookingController extends Controller {
      */
     public function show(Booking $booking) {
         //
+    }
+
+    public function editSeats(Booking $booking) {
+        if ($booking->status != BookingStatus::RESERVED->value)
+            return redirect(route('main.showings.index'));
+
+        return Inertia::render("Main/Booking/EditSeats", ['showing' => $booking->showing->load(['hall.seats' => function ($query) {
+            $query->orderBy('row')->orderBy('column');
+        }, 'bookings.seats', 'movie']), 'seats' => $booking->seats->pluck('id'), 'booking' => $booking]);
+    }
+
+    public function updateSeats(Booking $booking, UpdateBookingSeatsRequest $request) {
+        try {
+            if ($booking->status != BookingStatus::RESERVED->value)
+                return redirect(route('main.showings.index'));
+
+            $numPeople = count($request->input('seats'));
+
+            $booking->update([
+                'num_people' => $numPeople,
+                'price' => $numPeople * 31.5,
+            ]);
+
+            $booking->seats()->sync($request->input('seats'));
+        } catch (Exception $e) {
+            $booking->seats()->detach();
+            $booking->delete();
+
+            return redirect(route('main.showings.index'))->with([
+                'message' => "Wystąpił błąd, rezerwacja została anulowana",
+                'messageType' => 'error',
+            ]);
+        }
+        return redirect(route('main.bookings.edit', ['booking' => $booking->id]));
     }
 
     /**

@@ -16,3 +16,14 @@ export const translatedRoles: { [key in RoleType]: string } = {
     worker: "Pracownik",
     client: "Klient",
 };
+
+export function formatTime(time: number) {
+    const seconds = time % 60;
+    const minutes = Math.floor(time / 60);
+
+    return (
+        ("" + minutes).padStart(2, "0") +
+        ":" +
+        ("" + Math.abs(seconds)).padStart(2, "0")
+    );
+}

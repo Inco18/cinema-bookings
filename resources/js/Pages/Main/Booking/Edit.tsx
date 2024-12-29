@@ -3,11 +3,13 @@ import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
 import { Separator } from "@/Components/ui/separator";
 import MainLayout from "@/Layouts/MainLayout";
+import { formatTime } from "@/lib/utils";
 import { MainBookingRequest } from "@/schema";
 import { Booking } from "@/types";
 import { Head, router, useForm } from "@inertiajs/react";
 import { add, differenceInSeconds, format } from "date-fns";
 import { pl } from "date-fns/locale";
+import { MoveLeft } from "lucide-react";
 import { FormEventHandler, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { ZodIssue } from "zod";
@@ -15,17 +17,6 @@ import { ZodIssue } from "zod";
 type Props = {
     booking: Booking;
 };
-
-function formatTime(time: number) {
-    const seconds = time % 60;
-    const minutes = Math.floor(time / 60);
-
-    return (
-        ("" + minutes).padStart(2, "0") +
-        ":" +
-        ("" + Math.abs(seconds)).padStart(2, "0")
-    );
-}
 
 const EditBooking = ({ booking }: Props) => {
     const [remainingTimeSeconds, setRemainingTimeSeconds] = useState(
@@ -328,6 +319,20 @@ const EditBooking = ({ booking }: Props) => {
                         }
                     >
                         Anuluj
+                    </Button>
+                    <Button
+                        className="ml-auto mr-2"
+                        size={"lg"}
+                        variant="outline"
+                        onClick={() =>
+                            router.get(
+                                route("main.bookings.edit_seats", {
+                                    booking: booking.id,
+                                })
+                            )
+                        }
+                    >
+                        <MoveLeft /> Wróć
                     </Button>
                     <Button size={"lg"} form="editBookingForm" type="submit">
                         Potwierdź
