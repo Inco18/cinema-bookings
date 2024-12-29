@@ -154,7 +154,7 @@ class BookingController extends Controller {
             if ($type == 'timeRunOut' && $booking->status == BookingStatus::PAID->value) {
                 throw new Exception();
             }
-            if ($type != 'timeRunOut' && ($booking->status == BookingStatus::PAID->value || $booking->user_id != Auth::user()->id)) {
+            if ($type != 'timeRunOut' && ($booking->status == BookingStatus::PAID->value || (isset($booking->user_id) && $booking->user_id != Auth::user()->id))) {
                 throw new Exception();
             }
             $booking->seats()->detach();

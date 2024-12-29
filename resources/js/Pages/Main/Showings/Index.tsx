@@ -40,6 +40,7 @@ export default function ShowingsIndex(props: Props) {
     useEffect(() => {
         if (flash.message) {
             if (flash.type === "error") toast.error(flash.message);
+            if (flash.type === "success") toast.success(flash.message);
         }
     }, []);
     return (

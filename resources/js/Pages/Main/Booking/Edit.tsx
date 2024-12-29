@@ -30,7 +30,7 @@ function formatTime(time: number) {
 const EditBooking = ({ booking }: Props) => {
     const [remainingTimeSeconds, setRemainingTimeSeconds] = useState(
         differenceInSeconds(
-            add(new Date(booking.updated_at!), { minutes: 999 }),
+            add(new Date(booking.updated_at!), { minutes: 15 }),
             new Date()
         )
     );
@@ -310,7 +310,25 @@ const EditBooking = ({ booking }: Props) => {
                 </div>
             </form>
             <div className="fixed bottom-0 w-full bg-background">
-                <div className="mx-auto max-w-7xl px-6 lg:px-8 py-4 w-full flex justify-end">
+                <div className="mx-auto max-w-7xl px-6 lg:px-8 py-4 w-full flex justify-between">
+                    <Button
+                        size={"lg"}
+                        variant="secondary"
+                        onClick={() =>
+                            router.delete(
+                                route("main.bookings.destroy", {
+                                    booking: booking.id,
+                                }),
+                                {
+                                    onError: (error) => {
+                                        toast.error(Object.values(error)[0]);
+                                    },
+                                }
+                            )
+                        }
+                    >
+                        Anuluj
+                    </Button>
                     <Button size={"lg"} form="editBookingForm" type="submit">
                         Potwierdź
                     </Button>

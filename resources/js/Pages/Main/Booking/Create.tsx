@@ -71,7 +71,14 @@ export default function CreateBooking({ showing }: Props) {
                 </div>
             </div>
             <div className="sticky bottom-0 w-full bg-background">
-                <div className="mx-auto max-w-7xl px-6 lg:px-8 py-4 w-full flex justify-end">
+                <div className="mx-auto max-w-7xl px-6 lg:px-8 py-4 w-full flex justify-between">
+                    <Button
+                        size={"lg"}
+                        variant="secondary"
+                        onClick={() => router.get(route("main.showings.index"))}
+                    >
+                        Anuluj
+                    </Button>
                     <Button
                         size={"lg"}
                         disabled={selectedSeats.length < 1}
