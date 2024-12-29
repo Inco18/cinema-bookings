@@ -7,7 +7,7 @@ import { pl } from "date-fns/locale";
 import React, { useEffect, useState } from "react";
 import SeatPicker from "../../../Components/SeatPicker";
 import { Button } from "@/Components/ui/button";
-import { MoveRight } from "lucide-react";
+import { LoaderCircle, MoveRight } from "lucide-react";
 import { toast } from "react-toastify";
 import { formatTime } from "@/lib/utils";
 
@@ -19,6 +19,8 @@ type Props = {
 
 export default function EditSeats({ showing, seats, booking }: Props) {
     const [selectedSeats, setSelectedSeats] = useState<number[]>(seats);
+    const [isUpdating, setIsUpdating] = useState(false);
+    const [isCanceling, setIsCanceling] = useState(false);
     const [remainingTimeSeconds, setRemainingTimeSeconds] = useState(
         differenceInSeconds(
             add(new Date(booking.updated_at!), { minutes: 15 }),
@@ -105,25 +107,32 @@ export default function EditSeats({ showing, seats, booking }: Props) {
                     <Button
                         size={"lg"}
                         variant="secondary"
-                        onClick={() =>
+                        disabled={isCanceling}
+                        onClick={() => {
+                            setIsCanceling(true);
                             router.delete(
                                 route("main.bookings.destroy", {
                                     booking: booking.id,
                                 }),
                                 {
                                     onError: (error) => {
+                                        setIsCanceling(false);
                                         toast.error(Object.values(error)[0]);
                                     },
                                 }
-                            )
-                        }
+                            );
+                        }}
                     >
+                        {isCanceling && (
+                            <LoaderCircle className="!h-5 !w-5 animate-spin" />
+                        )}
                         Anuluj
                     </Button>
                     <Button
                         size={"lg"}
-                        disabled={selectedSeats.length < 1}
+                        disabled={selectedSeats.length < 1 || isUpdating}
                         onClick={() => {
+                            setIsUpdating(true);
                             router.patch(
                                 route("main.bookings.update_seats", {
                                     booking: booking.id,
@@ -135,12 +144,16 @@ export default function EditSeats({ showing, seats, booking }: Props) {
                                     preserveScroll: true,
                                     preserveState: true,
                                     onError: (error) => {
+                                        setIsUpdating(false);
                                         toast.error(Object.values(error)[0]);
                                     },
                                 }
                             );
                         }}
                     >
+                        {isUpdating && (
+                            <LoaderCircle className="!h-5 !w-5 animate-spin" />
+                        )}
                         Dalej
                         <MoveRight />
                     </Button>

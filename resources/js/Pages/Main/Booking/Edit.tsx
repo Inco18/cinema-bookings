@@ -9,7 +9,7 @@ import { Booking } from "@/types";
 import { Head, router, useForm } from "@inertiajs/react";
 import { add, differenceInSeconds, format } from "date-fns";
 import { pl } from "date-fns/locale";
-import { MoveLeft } from "lucide-react";
+import { LoaderCircle, MoveLeft } from "lucide-react";
 import { FormEventHandler, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { ZodIssue } from "zod";
@@ -19,6 +19,9 @@ type Props = {
 };
 
 const EditBooking = ({ booking }: Props) => {
+    const [isUpdating, setIsUpdating] = useState(false);
+    const [isCanceling, setIsCanceling] = useState(false);
+    const [isGoingBack, setIsGoingBack] = useState(false);
     const [remainingTimeSeconds, setRemainingTimeSeconds] = useState(
         differenceInSeconds(
             add(new Date(booking.updated_at!), { minutes: 15 }),
@@ -95,6 +98,7 @@ const EditBooking = ({ booking }: Props) => {
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
+
         const zodErrors = validateInputs();
         if (Object.keys(zodErrors).length !== 0) {
             inputsRef.current[
@@ -103,9 +107,11 @@ const EditBooking = ({ booking }: Props) => {
             setDidFail(true);
             return;
         }
+        setIsUpdating(true);
         patch(route("main.bookings.update", { booking }, false), {
             onError: () => {
                 setDidFail(true);
+                setIsUpdating(false);
                 toast.error("Nie udało się wypełnić danych rezerwacji");
             },
         });
@@ -305,36 +311,55 @@ const EditBooking = ({ booking }: Props) => {
                     <Button
                         size={"lg"}
                         variant="secondary"
-                        onClick={() =>
+                        disabled={isCanceling}
+                        onClick={() => {
+                            setIsCanceling(true);
                             router.delete(
                                 route("main.bookings.destroy", {
                                     booking: booking.id,
                                 }),
                                 {
                                     onError: (error) => {
+                                        setIsCanceling(false);
                                         toast.error(Object.values(error)[0]);
                                     },
                                 }
-                            )
-                        }
+                            );
+                        }}
                     >
+                        {isCanceling && (
+                            <LoaderCircle className="!h-5 !w-5 animate-spin" />
+                        )}
                         Anuluj
                     </Button>
                     <Button
                         className="ml-auto mr-2"
                         size={"lg"}
                         variant="outline"
-                        onClick={() =>
+                        disabled={isGoingBack}
+                        onClick={() => {
+                            setIsGoingBack(true);
                             router.get(
                                 route("main.bookings.edit_seats", {
                                     booking: booking.id,
                                 })
-                            )
-                        }
+                            );
+                        }}
                     >
                         <MoveLeft /> Wróć
+                        {isGoingBack && (
+                            <LoaderCircle className="!h-5 !w-5 animate-spin" />
+                        )}
                     </Button>
-                    <Button size={"lg"} form="editBookingForm" type="submit">
+                    <Button
+                        size={"lg"}
+                        form="editBookingForm"
+                        type="submit"
+                        disabled={isUpdating}
+                    >
+                        {isUpdating && (
+                            <LoaderCircle className="!h-5 !w-5 animate-spin" />
+                        )}
                         Potwierdź
                     </Button>
                 </div>

@@ -7,7 +7,7 @@ import { pl } from "date-fns/locale";
 import React, { useState } from "react";
 import SeatPicker from "../../../Components/SeatPicker";
 import { Button } from "@/Components/ui/button";
-import { MoveRight } from "lucide-react";
+import { Loader2, LoaderCircle, MoveRight } from "lucide-react";
 import { toast } from "react-toastify";
 
 type Props = {
@@ -16,6 +16,7 @@ type Props = {
 
 export default function CreateBooking({ showing }: Props) {
     const [selectedSeats, setSelectedSeats] = useState<number[]>([]);
+    const [isCreating, setIsCreating] = useState(false);
     return (
         <MainLayout>
             <Head title="Wybierz miejsca" />
@@ -81,8 +82,9 @@ export default function CreateBooking({ showing }: Props) {
                     </Button>
                     <Button
                         size={"lg"}
-                        disabled={selectedSeats.length < 1}
+                        disabled={selectedSeats.length < 1 || isCreating}
                         onClick={() => {
+                            setIsCreating(true);
                             router.post(
                                 route("main.bookings.store"),
                                 {
@@ -93,12 +95,16 @@ export default function CreateBooking({ showing }: Props) {
                                     preserveScroll: true,
                                     preserveState: true,
                                     onError: (error) => {
+                                        setIsCreating(false);
                                         toast.error(Object.values(error)[0]);
                                     },
                                 }
                             );
                         }}
                     >
+                        {isCreating && (
+                            <LoaderCircle className="!h-5 !w-5 animate-spin" />
+                        )}
                         Dalej
                         <MoveRight />
                     </Button>
