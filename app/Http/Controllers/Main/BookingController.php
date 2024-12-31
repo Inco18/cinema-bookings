@@ -10,6 +10,7 @@ use App\Http\Requests\Main\UpdateBookingSeatsRequest;
 use App\Mail\BookingConfirmation;
 use App\Models\Booking;
 use App\Models\Showing;
+use App\Services\PaynowService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -128,7 +129,7 @@ class BookingController extends Controller {
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateBookingRequest $request, Booking $booking) {
+    public function update(UpdateBookingRequest $request, Booking $booking, PaynowService $paynowService) {
         $type = $request->input('_type');
         try {
             if ($type != 'fillData' || $booking->status != BookingStatus::RESERVED->value)
@@ -138,7 +139,14 @@ class BookingController extends Controller {
                 ...$request->validated(),
                 'status' => BookingStatus::FILLED->value
             ]);
-            Mail::to($booking->email)->queue(new BookingConfirmation($booking));
+            $encryptedToken = Crypt::encryptString(json_encode(['id' => $booking->id]));
+
+            $redirectUrl = $paynowService->makePayment($booking, $encryptedToken);
+
+            if (!$redirectUrl)
+                throw new Exception("Wystąpił błąd w czasie płatności");
+
+            return Inertia::location($redirectUrl);
         } catch (Exception $e) {
             $booking->seats()->detach();
             $booking->delete();
@@ -148,11 +156,76 @@ class BookingController extends Controller {
                 'messageType' => 'error',
             ]);
         }
+    }
+
+    public function handlePaymentResponse(Booking $booking, Request $request, PaynowService $paynowService) {
+        try {
+            $decrypted = json_decode(Crypt::decryptString($request->input('token')), true);
+            if ($decrypted['id'] != $booking->id) {
+                abort(403, 'Nieprawidłowy token');
+            }
+        } catch (Exception $e) {
+            abort(403, 'Nieprawidłowy token');
+        }
+        $paymentId = $request->paymentId;
+        $paymentStatus = $paynowService->getStatus($paymentId)->getStatus();
+        $booking->update(['payment_id' => $paymentId]);
         $encryptedToken = Crypt::encryptString(json_encode(['id' => $booking->id]));
 
-        return redirect(route('main.bookings.confirmation', [
-            'booking' => $booking, 'token' => urlencode($encryptedToken)
-        ]));
+        if ($paymentStatus == 'CONFIRMED') {
+            $booking->update(['status' => BookingStatus::PAID->value]);
+            Mail::to($booking->email)->queue(new BookingConfirmation($booking));
+
+            return redirect(route('main.bookings.confirmation', ['booking' => $booking, 'token' => urlencode($encryptedToken)]));
+        }
+
+        if ($paymentStatus == 'PENDING') {
+            return Inertia::render("Main/Booking/Pending", [
+                'booking' => $booking,
+                'token' => urlencode($encryptedToken)
+            ]);
+        }
+
+        if ($paymentStatus == 'REJECTED' || $paymentStatus == 'ERROR') {
+
+            return Inertia::render("Main/Booking/Error", [
+                'booking' => $booking,
+                'token' => urlencode($encryptedToken)
+            ]);
+        }
+    }
+
+    public function retryPayment(Booking $booking, Request $request, PaynowService $paynowService) {
+        try {
+            $decrypted = json_decode(Crypt::decryptString($request->input('token')), true);
+            if ($decrypted['id'] != $booking->id) {
+                abort(403, 'Nieprawidłowy token');
+            }
+        } catch (Exception $e) {
+            abort(403, 'Nieprawidłowy token');
+        }
+
+        try {
+            if ($booking->status != BookingStatus::FILLED->value)
+                return redirect(route('main.showings.index'));
+
+            $encryptedToken = Crypt::encryptString(json_encode(['id' => $booking->id]));
+
+            $redirectUrl = $paynowService->makePayment($booking, $encryptedToken);
+
+            if (!$redirectUrl)
+                throw new Exception("Wystąpił błąd w czasie płatności");
+
+            return Inertia::location($redirectUrl);
+        } catch (Exception $e) {
+            $booking->seats()->detach();
+            $booking->delete();
+
+            return redirect(route('main.showings.index'))->with([
+                'message' => "Wystąpił błąd, rezerwacja została anulowana",
+                'messageType' => 'error',
+            ]);
+        }
     }
 
     public function showConfirmation(Request $request, Booking $booking) {

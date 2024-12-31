@@ -20,6 +20,7 @@ return new class extends Migration {
             $table->string('last_name')->nullable();
             $table->string('email')->nullable();
             $table->enum('status', BookingStatus::toArray());
+            $table->string('payment_id')->nullable();
             $table->timestamps();
         });
     }

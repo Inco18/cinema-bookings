@@ -35,6 +35,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property string $first_name
  * @property string $last_name
  * @property string $email
+ * @property string $payment_id
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Booking whereEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Booking whereFirstName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Booking whereLastName($value)
@@ -45,7 +46,7 @@ class Booking extends Model {
     use HasFactory;
 
     protected $fillable = [
-        'showing_id', 'user_id', 'num_people', 'price', 'first_name', 'last_name', 'email', 'status'
+        'showing_id', 'user_id', 'num_people', 'price', 'first_name', 'last_name', 'email', 'status', 'payment_id'
     ];
 
     public function showing(): BelongsTo {

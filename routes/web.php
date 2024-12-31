@@ -23,6 +23,8 @@ Route::get('/bookings/{booking}/confirmation', [BookingController::class, 'showC
 Route::get('/bookings/{booking}/tickets', [BookingController::class, 'downloadTickets'])->name('main.bookings.tickets');
 Route::get('/bookings/{booking}/edit_seats', [BookingController::class, 'editSeats'])->name('main.bookings.edit_seats');
 Route::patch('/bookings/{booking}/update_seats', [BookingController::class, 'updateSeats'])->name('main.bookings.update_seats');
+Route::get('/bookings/{booking}/handle_payment_response', [BookingController::class, 'handlePaymentResponse'])->name('main.bookings.handle_payment_response');
+Route::get('/bookings/{booking}/retry_payment', [BookingController::class, 'retryPayment'])->name('main.bookings.retry_payment');
 
 Route::get('/admin', function () {
     return Inertia::render('Dashboard');

@@ -28,11 +28,10 @@ class CleanOldBookings extends Command {
     public function handle() {
         $threshold = Carbon::now()->subMinutes(15);
 
-        // Pobierz IDs rekordów do usunięcia
         $bookingIds = DB::table('bookings')
             ->where('updated_at', '<', $threshold)
             ->where('status', '!=', BookingStatus::PAID->value)
-            ->pluck('id'); // Pobiera listę identyfikatorów rekordów
+            ->pluck('id');
 
         if ($bookingIds->isEmpty()) {
             $this->info("Brak rekordów do usunięcia.");
@@ -40,12 +39,10 @@ class CleanOldBookings extends Command {
         }
 
         DB::transaction(function () use ($bookingIds) {
-            // Usuń powiązane rekordy w tabeli pivot
             $deletedSeats = DB::table('booking_seat')
                 ->whereIn('booking_id', $bookingIds)
                 ->delete();
 
-            // Usuń rekordy w tabeli bookings
             $deletedBookings = DB::table('bookings')
                 ->whereIn('id', $bookingIds)
                 ->delete();

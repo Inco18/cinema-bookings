@@ -1,0 +1,47 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\Booking;
+use Paynow\Client;
+use Paynow\Environment;
+use Paynow\Exception\PaynowException;
+use Paynow\Service\Payment;
+class PaynowService {
+    protected $client;
+    public function __construct() {
+        $this->client = new Client(config('paynow.api_key'), config('paynow.signature_key'), Environment::SANDBOX);
+    }
+    public function makePayment(Booking $booking, $encryptedToken) {
+        $orderReference = $booking->id;
+        $idempotencyKey = uniqid($orderReference . '_');
+
+        $paymentData = [
+            'amount' => $booking->price * 100,
+            'currency' => 'PLN',
+            'externalId' => $orderReference,
+            'description' => "Rezerwacja $booking->id",
+            'buyer' => [
+                'email' => $booking->email,
+                'firstName' => $booking->first_name,
+                'lastName' => $booking->last_name
+            ],
+            'continueUrl' => route('main.bookings.handle_payment_response', [
+                'booking' => $booking, 'token' => urlencode($encryptedToken)
+            ])
+        ];
+
+        $payment = new Payment($this->client);
+        $result = $payment->authorize($paymentData, $idempotencyKey);
+        $booking->update(['payment_id' => $result->getPaymentId()]);
+
+        return $result->getRedirectUrl();
+    }
+
+    public function getStatus($paymentId) {
+        $idempotencyKey = uniqid($paymentId . '_');
+        $payment = new Payment($this->client);
+
+        return $payment->status($paymentId, $idempotencyKey);
+    }
+}
