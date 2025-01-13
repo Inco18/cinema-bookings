@@ -97,6 +97,13 @@ export default function MainLayout({
                                                     Profil
                                                 </Dropdown.Link>
                                                 <Dropdown.Link
+                                                    href={route(
+                                                        "main.bookings.index"
+                                                    )}
+                                                >
+                                                    Rezerwacje
+                                                </Dropdown.Link>
+                                                <Dropdown.Link
                                                     href={route("logout")}
                                                     method="post"
                                                     as="button"
@@ -212,6 +219,11 @@ export default function MainLayout({
                                         href={route("profile.edit")}
                                     >
                                         Profil
+                                    </ResponsiveNavLink>
+                                    <ResponsiveNavLink
+                                        href={route("main.bookings.index")}
+                                    >
+                                        Rezerwacje
                                     </ResponsiveNavLink>
                                     <ResponsiveNavLink
                                         method="post"

@@ -26,7 +26,15 @@ class BookingController extends Controller {
      * Display a listing of the resource.
      */
     public function index() {
-        //
+        $user = Auth::user();
+        $bookings = Booking::with(['showing.movie', 'seats.hall'])->where('user_id', '=', $user->id)->latest('updated_at')->get();
+
+        foreach ($bookings as $key => $booking) {
+            $encryptedToken = Crypt::encryptString(json_encode(['id' => $booking->id]));
+            $booking['token'] = urlencode($encryptedToken);
+        }
+
+        return Inertia::render("Main/Booking/Index", ['bookings' => $bookings]);
     }
 
     /**
@@ -254,6 +262,8 @@ class BookingController extends Controller {
         } catch (Exception $e) {
             abort(403, 'Nieprawidłowy token');
         }
+        if ($booking->status != BookingStatus::PAID->value)
+            return redirect(route('main.showings.index'));
 
         return pdf()->view("tickets", ['booking' => $booking->load(['seats', 'showing', 'showing.movie', 'showing.hall'])])->margins(5, 5, 5, 5)->name("bilety-{$booking->id}.pdf");
     }
