@@ -7,7 +7,7 @@
     "require": {
         "php": "^8.2",
         "doctrine/dbal": "^4.2",
-        "inertiajs/inertia-laravel": "^1.0",
+        "inertiajs/inertia-laravel": "^2.0",
         "laravel/framework": "^11.9",
         "laravel/sanctum": "^4.0",
         "laravel/telescope": "^5.2",

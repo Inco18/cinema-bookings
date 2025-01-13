@@ -1,18 +1,12 @@
 import MainLayout from "@/Layouts/MainLayout";
 import { Booking } from "@/types";
-import { Head, router } from "@inertiajs/react";
+import { Head, usePoll } from "@inertiajs/react";
 import { useEffect } from "react";
 
 type Props = { booking: Booking; token: string };
 
 function BookingError({ booking, token }: Props) {
-    useEffect(() => {
-        const interval = setInterval(() => {
-            router.reload();
-        }, 5000);
-
-        return () => clearInterval(interval);
-    });
+    usePoll(5000);
     return (
         <MainLayout>
             <Head title="Oczekująca płatność" />
