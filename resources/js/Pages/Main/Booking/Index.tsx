@@ -129,7 +129,7 @@ const Index = ({ bookings }: Props) => {
                                         </div>
                                     </SheetTrigger>
 
-                                    <SheetContent className="md:w-[35rem] !max-w-full">
+                                    <SheetContent className="md:w-[35rem] !max-w-full max-h-screen overflow-y-auto">
                                         <SheetHeader>
                                             <SheetTitle className="font-normal md:text-2xl text-left">
                                                 {getMovieTitleWithInfo(booking)}
