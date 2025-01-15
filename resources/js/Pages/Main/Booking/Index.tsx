@@ -82,7 +82,6 @@ function getBookingBadge(booking: Booking): JSX.Element {
 }
 
 const Index = ({ bookings }: Props) => {
-    console.log(bookings);
     return (
         <MainLayout>
             <Head title="Twoje rezerwacje" />
@@ -219,8 +218,26 @@ const Index = ({ bookings }: Props) => {
                                                     {booking.price as number} zł
                                                 </span>
                                             </p>
+                                            <p className="mt-2">
+                                                Imię:{" "}
+                                                <span className="font-semibold">
+                                                    {booking.first_name}
+                                                </span>
+                                            </p>
+                                            <p>
+                                                Nazwisko:{" "}
+                                                <span className="font-semibold">
+                                                    {booking.last_name}
+                                                </span>
+                                            </p>
+                                            <p>
+                                                Email:{" "}
+                                                <span className="font-semibold">
+                                                    {booking.email}
+                                                </span>
+                                            </p>
 
-                                            <div className="w-fit">
+                                            <div className="w-fit mt-2">
                                                 Status:{" "}
                                                 {getBookingBadge(booking)}
                                             </div>
