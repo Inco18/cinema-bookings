@@ -12,15 +12,17 @@ import {
 import MainLayout from "@/Layouts/MainLayout";
 import { Booking } from "@/types";
 import { BookingStatus } from "@/types/enums";
-import { Head, router } from "@inertiajs/react";
+import { Head, router, WhenVisible } from "@inertiajs/react";
 import { format, isPast } from "date-fns";
 import { pl } from "date-fns/locale";
-import { Download } from "lucide-react";
+import { Download, LoaderCircle } from "lucide-react";
 import React from "react";
 import { toast } from "react-toastify";
 
 type Props = {
     bookings: (Booking & { token: string })[];
+    page: number;
+    isNextPageExists: boolean;
 };
 
 function getMovieTitleWithInfo(booking: Booking): JSX.Element {
@@ -81,7 +83,8 @@ function getBookingBadge(booking: Booking): JSX.Element {
     else return <Badge className="pointer-events-none">{booking.status}</Badge>;
 }
 
-const Index = ({ bookings }: Props) => {
+const Index = ({ bookings, page, isNextPageExists }: Props) => {
+    console.log(bookings);
     return (
         <MainLayout>
             <Head title="Twoje rezerwacje" />
@@ -310,6 +313,26 @@ const Index = ({ bookings }: Props) => {
                             );
                         })}
                     </div>
+                    {isNextPageExists && (
+                        <WhenVisible
+                            always
+                            params={{
+                                data: {
+                                    page: +page + 1,
+                                },
+                                only: ["bookings", "page", "isNextPageExists"],
+                            }}
+                            fallback={
+                                <div className="w-full flex items-center justify-center p-3">
+                                    <LoaderCircle className="animate-spin w-8 h-8" />
+                                </div>
+                            }
+                        >
+                            <div className="w-full flex items-center justify-center p-3">
+                                <LoaderCircle className="animate-spin w-8 h-8" />
+                            </div>
+                        </WhenVisible>
+                    )}
                 </div>
             </div>
         </MainLayout>

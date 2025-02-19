@@ -25,16 +25,21 @@ class BookingController extends Controller {
     /**
      * Display a listing of the resource.
      */
-    public function index() {
+    public function index(Request $request) {
         $user = Auth::user();
-        $bookings = Booking::with(['showing.movie', 'seats.hall'])->where('user_id', '=', $user->id)->latest('updated_at')->get();
+        $perPage = 10;
+        $page = $request->query('page', 1);
+        $bookings = Booking::with(['showing.movie', 'seats.hall'])->where('user_id', '=', $user->id)->latest('updated_at')->paginate($perPage);
+
+        $isNextPageExists = $bookings->currentPage() < $bookings->lastPage();
 
         foreach ($bookings as $key => $booking) {
             $encryptedToken = Crypt::encryptString(json_encode(['id' => $booking->id]));
             $booking['token'] = urlencode($encryptedToken);
         }
 
-        return Inertia::render("Main/Booking/Index", ['bookings' => $bookings]);
+        return Inertia::render("Main/Booking/Index", ['bookings' => Inertia::merge($bookings->items()), 'page' => $page,
+            'isNextPageExists' => $isNextPageExists]);
     }
 
     /**
