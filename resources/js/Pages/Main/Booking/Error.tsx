@@ -35,6 +35,7 @@ function BookingError({ booking, token }: Props) {
                             router.delete(
                                 route("main.bookings.destroy", {
                                     booking: booking.id,
+                                    token,
                                 }),
                                 {
                                     onError: (error) => {

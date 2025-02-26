@@ -15,9 +15,10 @@ type Props = {
     showing: Showing;
     seats: number[];
     booking: Booking;
+    token: string;
 };
 
-export default function EditSeats({ showing, seats, booking }: Props) {
+export default function EditSeats({ showing, seats, booking, token }: Props) {
     const [selectedSeats, setSelectedSeats] = useState<number[]>(seats);
     const [isUpdating, setIsUpdating] = useState(false);
     const [isCanceling, setIsCanceling] = useState(false);
@@ -34,6 +35,7 @@ export default function EditSeats({ showing, seats, booking }: Props) {
                     route("main.bookings.destroy", {
                         booking: booking.id,
                         type: "timeRunOut",
+                        token: token,
                     })
                 );
             }
@@ -113,6 +115,7 @@ export default function EditSeats({ showing, seats, booking }: Props) {
                             router.delete(
                                 route("main.bookings.destroy", {
                                     booking: booking.id,
+                                    token: token,
                                 }),
                                 {
                                     onError: (error) => {
@@ -136,6 +139,7 @@ export default function EditSeats({ showing, seats, booking }: Props) {
                             router.patch(
                                 route("main.bookings.update_seats", {
                                     booking: booking.id,
+                                    token: token,
                                 }),
                                 {
                                     seats: selectedSeats,

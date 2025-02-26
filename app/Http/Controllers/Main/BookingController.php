@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
+use Str;
 
 use function Spatie\LaravelPdf\Support\pdf;
 
@@ -32,11 +33,6 @@ class BookingController extends Controller {
         $bookings = Booking::with(['showing.movie', 'seats.hall'])->where('user_id', '=', $user->id)->latest('updated_at')->paginate($perPage);
 
         $isNextPageExists = $bookings->currentPage() < $bookings->lastPage();
-
-        foreach ($bookings as $key => $booking) {
-            $encryptedToken = Crypt::encryptString(json_encode(['id' => $booking->id]));
-            $booking['token'] = urlencode($encryptedToken);
-        }
 
         return Inertia::render("Main/Booking/Index", ['bookings' => Inertia::merge($bookings->items()), 'page' => $page,
             'isNextPageExists' => $isNextPageExists]);
@@ -76,7 +72,8 @@ class BookingController extends Controller {
                 'num_people' => $numPeople,
                 'price' => $numPeople * 31.5,
                 'status' => BookingStatus::RESERVED->value,
-                'user_id' => $user ? $user->id : null
+                'user_id' => $user ? $user->id : null,
+                'token' => Str::random(32)
             ]
             );
             $booking->seats()->sync($request->input('seats'));
@@ -85,26 +82,25 @@ class BookingController extends Controller {
                 'create' => 'Nie udało się dodać rezerwacji'
             ]);
         }
-        return redirect(route('main.bookings.edit', ['booking' => $booking->id]));
+        return redirect(route('main.bookings.edit', ['booking' => $booking->id, 'token' => $booking->token]));
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Booking $booking) {
-        //
-    }
+    public function editSeats(Booking $booking, Request $request) {
+        if ($request->input('token') != $booking->token)
+            abort(403, 'Nieprawidłowy token');
 
-    public function editSeats(Booking $booking) {
         if ($booking->status != BookingStatus::RESERVED->value)
             return redirect(route('main.showings.index'));
 
         return Inertia::render("Main/Booking/EditSeats", ['showing' => $booking->showing->load(['hall.seats' => function ($query) {
             $query->orderBy('row')->orderBy('column');
-        }, 'bookings.seats', 'movie']), 'seats' => $booking->seats->pluck('id'), 'booking' => $booking]);
+        }, 'bookings.seats', 'movie']), 'seats' => $booking->seats->pluck('id'), 'booking' => $booking, 'token' => $booking->token]);
     }
 
     public function updateSeats(Booking $booking, UpdateBookingSeatsRequest $request) {
+        if ($request->input('token') != $booking->token)
+            abort(403, 'Nieprawidłowy token');
+
         try {
             if ($booking->status != BookingStatus::RESERVED->value)
                 return redirect(route('main.showings.index'));
@@ -126,23 +122,29 @@ class BookingController extends Controller {
                 'messageType' => 'error',
             ]);
         }
-        return redirect(route('main.bookings.edit', ['booking' => $booking->id]));
+        return redirect(route('main.bookings.edit', ['booking' => $booking->id, 'token' => $booking->token]));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Booking $booking) {
+    public function edit(Booking $booking, Request $request) {
+        if ($request->input('token') != $booking->token)
+            abort(403, 'Nieprawidłowy token');
+
         if ($booking->status != BookingStatus::RESERVED->value)
             return redirect(route('main.showings.index'));
 
-        return Inertia::render("Main/Booking/Edit", ['booking' => $booking->load(['showing', 'showing.movie', 'seats', 'showing.hall'])]);
+        return Inertia::render("Main/Booking/Edit", ['booking' => $booking->load(['showing', 'showing.movie', 'seats', 'showing.hall']), 'token' => $booking->token]);
     }
 
     /**
      * Update the specified resource in storage.
      */
     public function update(UpdateBookingRequest $request, Booking $booking, PaynowService $paynowService) {
+        if ($request->input('token') != $booking->token)
+            abort(403, 'Nieprawidłowy token');
+
         $type = $request->input('_type');
         try {
             if ($type != 'fillData' || $booking->status != BookingStatus::RESERVED->value)
@@ -152,9 +154,8 @@ class BookingController extends Controller {
                 ...$request->validated(),
                 'status' => BookingStatus::FILLED->value
             ]);
-            $encryptedToken = Crypt::encryptString(json_encode(['id' => $booking->id]));
 
-            $redirectUrl = $paynowService->makePayment($booking, $encryptedToken);
+            $redirectUrl = $paynowService->makePayment($booking, $booking->token);
 
             if (!$redirectUrl)
                 throw new Exception("Wystąpił błąd w czasie płatności");
@@ -172,30 +173,24 @@ class BookingController extends Controller {
     }
 
     public function handlePaymentResponse(Booking $booking, Request $request, PaynowService $paynowService) {
-        try {
-            $decrypted = json_decode(Crypt::decryptString($request->input('token')), true);
-            if ($decrypted['id'] != $booking->id) {
-                abort(403, 'Nieprawidłowy token');
-            }
-        } catch (Exception $e) {
+        if ($request->input('token') != $booking->token)
             abort(403, 'Nieprawidłowy token');
-        }
+
         $paymentId = $request->paymentId;
         $paymentStatus = $paynowService->getStatus($paymentId)->getStatus();
         $booking->update(['payment_id' => $paymentId]);
-        $encryptedToken = Crypt::encryptString(json_encode(['id' => $booking->id]));
 
         if ($paymentStatus == 'CONFIRMED') {
             $booking->update(['status' => BookingStatus::PAID->value]);
             Mail::to($booking->email)->queue(new BookingConfirmation($booking));
 
-            return redirect(route('main.bookings.confirmation', ['booking' => $booking, 'token' => urlencode($encryptedToken)]));
+            return redirect(route('main.bookings.confirmation', ['booking' => $booking, 'token' => urlencode($booking->token)]));
         }
 
         if ($paymentStatus == 'PENDING') {
             return Inertia::render("Main/Booking/Pending", [
                 'booking' => $booking,
-                'token' => urlencode($encryptedToken)
+                'token' => urlencode($booking->token)
             ]);
         }
 
@@ -203,28 +198,20 @@ class BookingController extends Controller {
 
             return Inertia::render("Main/Booking/Error", [
                 'booking' => $booking,
-                'token' => urlencode($encryptedToken)
+                'token' => urlencode($booking->token)
             ]);
         }
     }
 
     public function retryPayment(Booking $booking, Request $request, PaynowService $paynowService) {
-        try {
-            $decrypted = json_decode(Crypt::decryptString($request->input('token')), true);
-            if ($decrypted['id'] != $booking->id) {
-                abort(403, 'Nieprawidłowy token');
-            }
-        } catch (Exception $e) {
+        if ($request->input('token') != $booking->token)
             abort(403, 'Nieprawidłowy token');
-        }
 
         try {
             if ($booking->status != BookingStatus::FILLED->value)
                 return redirect(route('main.showings.index'));
 
-            $encryptedToken = Crypt::encryptString(json_encode(['id' => $booking->id]));
-
-            $redirectUrl = $paynowService->makePayment($booking, $encryptedToken);
+            $redirectUrl = $paynowService->makePayment($booking, $booking->token);
 
             if (!$redirectUrl)
                 throw new Exception("Wystąpił błąd w czasie płatności");
@@ -242,31 +229,19 @@ class BookingController extends Controller {
     }
 
     public function showConfirmation(Request $request, Booking $booking) {
-        try {
-            $decrypted = json_decode(Crypt::decryptString($request->input('token')), true);
-            if ($decrypted['id'] != $booking->id) {
-                abort(403, 'Nieprawidłowy token');
-            }
-        } catch (Exception $e) {
+        if ($request->input('token') != $booking->token)
             abort(403, 'Nieprawidłowy token');
-        }
-        $encryptedToken = Crypt::encryptString(json_encode(['id' => $booking->id]));
 
         return Inertia::render("Main/Booking/Confirmation", [
             'booking' => $booking,
-            'token' => urlencode($encryptedToken)
+            'token' => urlencode($booking->token)
         ]);
     }
 
     public function downloadTickets(Request $request, Booking $booking) {
-        try {
-            $decrypted = json_decode(Crypt::decryptString($request->input('token')), true);
-            if ($decrypted['id'] != $booking->id) {
-                abort(403, 'Nieprawidłowy token');
-            }
-        } catch (Exception $e) {
+        if ($request->input('token') != $booking->token)
             abort(403, 'Nieprawidłowy token');
-        }
+
         if ($booking->status != BookingStatus::PAID->value)
             return redirect(route('main.showings.index'));
 
@@ -277,6 +252,9 @@ class BookingController extends Controller {
      * Remove the specified resource from storage.
      */
     public function destroy(Request $request, Booking $booking) {
+        if ($request->input('token') != $booking->token)
+            abort(403, 'Nieprawidłowy token');
+
         try {
             $type = $request->input('type');
             if ($type == 'timeRunOut' && $booking->status == BookingStatus::PAID->value) {

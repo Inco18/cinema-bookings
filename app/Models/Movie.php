@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $genre_id
@@ -45,7 +45,14 @@ class Movie extends Model {
     use HasFactory;
 
     protected $fillable = [
-        'title', 'director', 'duration_seconds', 'description', 'poster_image', 'release_date', 'age_rating', 'genre_id'
+        'title',
+        'director',
+        'duration_seconds',
+        'description',
+        'poster_image',
+        'release_date',
+        'age_rating',
+        'genre_id'
     ];
 
     public function genre(): BelongsTo {

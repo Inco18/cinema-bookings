@@ -15,6 +15,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property int|null $user_id
  * @property int $num_people
  * @property string $price
+ * @property string|null $first_name
+ * @property string|null $last_name
+ * @property string|null $email
+ * @property string $status
+ * @property string|null $payment_id
+ * @property string $token
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Seat> $seats
@@ -26,19 +32,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Booking newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Booking query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Booking whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Booking whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Booking whereNumPeople($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Booking wherePrice($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Booking whereShowingId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Booking whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Booking whereUserId($value)
- * @property string $first_name
- * @property string $last_name
- * @property string $email
- * @property string $payment_id
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Booking whereEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Booking whereFirstName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Booking whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Booking whereLastName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Booking whereNumPeople($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Booking wherePaymentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Booking wherePrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Booking whereShowingId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Booking whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Booking whereToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Booking whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Booking whereUserId($value)
  * @mixin \Eloquent
  */
 class Booking extends Model {
@@ -46,7 +51,16 @@ class Booking extends Model {
     use HasFactory;
 
     protected $fillable = [
-        'showing_id', 'user_id', 'num_people', 'price', 'first_name', 'last_name', 'email', 'status', 'payment_id'
+        'showing_id',
+        'user_id',
+        'num_people',
+        'price',
+        'first_name',
+        'last_name',
+        'email',
+        'status',
+        'payment_id',
+        'token'
     ];
 
     public function showing(): BelongsTo {

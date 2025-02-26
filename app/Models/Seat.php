@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $hall_id
@@ -40,7 +40,11 @@ class Seat extends Model {
     use HasFactory;
 
     protected $fillable = [
-        'hall_id', 'type', 'row', 'column', 'number'
+        'hall_id',
+        'type',
+        'row',
+        'column',
+        'number'
     ];
 
     public function hall(): BelongsTo {

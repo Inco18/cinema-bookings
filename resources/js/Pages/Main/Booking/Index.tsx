@@ -20,7 +20,7 @@ import React from "react";
 import { toast } from "react-toastify";
 
 type Props = {
-    bookings: (Booking & { token: string })[];
+    bookings: Booking[];
     page: number;
     isNextPageExists: boolean;
 };
@@ -84,7 +84,6 @@ function getBookingBadge(booking: Booking): JSX.Element {
 }
 
 const Index = ({ bookings, page, isNextPageExists }: Props) => {
-    console.log(bookings);
     return (
         <MainLayout>
             <Head title="Twoje rezerwacje" />
@@ -284,6 +283,7 @@ const Index = ({ bookings, page, isNextPageExists }: Props) => {
                                                                 {
                                                                     booking:
                                                                         booking.id,
+                                                                    token: booking.token,
                                                                 }
                                                             ),
                                                             {

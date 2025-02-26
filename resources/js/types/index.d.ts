@@ -16,6 +16,7 @@ export interface Booking {
     last_name: string | null;
     email: string | null;
     status: BookingStatus;
+    token: string;
     created_at?: string;
     updated_at?: string;
     showing?: Showing;

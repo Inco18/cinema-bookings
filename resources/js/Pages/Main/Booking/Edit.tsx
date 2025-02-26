@@ -16,9 +16,10 @@ import { ZodIssue } from "zod";
 
 type Props = {
     booking: Booking;
+    token: string;
 };
 
-const EditBooking = ({ booking }: Props) => {
+const EditBooking = ({ booking, token }: Props) => {
     const [isUpdating, setIsUpdating] = useState(false);
     const [isCanceling, setIsCanceling] = useState(false);
     const [isGoingBack, setIsGoingBack] = useState(false);
@@ -35,6 +36,7 @@ const EditBooking = ({ booking }: Props) => {
                     route("main.bookings.destroy", {
                         booking: booking.id,
                         type: "timeRunOut",
+                        token: token,
                     })
                 );
             }
@@ -58,6 +60,7 @@ const EditBooking = ({ booking }: Props) => {
         last_name: booking?.last_name || "",
         email: booking?.email || "",
         _type: "fillData",
+        token: token,
     });
     const [didFail, setDidFail] = useState(false);
     const inputsRef = useRef<{
@@ -317,6 +320,7 @@ const EditBooking = ({ booking }: Props) => {
                             router.delete(
                                 route("main.bookings.destroy", {
                                     booking: booking.id,
+                                    token: token,
                                 }),
                                 {
                                     onError: (error) => {
@@ -342,6 +346,7 @@ const EditBooking = ({ booking }: Props) => {
                             router.get(
                                 route("main.bookings.edit_seats", {
                                     booking: booking.id,
+                                    token: token,
                                 })
                             );
                         }}

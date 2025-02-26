@@ -12,7 +12,7 @@ class PaynowService {
     public function __construct() {
         $this->client = new Client(config('paynow.api_key'), config('paynow.signature_key'), Environment::SANDBOX);
     }
-    public function makePayment(Booking $booking, $encryptedToken) {
+    public function makePayment(Booking $booking, $token) {
         $orderReference = $booking->id;
         $idempotencyKey = uniqid($orderReference . '_');
 
@@ -27,7 +27,7 @@ class PaynowService {
                 'lastName' => $booking->last_name
             ],
             'continueUrl' => route('main.bookings.handle_payment_response', [
-                'booking' => $booking, 'token' => urlencode($encryptedToken)
+                'booking' => $booking, 'token' => urlencode($token)
             ])
         ];
 

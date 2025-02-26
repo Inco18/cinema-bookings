@@ -21,6 +21,7 @@ return new class extends Migration {
             $table->string('email')->nullable();
             $table->enum('status', BookingStatus::toArray());
             $table->string('payment_id')->nullable();
+            $table->string('token', 32);
             $table->timestamps();
         });
     }

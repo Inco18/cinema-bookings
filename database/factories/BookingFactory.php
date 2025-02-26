@@ -8,6 +8,7 @@ use App\Models\Seat;
 use App\Models\Showing;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Booking>
@@ -29,7 +30,8 @@ class BookingFactory extends Factory {
             'first_name' => fake()->firstName(),
             'last_name' => fake()->lastName(),
             'email' => fake()->email(),
-            'status' => BookingStatus::PAID
+            'status' => BookingStatus::PAID,
+            'token' => Str::random(32)
         ];
     }
 
