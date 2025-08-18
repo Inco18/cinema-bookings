@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Enums\BookingStatus;
+use App\Enums\TicketType;
 use App\Models\Booking;
 use App\Models\Seat;
 use App\Models\Showing;
@@ -13,15 +14,18 @@ use Str;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Booking>
  */
-class BookingFactory extends Factory {
+class BookingFactory extends Factory
+{
     /**
      * Define the model's default state.
      *
      * @return array<string, mixed>
      */
-    public function definition(): array {
+    public function definition(): array
+    {
         $showings = Showing::pluck('id')->toArray();
         $users = User::pluck('id')->toArray();
+
         return [
             'showing_id' => fake()->randomElement($showings),
             'user_id' => fake()->randomElement($users),
@@ -31,13 +35,14 @@ class BookingFactory extends Factory {
             'last_name' => fake()->lastName(),
             'email' => fake()->email(),
             'status' => BookingStatus::PAID,
-            'token' => Str::random(32)
+            'token' => Str::random(32),
         ];
     }
 
-    public function configure() {
+    public function configure()
+    {
         return $this->afterCreating(function (Booking $booking) {
-            $booking->seats()->attach(Seat::where('hall_id', '=', $booking->showing->hall_id)->inRandomOrder()->take(random_int(1, 5))->pluck('id'));
+            $booking->seats()->attach(Seat::where('hall_id', '=', $booking->showing->hall_id)->inRandomOrder()->take(random_int(1, 5))->pluck('id'), ['price' => $booking->price / $booking->num_people, 'type' => TicketType::NORMAL->value]);
         });
     }
 }

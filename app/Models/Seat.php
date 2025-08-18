@@ -51,6 +51,8 @@ class Seat extends Model {
         return $this->belongsTo(Hall::class);
     }
     public function bookings(): BelongsToMany {
-        return $this->belongsToMany(Booking::class);
+        return $this->belongsToMany(Booking::class, 'tickets', 'seat_id', 'booking_id')
+            ->withPivot('price', 'type')
+            ->withTimestamps();
     }
 }

@@ -71,6 +71,8 @@ class Booking extends Model {
     }
 
     public function seats(): BelongsToMany {
-        return $this->belongsToMany(Seat::class);
+        return $this->belongsToMany(Seat::class, 'tickets', 'booking_id', 'seat_id')
+            ->withPivot('price', 'type')
+            ->withTimestamps();
     }
 }
