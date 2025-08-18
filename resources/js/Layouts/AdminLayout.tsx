@@ -23,7 +23,7 @@ export default function Admin({
         <>
             <div className="min-h-screen bg-gray-100">
                 <nav className="border-b border-gray-100 bg-white">
-                    <div className="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8">
+                    <div className="mx-auto max-w-(--breakpoint-2xl) px-4 sm:px-6 lg:px-8">
                         <div className="flex h-16 justify-between">
                             <div className="flex">
                                 <div className="flex shrink-0 items-center">
@@ -295,7 +295,7 @@ export default function Admin({
 
                 {header && (
                     <header className="bg-white shadow">
-                        <div className="mx-auto max-w-screen-2xl px-4 py-3 sm:px-6 lg:px-8 flex items-center">
+                        <div className="mx-auto max-w-(--breakpoint-2xl) px-4 py-3 sm:px-6 lg:px-8 flex items-center">
                             {header}
                         </div>
                     </header>

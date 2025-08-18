@@ -67,7 +67,7 @@ export default function ShowingsIndex(props: Props) {
                                             day: format(day, "yyyy-MM-dd"),
                                         })}
                                         key={format(day, "yyyy-MM-dd")}
-                                        className={`h-16 aspect-square border-[1px] border-primary-foreground/50 rounded-md p-1 flex flex-col items-center justify-center hover:bg-primary-foreground hover:text-foreground cursor-pointer transition ${
+                                        className={`h-16 aspect-square border border-primary-foreground/50 rounded-md p-1 flex flex-col items-center justify-center hover:bg-primary-foreground hover:text-foreground cursor-pointer transition ${
                                             props.day ===
                                             format(day, "yyyy-MM-dd")
                                                 ? "bg-primary-foreground text-foreground"
@@ -99,7 +99,7 @@ export default function ShowingsIndex(props: Props) {
                                                 ? null
                                                 : "PL",
                                     })}
-                                    className={`border-[1px] border-primary-foreground/50 rounded-md py-1 px-3 transition hover:bg-primary-foreground hover:text-foreground ${
+                                    className={`border border-primary-foreground/50 rounded-md py-1 px-3 transition hover:bg-primary-foreground hover:text-foreground ${
                                         props.subtitles_lang === "PL"
                                             ? "bg-primary-foreground text-foreground"
                                             : ""
@@ -116,7 +116,7 @@ export default function ShowingsIndex(props: Props) {
                                                 ? null
                                                 : "PL",
                                     })}
-                                    className={`border-[1px] border-primary-foreground/50 rounded-md py-1 px-3 transition hover:bg-primary-foreground hover:text-foreground ${
+                                    className={`border border-primary-foreground/50 rounded-md py-1 px-3 transition hover:bg-primary-foreground hover:text-foreground ${
                                         props.dubbing_lang === "PL"
                                             ? "bg-primary-foreground text-foreground"
                                             : ""
@@ -133,7 +133,7 @@ export default function ShowingsIndex(props: Props) {
                                                 ? null
                                                 : "PL",
                                     })}
-                                    className={`border-[1px] border-primary-foreground/50 rounded-md py-1 px-3 transition hover:bg-primary-foreground hover:text-foreground ${
+                                    className={`border border-primary-foreground/50 rounded-md py-1 px-3 transition hover:bg-primary-foreground hover:text-foreground ${
                                         props.speech_lang === "PL"
                                             ? "bg-primary-foreground text-foreground"
                                             : ""

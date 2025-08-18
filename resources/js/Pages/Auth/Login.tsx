@@ -85,7 +85,7 @@ export default function Login({
                             setData("remember", !!checked);
                         }}
                     />
-                    <Label htmlFor="remember">Zapamiętaj mnie</Label>
+                    <Label htmlFor="remember" className="text-gray-700">Zapamiętaj mnie</Label>
                 </div>
 
                 <div className="mt-4 flex items-center justify-end">

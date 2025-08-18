@@ -10,7 +10,7 @@
     @foreach ($booking->seats as $seat)
         <div
             class="h-72 flex justify-between items-center border-b-2 border-dashed border-black break-inside-avoid-page">
-            <div class="h-full w-full flex flex-col items-start justify-start -mr-[4.5rem]">
+            <div class="h-full w-full flex flex-col items-start justify-start -mr-18">
                 <img src="{{ asset('/ticket.svg') }}" class="h-12" />
                 <div class="flex flex-col w-full items-center">
                     <h1 class="text-2xl font-bold">{{ $booking->showing->movie->title }}
@@ -47,7 +47,7 @@
                 </div>
             </div>
             <img src="data:image/png;base64, {{ DNS1D::getBarcodePNG($booking->id, 'C39+', 2, 50, [0, 0, 0]) }}"
-                alt="barcode" class="-rotate-90 translate-x-[4.5rem]" />
+                alt="barcode" class="-rotate-90 translate-x-18" />
         </div>
     @endforeach
 

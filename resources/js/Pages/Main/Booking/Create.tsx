@@ -103,7 +103,7 @@ export default function CreateBooking({ showing }: Props) {
                         }}
                     >
                         {isCreating && (
-                            <LoaderCircle className="!h-5 !w-5 animate-spin" />
+                            <LoaderCircle className="h-5! w-5! animate-spin" />
                         )}
                         Dalej
                         <MoveRight />

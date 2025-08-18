@@ -331,7 +331,7 @@ const EditBooking = ({ booking, token }: Props) => {
                         }}
                     >
                         {isCanceling && (
-                            <LoaderCircle className="!h-5 !w-5 animate-spin" />
+                            <LoaderCircle className="h-5! w-5! animate-spin" />
                         )}
                         Anuluj
                     </Button>
@@ -352,7 +352,7 @@ const EditBooking = ({ booking, token }: Props) => {
                     >
                         <MoveLeft /> Wróć
                         {isGoingBack && (
-                            <LoaderCircle className="!h-5 !w-5 animate-spin" />
+                            <LoaderCircle className="h-5! w-5! animate-spin" />
                         )}
                     </Button>
                     <Button
@@ -362,7 +362,7 @@ const EditBooking = ({ booking, token }: Props) => {
                         disabled={isUpdating}
                     >
                         {isUpdating && (
-                            <LoaderCircle className="!h-5 !w-5 animate-spin" />
+                            <LoaderCircle className="h-5! w-5! animate-spin" />
                         )}
                         Potwierdź
                     </Button>

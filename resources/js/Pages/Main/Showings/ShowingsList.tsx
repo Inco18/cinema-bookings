@@ -51,7 +51,7 @@ const ShowingsList = ({ showings }: Props) => {
                                 {movie?.description}
                             </p>
                             <Separator className="my-3" />
-                            <div className="gap-2 max-w-full grid grid-cols-[repeat(auto-fill,_minmax(160px,_1fr))]">
+                            <div className="gap-2 max-w-full grid grid-cols-[repeat(auto-fill,minmax(160px,1fr))]">
                                 {showingArr.map((showing) => (
                                     <Link
                                         href={route("main.bookings.create", {
@@ -59,7 +59,7 @@ const ShowingsList = ({ showings }: Props) => {
                                         })}
                                         key={showing.id}
                                         className={cn(
-                                            "h-24 w-full border-[1px] border-foreground/20 rounded-md py-1 px-2 flex flex-col hover:bg-indigo-700 hover:text-primary-foreground cursor-pointer transition",
+                                            "h-24 w-full border border-foreground/20 rounded-md py-1 px-2 flex flex-col hover:bg-indigo-700 hover:text-primary-foreground cursor-pointer transition",
                                             {
                                                 "pointer-events-none opacity-50":
                                                     isPast(showing.end_time),

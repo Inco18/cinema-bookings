@@ -127,7 +127,7 @@ export default function EditSeats({ showing, seats, booking, token }: Props) {
                         }}
                     >
                         {isCanceling && (
-                            <LoaderCircle className="!h-5 !w-5 animate-spin" />
+                            <LoaderCircle className="h-5! w-5! animate-spin" />
                         )}
                         Anuluj
                     </Button>
@@ -156,7 +156,7 @@ export default function EditSeats({ showing, seats, booking, token }: Props) {
                         }}
                     >
                         {isUpdating && (
-                            <LoaderCircle className="!h-5 !w-5 animate-spin" />
+                            <LoaderCircle className="h-5! w-5! animate-spin" />
                         )}
                         Dalej
                         <MoveRight />

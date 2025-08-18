@@ -79,7 +79,7 @@ const Filters = ({
 
     return (
         <>
-            <div className="flex items-center ml-8 min-w-80 max-w-[45rem] gap-1">
+            <div className="flex items-center ml-8 min-w-80 max-w-180 gap-1">
                 <div className="relative">
                     <FloatingInput
                         id="movie"

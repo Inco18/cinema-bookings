@@ -101,7 +101,7 @@ const DataTable = <TData, TValue>({
     }
 
     return (
-        <div className="rounded-md border max-w-screen-2xl mt-2 m-auto bg-white">
+        <div className="rounded-md border max-w-(--breakpoint-2xl) mt-2 m-auto bg-white">
             <Table>
                 <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (
