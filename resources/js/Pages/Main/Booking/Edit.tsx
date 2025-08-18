@@ -84,8 +84,7 @@ const EditBooking = ({ booking, token }: Props) => {
             if (zodErrors[key as keyof typeof zodErrors]) {
                 setError(
                     key as keyof typeof zodErrors,
-                    //@ts-ignore
-                    zodErrors[key as keyof typeof zodErrors][0].message
+                    zodErrors[key as keyof typeof zodErrors]![0].message
                 );
             } else {
                 clearErrors(key as keyof typeof zodErrors);

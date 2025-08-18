@@ -85,6 +85,7 @@ class BookingController extends Controller {
         return redirect(route('main.bookings.edit', ['booking' => $booking->id, 'token' => $booking->token]));
     }
 
+
     public function editSeats(Booking $booking, Request $request) {
         if ($request->input('token') != $booking->token)
             abort(403, 'Nieprawidłowy token');

@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->string('director');
             $table->integer('duration_seconds');
             $table->text('description');
-            $table->string('poster_image');
+            $table->string('poster_image')->nullable();
             $table->date('release_date');
             $table->tinyInteger('age_rating');
             $table->timestamps();
