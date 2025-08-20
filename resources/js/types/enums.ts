@@ -43,3 +43,8 @@ export enum BookingStatus {
     FILLED = "wypełniony",
     PAID = "opłacony",
 }
+
+export enum TicketType {
+    NORMAL = "normal",
+    REDUCED = "reduced",
+}

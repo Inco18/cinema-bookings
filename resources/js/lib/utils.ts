@@ -27,3 +27,19 @@ export function formatTime(time: number) {
         ("" + Math.abs(seconds)).padStart(2, "0")
     );
 }
+
+export function formatPrice(price: number | string) {
+  if (price === 0 || price === null || price === undefined || price === '') {
+    return '0,00 zł';
+  }
+  if (typeof price === 'string') {
+    price = Number(price.replace(',', '.'));
+  }
+  const formattedPrice = price.toLocaleString('pl-PL', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+    currency: 'PLN',
+    style: 'currency',
+  });
+  return formattedPrice;
+}

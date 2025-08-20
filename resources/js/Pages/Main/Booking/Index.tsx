@@ -16,7 +16,6 @@ import { Head, router, WhenVisible } from "@inertiajs/react";
 import { format, isPast } from "date-fns";
 import { pl } from "date-fns/locale";
 import { Download, LoaderCircle } from "lucide-react";
-import React from "react";
 import { toast } from "react-toastify";
 
 type Props = {
@@ -188,8 +187,7 @@ const Index = ({ bookings, page, isNextPageExists }: Props) => {
                                                                         Cena:{" "}
                                                                         <span className="font-semibold">
                                                                             {(
-                                                                                booking.price /
-                                                                                booking.num_people
+                                                                                +seat.pivot.price
                                                                             ).toFixed(
                                                                                 2
                                                                             )}

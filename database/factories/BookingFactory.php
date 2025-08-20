@@ -29,7 +29,6 @@ class BookingFactory extends Factory
         return [
             'showing_id' => fake()->randomElement($showings),
             'user_id' => fake()->randomElement($users),
-            'num_people' => fake()->numberBetween(1, 5),
             'price' => fake()->randomFloat(2, 10, 500),
             'first_name' => fake()->firstName(),
             'last_name' => fake()->lastName(),
@@ -41,8 +40,9 @@ class BookingFactory extends Factory
 
     public function configure()
     {
-        return $this->afterCreating(function (Booking $booking) {
-            $booking->seats()->attach(Seat::where('hall_id', '=', $booking->showing->hall_id)->inRandomOrder()->take(random_int(1, 5))->pluck('id'), ['price' => $booking->price / $booking->num_people, 'type' => TicketType::NORMAL->value]);
+        $rand = random_int(1, 5);
+        return $this->afterCreating(function (Booking $booking) use ($rand) {
+            $booking->seats()->attach(Seat::where('hall_id', '=', $booking->showing->hall_id)->inRandomOrder()->take($rand)->pluck('id'), ['price' => $booking->price / $rand, 'type' => TicketType::NORMAL->value]);
         });
     }
 }

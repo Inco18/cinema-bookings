@@ -3,22 +3,17 @@
 use App\Http\Controllers\Main\BookingController;
 use App\Http\Controllers\Main\ShowingsController;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
     return redirect(route('main.showings.index'));
-    // return Inertia::render('Welcome', [
-    //     'canLogin' => Route::has('login'),
-    //     'canRegister' => Route::has('register'),
-    //     'laravelVersion' => Application::VERSION,
-    //     'phpVersion' => PHP_VERSION,
-    // ]);
-})->name("index");
+})->name('index');
 
 Route::get('/showings', [ShowingsController::class, 'index'])->name('main.showings.index');
 Route::resource('/bookings', BookingController::class)->names('main.bookings');
+Route::get('/bookings/{booking}/chooseTickets', [BookingController::class, 'showChooseTickets'])->name('main.bookings.chooseTickets');
+Route::patch('/bookings/{booking}/updateTickets', [BookingController::class, 'updateTickets'])->name('main.bookings.updateTickets');
 Route::get('/bookings/{booking}/confirmation', [BookingController::class, 'showConfirmation'])->name('main.bookings.confirmation');
 Route::get('/bookings/{booking}/tickets', [BookingController::class, 'downloadTickets'])->name('main.bookings.tickets');
 Route::get('/bookings/{booking}/edit_seats', [BookingController::class, 'editSeats'])->name('main.bookings.edit_seats');
@@ -36,5 +31,5 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__ . '/auth.php';
-require __DIR__ . '/admin.php';
+require __DIR__.'/auth.php';
+require __DIR__.'/admin.php';

@@ -4,6 +4,7 @@ import {
     RoleType,
     SeatType,
     ShowingType,
+    TicketType,
 } from "./enums";
 
 export interface Booking {
@@ -21,7 +22,14 @@ export interface Booking {
     updated_at?: string;
     showing?: Showing;
     user?: User;
-    seats?: Seat[];
+    seats?: (Seat & {
+        pivot: {
+            booking_id: number;
+            seat_id: number;
+            price: number;
+            type: TicketType;
+        };
+    })[];
 }
 
 export interface Genre {
@@ -65,7 +73,14 @@ export type Seat = {
     created_at?: string;
     updated_at?: string;
     hall?: Hall;
-    bookings?: Booking[];
+    bookings?: (Booking & {
+        pivot: {
+            booking_id: number;
+            seat_id: number;
+            price: number;
+            type: TicketType;
+        };
+    })[];
 };
 
 export type Showing = {

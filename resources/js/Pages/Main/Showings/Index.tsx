@@ -164,7 +164,7 @@ export default function ShowingsIndex(props: Props) {
                                 >
                                     <SelectTrigger
                                         id="genre_id"
-                                        className="text-foreground w-full md:w-48"
+                                        className="text-foreground bg-background !ring-background/50 w-full md:w-48"
                                     >
                                         <SelectValue placeholder="Wybierz gatunek" />
                                     </SelectTrigger>

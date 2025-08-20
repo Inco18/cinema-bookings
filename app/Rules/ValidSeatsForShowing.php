@@ -35,9 +35,9 @@ class ValidSeatsForShowing implements ValidationRule {
 
 
         $occupiedSeats = DB::table('bookings')
-            ->join('booking_seat', 'bookings.id', '=', 'booking_seat.booking_id')
+            ->join('tickets', 'bookings.id', '=', 'tickets.booking_id')
             ->where('bookings.showing_id', $this->showingId)
-            ->pluck('booking_seat.seat_id')
+            ->pluck('tickets.seat_id')
             ->toArray();
 
 
