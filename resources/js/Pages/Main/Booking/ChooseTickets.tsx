@@ -1,4 +1,5 @@
 import { Button } from "@/Components/ui/button";
+import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
 import { Separator } from "@/Components/ui/separator";
 import MainLayout from "@/Layouts/MainLayout";
@@ -45,10 +46,19 @@ const ChooseTickets = ({ booking, token, prices }: Props) => {
 
         return () => clearInterval(interval);
     });
+    const normalCount = booking.seats?.filter(
+        (seat) => seat.pivot.type === TicketType.NORMAL
+    ).length;
+    const reducedCount = booking.seats?.filter(
+        (seat) => seat.pivot.type === TicketType.REDUCED
+    ).length;
 
     const { data, setData, patch, errors } = useForm({
-        normal: numPeople,
-        reduced: 0,
+        normal:
+            normalCount === 0 && reducedCount === 0 ? numPeople : normalCount,
+        reduced: reducedCount || 0,
+        prices: prices,
+        token: token,
     });
 
     const submit: FormEventHandler = (e) => {
@@ -140,16 +150,16 @@ const ChooseTickets = ({ booking, token, prices }: Props) => {
                     </div>
                 </div>
             </div>
-            <h1 className="text-2xl mt-2 space-y-6 max-w-4xl mx-auto">
+            <h1 className="text-2xl mt-2 space-y-6 max-w-4xl mx-auto px-3 md:px-0">
                 Wybierz bilety
             </h1>
             <form
                 onSubmit={submit}
                 id="chooseTicketsForm"
-                className="mt-2 space-y-6 max-w-4xl bg-background p-2 sm:rounded-lg sm:p-4 border mx-auto"
+                className="mt-2 space-y-6 max-w-4xl bg-background p-2 sm:rounded-lg sm:p-4 border mx-auto mb-20"
             >
                 <div className="flex flex-col w-full gap-3">
-                    <div className="flex-1 flex justify-between items-center bg-secondary p-2 rounded-lg">
+                    <div className="flex-1 flex flex-col md:flex-row justify-between md:items-center gap-3 bg-secondary p-2 rounded-lg">
                         <Label htmlFor="normal">Normalny</Label>
                         <div className="flex items-center gap-5">
                             <p className="text-sm">
@@ -195,13 +205,16 @@ const ChooseTickets = ({ booking, token, prices }: Props) => {
                             </div>
                         </div>
                     </div>
-                    <div className="flex-1 flex justify-between items-center bg-secondary p-2 rounded-lg">
+                    <div className="flex-1 flex flex-col md:flex-row justify-between md:items-center gap-3 bg-secondary p-2 rounded-lg">
                         <Label
                             htmlFor="reduced"
                             className="flex flex-col items-start gap-0 justify-start"
                         >
                             Ulgowy
-                            <p className="text-foreground/60 text-xs">Dostępny dla dzieci, młodzieży, studentów i seniorów za okazaniem ważnej legitymacji.</p>
+                            <p className="text-foreground/60 text-xs">
+                                Dostępny dla dzieci, młodzieży, studentów i
+                                seniorów za okazaniem ważnej legitymacji.
+                            </p>
                         </Label>
                         <div className="flex items-center gap-5">
                             <p className="text-sm">
@@ -248,15 +261,22 @@ const ChooseTickets = ({ booking, token, prices }: Props) => {
                         </div>
                     </div>
                 </div>
-                <p className="text-xl text-right">
-                    Łączna cena:{" "}
-                    <span className="font-semibold">
-                        {formatPrice(
-                            prices.normal * data.normal +
-                                prices.reduced * data.reduced
-                        )}
-                    </span>
-                </p>
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                    <Input
+                        name="discount_code"
+                        placeholder="Kod rabatowy"
+                        className="md:max-w-52"
+                    />
+                    <p className="text-xl text-right">
+                        Łączna cena:{" "}
+                        <span className="font-semibold">
+                            {formatPrice(
+                                prices.normal * data.normal +
+                                    prices.reduced * data.reduced
+                            )}
+                        </span>
+                    </p>
+                </div>
             </form>
             <div className="fixed bottom-0 w-full bg-background">
                 <div className="mx-auto max-w-7xl px-6 lg:px-8 py-4 w-full flex justify-between">
@@ -307,7 +327,7 @@ const ChooseTickets = ({ booking, token, prices }: Props) => {
                     </Button>
                     <Button
                         size={"lg"}
-                        form="editBookingForm"
+                        form="chooseTicketsForm"
                         type="submit"
                         disabled={isUpdating}
                     >

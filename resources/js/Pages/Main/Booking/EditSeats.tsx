@@ -54,7 +54,7 @@ export default function EditSeats({ showing, seats, booking, token }: Props) {
                     {formatTime(remainingTimeSeconds)}
                 </span>
             </div>
-            <div className="py-3">
+            <div className="py-3 mb-16">
                 <div className="mx-auto max-w-7xl lg:px-8">
                     <div className="bg-indigo-700 text-primary-foreground shadow-sm lg:rounded-lg py-6 px-6 lg:px-12">
                         <div className="flex flex-col md:flex-row md:justify-between items-end md:items-center gap-2">
@@ -104,7 +104,7 @@ export default function EditSeats({ showing, seats, booking, token }: Props) {
                     />
                 </div>
             </div>
-            <div className="sticky bottom-0 w-full bg-background">
+            <div className="fixed bottom-0 w-full bg-background">
                 <div className="mx-auto max-w-7xl px-6 lg:px-8 py-4 w-full flex justify-between">
                     <Button
                         size={"lg"}

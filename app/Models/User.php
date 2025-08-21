@@ -10,7 +10,7 @@ use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property string $first_name
@@ -62,6 +62,7 @@ class User extends Authenticatable {
         'last_name',
         'email',
         'password',
+        'points_number'
     ];
 
     /**
@@ -88,5 +89,9 @@ class User extends Authenticatable {
 
     public function bookings(): HasMany {
         return $this->hasMany(Booking::class);
+    }
+
+    public function pointsHistory(): HasMany {
+        return $this->hasMany(PointsHistory::class);
     }
 }

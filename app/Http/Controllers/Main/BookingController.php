@@ -8,8 +8,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Main\StoreBookingRequest;
 use App\Http\Requests\Main\UpdateBookingRequest;
 use App\Http\Requests\Main\UpdateBookingSeatsRequest;
+use App\Http\Requests\Main\UpdateTicketsRequest;
 use App\Mail\BookingConfirmation;
 use App\Models\Booking;
+use App\Models\Price;
 use App\Models\Showing;
 use App\Services\PaynowService;
 use Carbon\Carbon;
@@ -114,14 +116,11 @@ class BookingController extends Controller
                 return redirect(route('main.showings.index'));
             }
 
-            $numPeople = count($request->input('seats'));
-
             $booking->update([
-                'num_people' => $numPeople,
-                'price' => $numPeople * 31.5,
+                'price' => 0,
             ]);
 
-            $booking->seats()->sync($request->input('seats'));
+            $booking->seats()->syncWithPivotValues($request->input('seats'), ['price' => 0, 'type' => TicketType::NORMAL->value]);
         } catch (Exception $e) {
             $booking->seats()->detach();
             $booking->delete();
@@ -145,19 +144,56 @@ class BookingController extends Controller
             return redirect(route('main.showings.index'));
         }
 
+        $dynamicPrices = $this->calculateDynamicPrices($booking->showing);
+
         return Inertia::render('Main/Booking/ChooseTickets', [
             'booking' => $booking->load(['showing', 'showing.movie', 'seats', 'showing.hall']),
             'token' => $booking->token,
-            'prices' => [ //TODO: get from db
-                'normal' => 31.5,
-                'reduced' => 25.0,
-            ]
+            'prices' => $dynamicPrices,
         ]);
     }
 
-    public function updateTickets(Booking $booking, Request $request) {
+    public function updateTickets(Booking $booking, UpdateTicketsRequest $request)
+    {
         if ($request->input('token') != $booking->token) {
             abort(403, 'Nieprawidłowy token');
+        }
+        $validated = $request->validated();
+        $booking->load(['showing', 'showing.movie', 'seats', 'showing.hall']);
+        $prices = $request->input('prices', [
+            'normal' => 31.5,
+            'reduced' => 25.0,
+        ]);
+
+        if ($booking->seats->count() != $validated['normal'] + $validated['reduced']) {
+            return back()->withErrors([
+                'tickets' => 'Liczba biletów nie zgadza się z liczbą wybranych miejsc',
+            ]);
+        }
+
+        try {
+            if ($booking->status != BookingStatus::RESERVED->value) {
+                return redirect(route('main.showings.index'));
+            }
+
+            foreach ($booking->seats as $seat) {
+                if ($validated['normal'] > 0) {
+                    $seat->pivot->update(['type' => TicketType::NORMAL->value, 'price' => $prices['normal']]);
+                    $validated['normal']--;
+                } else {
+                    $seat->pivot->update(['type' => TicketType::REDUCED->value, 'price' => $prices['reduced']]);
+                    $validated['reduced']--;
+                }
+            }
+            $booking->update(['price' => $booking->seats->sum('pivot.price')]);
+        } catch (Exception $e) {
+            $booking->seats()->detach();
+            $booking->delete();
+
+            return redirect(route('main.showings.index'))->with([
+                'message' => 'Wystąpił błąd, rezerwacja została anulowana',
+                'messageType' => 'error',
+            ]);
         }
 
         return redirect(route('main.bookings.edit', ['booking' => $booking->id, 'token' => $booking->token]));
@@ -341,5 +377,37 @@ class BookingController extends Controller
                 'delete' => 'Nie udało się usunąć wybranej rezerwacji',
             ]);
         }
+    }
+
+    public function calculateDynamicPrices(Showing $showing)
+    {
+        $prices = [];
+        $priceModels = Price::all()->keyBy('ticket_type');
+        $seatsCount = $showing->hall->seats()->count();
+        $bookedSeats = $showing->bookings()->withCount('seats')->get()->sum('seats_count');
+        $occupancy = $seatsCount > 0 ? $bookedSeats / $seatsCount : 0;
+
+        foreach ($priceModels as $ticketType => $price) {
+            // Domyślnie base_price
+            $finalPrice = $price->base_price;
+
+            // Jeśli obłożenie > 70% lub seans za < 24h, podnieś cenę do max 10% powyżej base_price, ale nie więcej niż max_price
+            $soon = (strtotime($showing->start_time) - time()) < 60 * 60 * 24;
+            if ($occupancy > 0.7 || $soon) {
+                $dynamic = $price->base_price * 1.1;
+                $finalPrice = min($dynamic, $price->max_price);
+            }
+
+            // Jeśli obłożenie < 20%, obniż cenę do min 10% poniżej base_price, ale nie mniej niż min_price
+            if ($occupancy < 0.2) {
+                $dynamic = $price->base_price * 0.9;
+                $finalPrice = max($dynamic, $price->min_price);
+            }
+
+            // Zaokrąglij do dwóch miejsc
+            $prices[$ticketType] = round($finalPrice, 2);
+        }
+
+        return $prices;
     }
 }

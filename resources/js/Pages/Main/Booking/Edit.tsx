@@ -3,7 +3,7 @@ import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
 import { Separator } from "@/Components/ui/separator";
 import MainLayout from "@/Layouts/MainLayout";
-import { formatTime } from "@/lib/utils";
+import { formatPrice, formatTime } from "@/lib/utils";
 import { MainBookingRequest } from "@/schema";
 import { Booking } from "@/types";
 import { Head, router, useForm } from "@inertiajs/react";
@@ -186,13 +186,23 @@ const EditBooking = ({ booking, token }: Props) => {
                                 </span>
                             ))}
                         </div>
+                        <Separator className="opacity-50 my-2" />
+                        <div className="flex flex-row md:items-center md:text-md gap-1">
+                            Łączna cena:
+                            <span className="font-semibold">
+                                {formatPrice(booking.price)}
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
+            <h1 className="text-2xl mt-2 space-y-6 max-w-xl mx-auto px-3 md:px-0">
+                Podaj dane kupującego
+            </h1>
             <form
                 onSubmit={submit}
                 id="editBookingForm"
-                className="mt-2 space-y-6 max-w-xl bg-background p-4 sm:rounded-lg sm:p-8 border mx-auto"
+                className="mt-2 space-y-6 sm:max-w-xl bg-background p-4 sm:rounded-lg sm:p-8 border mx-auto"
             >
                 <div className="flex items-start w-full gap-5">
                     <div className="flex-1">
@@ -286,27 +296,6 @@ const EditBooking = ({ booking, token }: Props) => {
                         </p>
                     )}
                 </div>
-                <div className="flex items-start w-full gap-5">
-                    <div className="flex-1">
-                        <Label htmlFor="num_people">Liczba osób</Label>
-                        <Input
-                            disabled
-                            type="number"
-                            id="num_people"
-                            value={booking.num_people}
-                        />
-                    </div>
-                    <div className="flex-1">
-                        <Label htmlFor="price">Cena</Label>
-                        <Input
-                            disabled
-                            type="number"
-                            step={0.01}
-                            id="price"
-                            value={booking.price}
-                        />
-                    </div>
-                </div>
             </form>
             <div className="fixed bottom-0 w-full bg-background">
                 <div className="mx-auto max-w-7xl px-6 lg:px-8 py-4 w-full flex justify-between">
@@ -343,7 +332,7 @@ const EditBooking = ({ booking, token }: Props) => {
                         onClick={() => {
                             setIsGoingBack(true);
                             router.get(
-                                route("main.bookings.edit_seats", {
+                                route("main.bookings.chooseTickets", {
                                     booking: booking.id,
                                     token: token,
                                 })
@@ -364,7 +353,7 @@ const EditBooking = ({ booking, token }: Props) => {
                         {isUpdating && (
                             <LoaderCircle className="h-5! w-5! animate-spin" />
                         )}
-                        Potwierdź
+                        Potwierdź i zapłać
                     </Button>
                 </div>
             </div>

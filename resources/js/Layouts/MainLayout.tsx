@@ -23,7 +23,7 @@ export default function MainLayout({
 
     return (
         <>
-            <div className="min-h-screen bg-gray-100">
+            <div className="min-h-screen bg-gray-100 flex flex-col">
                 <nav className="bg-white z-50 sticky top-0">
                     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                         <div className="flex h-16 justify-between">
@@ -264,7 +264,7 @@ export default function MainLayout({
                         </div>
                     </header>
                 )}
-                <main>{children}</main>
+                <main className="flex-1">{children}</main>
             </div>
             <ToastContainer theme="colored" />
         </>
