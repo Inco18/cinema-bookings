@@ -7,13 +7,13 @@ import { format, isPast } from "date-fns";
 import React from "react";
 
 type Props = {
-    showings: { [key: string]: Showing[] };
+    showings: Showing[][];
 };
 
 const ShowingsList = ({ showings }: Props) => {
     return (
         <div className="flex flex-col gap-2 mt-5">
-            {Object.entries(showings).map(([movieId, showingArr]) => {
+            {showings.map((showingArr, idx) => {
                 const movie = showingArr[0].movie;
                 return (
                     <div
