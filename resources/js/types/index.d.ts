@@ -100,6 +100,15 @@ export type Showing = {
     bookings?: Booking[];
 };
 
+export type PriceCamelCase = {
+    id: number;
+    ticketType: TicketType;
+    basePrice: number;
+    minPrice: number;
+    maxPrice: number;
+    description?: string;
+}
+
 export interface User {
     id: number;
     first_name: string;

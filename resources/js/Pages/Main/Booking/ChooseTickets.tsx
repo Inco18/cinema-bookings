@@ -48,10 +48,10 @@ const ChooseTickets = ({ booking, token, prices }: Props) => {
     });
     const normalCount = booking.seats?.filter(
         (seat) => seat.pivot.type === TicketType.NORMAL
-    ).length;
+    ).length || 0;
     const reducedCount = booking.seats?.filter(
         (seat) => seat.pivot.type === TicketType.REDUCED
-    ).length;
+    ).length || 0;
 
     const { data, setData, patch, errors } = useForm({
         normal:

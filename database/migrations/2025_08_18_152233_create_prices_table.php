@@ -18,6 +18,7 @@ return new class extends Migration
             $table->decimal('base_price', 6, 2);
             $table->decimal('min_price', 6, 2);
             $table->decimal('max_price', 6, 2);
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }

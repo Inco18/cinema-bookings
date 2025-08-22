@@ -10,4 +10,12 @@ enum TicketType: string
 
     case NORMAL = 'normal';
     case REDUCED = 'reduced';
+
+    public function getLabel(): string
+    {
+        return match ($this) {
+            self::NORMAL => 'Normalny',
+            self::REDUCED => 'Ulgowy',
+        };
+    }
 }

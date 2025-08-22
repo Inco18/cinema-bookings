@@ -47,6 +47,18 @@ export default function MainLayout({
                                     >
                                         Repertuar
                                     </Link>
+                                    <Link
+                                        href={route("main.prices.index")}
+                                        className={`inline-flex items-center hover:text-indigo-700 transition ${
+                                            route().current(
+                                                "main.prices.index"
+                                            )
+                                                ? "text-indigo-700 font-semibold"
+                                                : ""
+                                        }`}
+                                    >
+                                        Cennik
+                                    </Link>
                                 </div>
                             </div>
 
@@ -193,6 +205,12 @@ export default function MainLayout({
                                 active={route().current("main.showings.index")}
                             >
                                 Repertuar
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink
+                                href={route("main.prices.index")}
+                                active={route().current("main.prices.index")}
+                            >
+                                Cennik
                             </ResponsiveNavLink>
                         </div>
 

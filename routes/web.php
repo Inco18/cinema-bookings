@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Main\BookingController;
+use App\Http\Controllers\Main\PricesController;
 use App\Http\Controllers\Main\ShowingsController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -11,6 +12,7 @@ Route::get('/', function () {
 })->name('index');
 
 Route::get('/showings', [ShowingsController::class, 'index'])->name('main.showings.index');
+Route::get('/prices', [PricesController::class, 'index'])->name('main.prices.index');
 Route::resource('/bookings', BookingController::class)->names('main.bookings');
 Route::get('/bookings/{booking}/chooseTickets', [BookingController::class, 'showChooseTickets'])->name('main.bookings.chooseTickets');
 Route::patch('/bookings/{booking}/updateTickets', [BookingController::class, 'updateTickets'])->name('main.bookings.updateTickets');
