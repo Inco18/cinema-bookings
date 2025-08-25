@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('points_history', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('booking_id')->nullable()->constrained()->onDelete('cascade');
             $table->integer('points_change');
             $table->string('description');
             $table->timestamps();

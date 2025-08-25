@@ -13,6 +13,7 @@ class PointsHistory extends Model
 
     protected $fillable = [
         'user_id',
+        'booking_id',
         'points_change',
         'description',
     ];
@@ -20,5 +21,10 @@ class PointsHistory extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function booking()
+    {
+        return $this->belongsTo(Booking::class);
     }
 }

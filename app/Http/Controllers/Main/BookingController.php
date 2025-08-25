@@ -32,6 +32,9 @@ class BookingController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
+        if (! $user) {
+            return redirect(route('main.showings.index'));
+        }
         $perPage = 10;
         $page = $request->query('page', 1);
         $bookings = Booking::with(['showing.movie', 'seats.hall'])->where('user_id', '=', $user->id)->latest('updated_at')->paginate($perPage);
@@ -266,8 +269,18 @@ class BookingController extends Controller
         if ($paymentStatus == 'CONFIRMED') {
             $booking->update(['status' => BookingStatus::PAID->value]);
             Mail::to($booking->email)->queue(new BookingConfirmation($booking));
+            $user = Auth::user();
+            if ($user) {
+                $pointsToAdd = floor($booking->price / 10);
+                $user->increment('points_number', $pointsToAdd);
+                $user->pointsHistory()->create([
+                    'points_change' => $pointsToAdd,
+                    'booking_id' => $booking->id,
+                    'description' => 'Punkty za rezerwację #'.$booking->id,
+                ]);
+            }
 
-            return redirect(route('main.bookings.confirmation', ['booking' => $booking, 'token' => urlencode($booking->token)]));
+            return redirect(route('main.bookings.confirmation', ['booking' => $booking, 'token' => urlencode($booking->token), 'points' => $pointsToAdd]));
         }
 
         if ($paymentStatus == 'PENDING') {

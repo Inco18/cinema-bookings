@@ -42,6 +42,14 @@ class BookingFactory extends Factory
     {
         $rand = random_int(1, 5);
         return $this->afterCreating(function (Booking $booking) use ($rand) {
+            if($booking->user_id) {
+                $booking->user->increment('points_number', floor($booking->price / 10));
+                $booking->user->pointsHistory()->create([
+                    'booking_id' => $booking->id,
+                    'points_change' => floor($booking->price / 10),
+                    'description' => 'Punkty za rezerwację #' . $booking->id,
+                ]);
+            }
             $booking->seats()->attach(Seat::where('hall_id', '=', $booking->showing->hall_id)->inRandomOrder()->take($rand)->pluck('id'), ['price' => $booking->price / $rand, 'type' => TicketType::NORMAL->value]);
         });
     }

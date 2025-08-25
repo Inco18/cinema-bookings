@@ -109,12 +109,23 @@ export type PriceCamelCase = {
     description?: string;
 }
 
+export type PointsHistory = {
+    id: number;
+    user_id: number;
+    booking_id?: number;
+    points_change: number;
+    description: string;
+    created_at: string;
+    updated_at: string;
+}
+
 export interface User {
     id: number;
     first_name: string;
     last_name: string;
     roles?: Role[];
     email: string;
+    points_number: number;
     email_verified_at?: string;
     created_at?: string;
     updated_at?: string;

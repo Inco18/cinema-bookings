@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Main\BookingController;
+use App\Http\Controllers\Main\LoyaltyProgramController;
+use App\Http\Controllers\Main\PointsController;
 use App\Http\Controllers\Main\PricesController;
 use App\Http\Controllers\Main\ShowingsController;
 use App\Http\Controllers\ProfileController;
@@ -31,6 +33,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/points', [LoyaltyProgramController::class, 'index'])->name('main.points.index');
 });
 
 require __DIR__.'/auth.php';
