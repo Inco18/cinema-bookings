@@ -48,3 +48,20 @@ export enum TicketType {
     NORMAL = "normal",
     REDUCED = "reduced",
 }
+
+export enum RewardType {
+    DISCOUNT = "discount",
+    FREE_ITEM = "free_item",
+    MERCH = "merch",
+}
+
+export enum RewardValueType {
+    PERCENT = "percent",
+    AMOUNT = "amount",
+    ITEM = "item",
+}
+
+export enum UserRewardStatus {
+    ACTIVE = "active",
+    USED = "used",
+}

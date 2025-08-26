@@ -27,4 +27,9 @@ class PointsHistory extends Model
     {
         return $this->belongsTo(Booking::class);
     }
+
+    public function userReward()
+    {
+        return $this->belongsTo(UserReward::class);
+    }
 }

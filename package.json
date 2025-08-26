@@ -44,6 +44,7 @@
         "cmdk": "^1.0.0",
         "date-fns": "^3.6.0",
         "lucide-react": "^0.454.0",
+        "motion": "^12.23.12",
         "puppeteer": "^23.11.1",
         "puppeteer-core": "^23.11.1",
         "radix-ui": "^1.4.3",

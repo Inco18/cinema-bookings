@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Main;
 
 use App\Http\Controllers\Controller;
+use App\Models\Reward;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -14,7 +15,8 @@ class LoyaltyProgramController extends Controller
     public function index(Request $request)
     {
         $points = $request->user()->pointsHistory()->latest()->get();
+        $rewards = Reward::all();
 
-        return Inertia::render('Main/LoyaltyProgram/Index', ['points' => $points]);
+        return Inertia::render('Main/LoyaltyProgram/Index', ['points' => $points, 'rewards' => $rewards]);
     }
 }

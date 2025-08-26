@@ -1,10 +1,13 @@
 import {
     BookingStatus,
     HallType,
+    RewardType,
+    RewardValueType,
     RoleType,
     SeatType,
     ShowingType,
     TicketType,
+    UserRewardStatus,
 } from "./enums";
 
 export interface Booking {
@@ -107,7 +110,7 @@ export type PriceCamelCase = {
     minPrice: number;
     maxPrice: number;
     description?: string;
-}
+};
 
 export type PointsHistory = {
     id: number;
@@ -117,7 +120,32 @@ export type PointsHistory = {
     description: string;
     created_at: string;
     updated_at: string;
-}
+};
+
+export type Reward = {
+    id: number;
+    name: string;
+    cost_points: number;
+    type: RewardType;
+    value: number;
+    value_type: RewardValueType;
+    details: string;
+    created_at: string;
+    updated_at: string;
+    userRewards?: UserReward[];
+};
+
+export type UserReward = {
+    id: number;
+    user_id: number;
+    reward_id: number;
+    status: UserRewardStatus;
+    created_at: string;
+    updated_at: string;
+    user?: User;
+    reward?: Reward;
+    pointsHistory?: PointsHistory;
+};
 
 export interface User {
     id: number;
