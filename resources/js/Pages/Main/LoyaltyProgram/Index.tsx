@@ -31,7 +31,7 @@ export default function LoyaltyProgramIndex({ points, rewards }: Props) {
 
                 <TabsContents>
                     <TabsContent value="points">
-                        <div className="flex mt-2 my-5 max-w-4xl mx-auto px-3 md:px-0 items-center gap-3">
+                        <div className="flex mt-2 my-5 px-3 md:px-0 items-center justify-between gap-3">
                             <h1 className="text-2xl m-0">Twoje punkty</h1>
                             <div
                                 className="bg-background rounded-full py-2 px-5 cursor-default flex gap-2 text-amber-600 items-center"
@@ -41,7 +41,7 @@ export default function LoyaltyProgramIndex({ points, rewards }: Props) {
                                 {user.points_number}
                             </div>
                         </div>
-                        <div className="mt-2 space-y-6 max-w-4xl bg-background p-2 sm:rounded-lg sm:p-4 border mx-auto mb-20">
+                        <div className="mt-2 space-y-6 bg-background p-2 sm:rounded-lg sm:p-4 border mb-20">
                             <div className="flex flex-col w-full gap-3">
                                 <div className="flex-1 flex flex-col md:flex-row md:items-center gap-3 bg-primary text-background p-2 rounded-lg">
                                     <div className="flex flex-col items-start gap-0 justify-start">
@@ -104,8 +104,8 @@ export default function LoyaltyProgramIndex({ points, rewards }: Props) {
                             </div>
                         </div>
                     </TabsContent>
-                    <TabsContent value="rewardsShop" className="space-y-6 p-6">
-                        <Rewards />
+                    <TabsContent value="rewardsShop" className="mb-5 overflow-y-auto">
+                        <Rewards rewards={rewards} userPoints={user.points_number}/>
                     </TabsContent>
                     <TabsContent value="rewards" className="space-y-6 p-6">
                         Test

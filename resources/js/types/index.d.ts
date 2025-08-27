@@ -130,6 +130,7 @@ export type Reward = {
     value: number;
     value_type: RewardValueType;
     details: string;
+    image?: string;
     created_at: string;
     updated_at: string;
     userRewards?: UserReward[];
