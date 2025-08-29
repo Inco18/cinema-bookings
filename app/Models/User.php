@@ -94,4 +94,8 @@ class User extends Authenticatable {
     public function pointsHistory(): HasMany {
         return $this->hasMany(PointsHistory::class);
     }
+
+    public function userRewards(): HasMany {
+        return $this->hasMany(UserReward::class);
+    }
 }

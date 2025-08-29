@@ -20,7 +20,7 @@ export default function LoyaltyProgramIndex({ points, rewards }: Props) {
     const user = usePage().props.auth.user;
 
     return (
-        <MainLayout>
+        <>
             <Head title="Program lojalnościowy - Punkty" />
             <Tabs defaultValue="points" className="max-w-4xl mx-auto">
                 <TabsList className="grid w-full grid-cols-3">
@@ -30,7 +30,7 @@ export default function LoyaltyProgramIndex({ points, rewards }: Props) {
                 </TabsList>
 
                 <TabsContents>
-                    <TabsContent value="points">
+                    <TabsContent value="points" className="px-5">
                         <div className="flex mt-2 my-5 px-3 md:px-0 items-center justify-between gap-3">
                             <h1 className="text-2xl m-0">Twoje punkty</h1>
                             <div
@@ -78,7 +78,7 @@ export default function LoyaltyProgramIndex({ points, rewards }: Props) {
                                                 >
                                                     {point.points_change > 0
                                                         ? `+${point.points_change}`
-                                                        : `-${point.points_change}`}{" "}
+                                                        : `${point.points_change}`}{" "}
                                                     pkt
                                                 </p>
                                             </div>
@@ -104,14 +104,21 @@ export default function LoyaltyProgramIndex({ points, rewards }: Props) {
                             </div>
                         </div>
                     </TabsContent>
-                    <TabsContent value="rewardsShop" className="mb-5 overflow-y-auto">
-                        <Rewards rewards={rewards} userPoints={user.points_number}/>
+                    <TabsContent value="rewardsShop" className="mb-5 px-5">
+                        <Rewards
+                            rewards={rewards}
+                            userPoints={user.points_number}
+                        />
                     </TabsContent>
                     <TabsContent value="rewards" className="space-y-6 p-6">
                         Test
                     </TabsContent>
                 </TabsContents>
             </Tabs>
-        </MainLayout>
+        </>
     );
 }
+
+LoyaltyProgramIndex.layout = (page: React.ReactNode) => (
+    <MainLayout children={page} />
+);

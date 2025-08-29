@@ -14,8 +14,8 @@ import { hasRole } from "@/lib/utils";
 import { RoleType } from "@/types/enums";
 import { Link, usePage } from "@inertiajs/react";
 import { ChevronDown, HandCoins, UserRound } from "lucide-react";
-import { PropsWithChildren, ReactNode, useState } from "react";
-import { ToastContainer } from "react-toastify";
+import { PropsWithChildren, ReactNode, useEffect, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -28,6 +28,12 @@ export default function MainLayout({
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
 
+    const { flash }: any = usePage().props;
+    useEffect(() => {
+        console.log(flash);
+        if (flash.success) toast.success(flash.success);
+        if (flash.error) toast.error(flash.error);
+    }, [flash]);
     return (
         <>
             <div className="min-h-screen bg-gray-100 flex flex-col">
@@ -72,9 +78,11 @@ export default function MainLayout({
                                     <div className="relative ms-3">
                                         <DropdownMenu>
                                             <DropdownMenuTrigger
-                                                className={buttonVariants({
-                                                    variant: "ghost",
-                                                }) + " text-foreground/60"}
+                                                className={
+                                                    buttonVariants({
+                                                        variant: "ghost",
+                                                    }) + " text-foreground/60"
+                                                }
                                             >
                                                 {user.first_name}{" "}
                                                 {user.last_name}
@@ -109,7 +117,7 @@ export default function MainLayout({
                                                 <DropdownMenuItem asChild>
                                                     <Link
                                                         href={route(
-                                                            "main.points.index"
+                                                            "main.loyaltyProgram.index"
                                                         )}
                                                         className={
                                                             "cursor-pointer"
@@ -272,7 +280,9 @@ export default function MainLayout({
                                         </ResponsiveNavLink>
                                     )}
                                     <ResponsiveNavLink
-                                        href={route("main.points.index")}
+                                        href={route(
+                                            "main.loyaltyProgram.index"
+                                        )}
                                     >
                                         Program lojalnościowy
                                     </ResponsiveNavLink>

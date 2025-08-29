@@ -33,7 +33,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::get('/points', [LoyaltyProgramController::class, 'index'])->name('main.points.index');
+    Route::get('/loyalty-program', [LoyaltyProgramController::class, 'index'])->name('main.loyaltyProgram.index');
+    Route::post('/loyalty-program/redeemReward', [LoyaltyProgramController::class, 'redeemReward'])->name('main.loyaltyProgram.redeemReward');
 });
 
 require __DIR__.'/auth.php';

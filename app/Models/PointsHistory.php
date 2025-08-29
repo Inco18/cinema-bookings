@@ -14,6 +14,7 @@ class PointsHistory extends Model
     protected $fillable = [
         'user_id',
         'booking_id',
+        'user_reward_id',
         'points_change',
         'description',
     ];
