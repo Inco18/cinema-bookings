@@ -62,7 +62,7 @@ const Rewards = ({ rewards, userPoints }: Props) => {
                                 <div
                                     key={reward.id}
                                     className={clsx(
-                                        "bg-background p-4 md:rounded-lg flex flex-col sm:flex-row sm:items-center gap-4 transition-all border",
+                                        "bg-background p-4 rounded-lg flex flex-col sm:flex-row sm:items-center gap-4 transition-all border",
                                         reward.cost_points > userPoints
                                             ? "opacity-60 cursor-not-allowed"
                                             : "cursor-pointer hover:ring-[3px] hover:ring-primary/30 hover:border-primary"
