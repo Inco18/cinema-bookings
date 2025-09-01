@@ -116,10 +116,14 @@ export type PointsHistory = {
     id: number;
     user_id: number;
     booking_id?: number;
+    user_reward_id?: number;
     points_change: number;
     description: string;
     created_at: string;
     updated_at: string;
+    user?: User;
+    booking?: Booking;
+    userReward?: UserReward;
 };
 
 export type Reward = {

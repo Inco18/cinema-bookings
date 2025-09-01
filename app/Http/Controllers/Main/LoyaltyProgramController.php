@@ -18,8 +18,9 @@ class LoyaltyProgramController extends Controller
     {
         $points = $request->user()->pointsHistory()->latest()->get();
         $rewards = Reward::query()->orderBy('cost_points')->get();
+        $redeemedRewards = $request->user()->userRewards()->with('reward')->orderBy('status')->latest()->get();
 
-        return Inertia::render('Main/LoyaltyProgram/Index', ['points' => $points, 'rewards' => $rewards]);
+        return Inertia::render('Main/LoyaltyProgram/Index', ['points' => $points, 'rewards' => $rewards, 'redeemedRewards' => $redeemedRewards]);
     }
 
     public function redeemReward(Request $request)

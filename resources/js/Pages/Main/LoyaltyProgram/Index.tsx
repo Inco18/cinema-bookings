@@ -6,27 +6,33 @@ import {
     TabsTrigger,
 } from "@/Components/ui/shadcn-io/tabs";
 import MainLayout from "@/Layouts/MainLayout";
-import { PointsHistory, Reward } from "@/types";
+import { PointsHistory, Reward, UserReward } from "@/types";
 import { Head, usePage } from "@inertiajs/react";
 import { HandCoins } from "lucide-react";
 import Rewards from "./Rewards";
+import RedeemedRewards from "./RedeemedRewards";
 
 type Props = {
     points: PointsHistory[];
     rewards: Reward[];
+    redeemedRewards: UserReward[];
 };
 
-export default function LoyaltyProgramIndex({ points, rewards }: Props) {
+export default function LoyaltyProgramIndex({
+    points,
+    rewards,
+    redeemedRewards,
+}: Props) {
     const user = usePage().props.auth.user;
 
     return (
         <>
-            <Head title="Program lojalnościowy - Punkty" />
+            <Head title="Program lojalnościowy" />
             <Tabs defaultValue="points" className="max-w-4xl mx-auto">
                 <TabsList className="grid w-full grid-cols-3">
                     <TabsTrigger value="points">Twoje punkty</TabsTrigger>
                     <TabsTrigger value="rewardsShop">Nagrody</TabsTrigger>
-                    <TabsTrigger value="rewards">Odebrane nagrody</TabsTrigger>
+                    <TabsTrigger value="redeemedRewards">Odebrane nagrody</TabsTrigger>
                 </TabsList>
 
                 <TabsContents>
@@ -110,8 +116,11 @@ export default function LoyaltyProgramIndex({ points, rewards }: Props) {
                             userPoints={user.points_number}
                         />
                     </TabsContent>
-                    <TabsContent value="rewards" className="space-y-6 p-6">
-                        Test
+                    <TabsContent value="redeemedRewards" className="mb-5 px-5">
+                        <RedeemedRewards
+                            redeemedRewards={redeemedRewards}
+                            userPoints={user.points_number}
+                        />
                     </TabsContent>
                 </TabsContents>
             </Tabs>

@@ -12,7 +12,7 @@ import {
 import { AnimatedCircularProgressBar } from "@/Components/ui/magicui/animated-circular-progress-bar";
 import { Reward } from "@/types";
 import { RewardType } from "@/types/enums";
-import { router, usePage } from "@inertiajs/react";
+import { Head, router, usePage } from "@inertiajs/react";
 import clsx from "clsx";
 import { HandCoins } from "lucide-react";
 import { useEffect, useState } from "react";

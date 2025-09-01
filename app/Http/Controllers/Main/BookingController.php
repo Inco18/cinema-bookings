@@ -53,8 +53,7 @@ class BookingController extends Controller
         $showingId = $request->input('showing_id');
         if (! $showingId) {
             return redirect(route('main.showings.index'))->with([
-                'message' => 'Nie podano seansu do rezerwacji',
-                'messageType' => 'error',
+                'error' => 'Nie podano seansu do rezerwacji',
             ]);
         }
         $showing = Showing::with(['hall.seats' => function ($query) {
@@ -129,8 +128,7 @@ class BookingController extends Controller
             $booking->delete();
 
             return redirect(route('main.showings.index'))->with([
-                'message' => 'Wystąpił błąd, rezerwacja została anulowana',
-                'messageType' => 'error',
+                'error' => 'Wystąpił błąd, rezerwacja została anulowana',
             ]);
         }
 
@@ -194,8 +192,7 @@ class BookingController extends Controller
             $booking->delete();
 
             return redirect(route('main.showings.index'))->with([
-                'message' => 'Wystąpił błąd, rezerwacja została anulowana',
-                'messageType' => 'error',
+                'error' => 'Wystąpił błąd, rezerwacja została anulowana',
             ]);
         }
 
@@ -250,8 +247,7 @@ class BookingController extends Controller
             $booking->delete();
 
             return redirect(route('main.showings.index'))->with([
-                'message' => 'Wystąpił błąd, rezerwacja została anulowana',
-                'messageType' => 'error',
+                'error' => 'Wystąpił błąd, rezerwacja została anulowana',
             ]);
         }
     }
@@ -322,8 +318,7 @@ class BookingController extends Controller
             $booking->delete();
 
             return redirect(route('main.showings.index'))->with([
-                'message' => 'Wystąpił błąd, rezerwacja została anulowana',
-                'messageType' => 'error',
+                'error' => 'Wystąpił błąd, rezerwacja została anulowana',
             ]);
         }
     }
@@ -375,13 +370,11 @@ class BookingController extends Controller
 
             if ($type == 'timeRunOut') {
                 return redirect(route('main.showings.index'))->with([
-                    'message' => 'Rezerwacja została przerwana (czas się skończył)',
-                    'messageType' => 'error',
+                    'error' => 'Rezerwacja została przerwana (czas się skończył)',
                 ]);
             } else {
                 return redirect(route('main.showings.index'))->with([
-                    'message' => 'Rezerwacja została usunięta',
-                    'messageType' => 'success',
+                    'success' => 'Rezerwacja została usunięta',
                 ]);
             }
 
