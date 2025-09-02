@@ -11,6 +11,7 @@ class UserReward extends Model
     protected $fillable = [
         'user_id',
         'reward_id',
+        'booking_id',
         'status',
     ];
 
@@ -27,5 +28,10 @@ class UserReward extends Model
     public function pointsHistory(): HasOne
     {
         return $this->hasOne(PointsHistory::class);
+    }
+
+    public function booking(): BelongsTo
+    {
+        return $this->belongsTo(Booking::class);
     }
 }

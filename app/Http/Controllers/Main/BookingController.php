@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Main;
 
 use App\Enums\BookingStatus;
+use App\Enums\RewardType;
+use App\Enums\RewardValueType;
 use App\Enums\TicketType;
+use App\Enums\UserRewardStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Main\StoreBookingRequest;
 use App\Http\Requests\Main\UpdateBookingRequest;
@@ -18,6 +21,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 use Str;
@@ -124,6 +128,10 @@ class BookingController extends Controller
 
             $booking->seats()->syncWithPivotValues($request->input('seats'), ['price' => 0, 'type' => TicketType::NORMAL->value]);
         } catch (Exception $e) {
+            $bookingDiscount = $booking->userRewards()->first();
+            if ($bookingDiscount) {
+                $bookingDiscount->update(['status' => UserRewardStatus::ACTIVE->value, 'booking_id' => null]);
+            }
             $booking->seats()->detach();
             $booking->delete();
 
@@ -144,13 +152,22 @@ class BookingController extends Controller
         if ($booking->status != BookingStatus::RESERVED->value) {
             return redirect(route('main.showings.index'));
         }
+        $user = Auth::user();
 
         $dynamicPrices = $this->calculateDynamicPrices($booking->showing);
+        $userDiscounts = $user->userRewards()->with('reward')->where('status', '=', UserRewardStatus::ACTIVE->value)->orWhere(function ($query) use ($booking) {
+            $query->where('status', '=', UserRewardStatus::USED->value)->where('booking_id', '=', $booking->id);
+        })->whereHas('reward', function ($query) {
+            $query->where('type', '=', RewardType::DISCOUNT->value);
+        })->orderBy('created_at', 'desc')->get();
+        $selectedDiscountId = $booking->userRewards()->first()?->id;
 
         return Inertia::render('Main/Booking/ChooseTickets', [
             'booking' => $booking->load(['showing', 'showing.movie', 'seats', 'showing.hall']),
             'token' => $booking->token,
             'prices' => $dynamicPrices,
+            'userDiscounts' => $userDiscounts,
+            'selectedDiscountId' => $selectedDiscountId,
         ]);
     }
 
@@ -173,6 +190,7 @@ class BookingController extends Controller
         }
 
         try {
+            DB::beginTransaction();
             if ($booking->status != BookingStatus::RESERVED->value) {
                 return redirect(route('main.showings.index'));
             }
@@ -186,8 +204,36 @@ class BookingController extends Controller
                     $validated['reduced']--;
                 }
             }
-            $booking->update(['price' => $booking->seats->sum('pivot.price')]);
+            $basePrice = $booking->seats->sum('pivot.price');
+            $discountedPrice = null;
+
+            $bookingDiscount = $booking->userRewards()->first();
+            if ($bookingDiscount) {
+                $bookingDiscount->update(['status' => UserRewardStatus::ACTIVE->value, 'booking_id' => null]);
+            }
+
+            if ($validated['selected_discount_id']) {
+                $userReward = $booking->user ? $booking->user->userRewards()->where('id', '=', $validated['selected_discount_id'])->where('status', '=', UserRewardStatus::ACTIVE->value)->whereHas('reward', function ($query) {
+                    $query->where('type', '=', RewardType::DISCOUNT->value);
+                })->with('reward')->first() : null;
+                if ($userReward) {
+                    $discountValue = $userReward->reward->value;
+                    if ($userReward->reward->value_type === RewardValueType::PERCENT->value) {
+                        $discountedPrice = round($basePrice * (1 - $discountValue / 100), 2);
+                    } else {
+                        $discountedPrice = max(0, round($basePrice - $discountValue, 2));
+                    }
+                    $userReward->update(['status' => UserRewardStatus::USED->value, 'booking_id' => $booking->id]);
+                }
+            }
+            $booking->update(['price' => $booking->seats->sum('pivot.price'), 'discounted_price' => $discountedPrice]);
+            DB::commit();
         } catch (Exception $e) {
+            DB::rollBack();
+            $bookingDiscount = $booking->userRewards()->first();
+            if ($bookingDiscount) {
+                $bookingDiscount->update(['status' => UserRewardStatus::ACTIVE->value, 'booking_id' => null]);
+            }
             $booking->seats()->detach();
             $booking->delete();
 
@@ -243,6 +289,10 @@ class BookingController extends Controller
 
             return Inertia::location($redirectUrl);
         } catch (Exception $e) {
+            $bookingDiscount = $booking->userRewards()->first();
+            if ($bookingDiscount) {
+                $bookingDiscount->update(['status' => UserRewardStatus::ACTIVE->value, 'booking_id' => null]);
+            }
             $booking->seats()->detach();
             $booking->delete();
 
@@ -364,6 +414,10 @@ class BookingController extends Controller
             }
             if ($type != 'timeRunOut' && ($booking->status == BookingStatus::PAID->value || (isset($booking->user_id) && $booking->user_id != Auth::user()->id))) {
                 throw new Exception;
+            }
+            $bookingDiscount = $booking->userRewards()->first();
+            if ($bookingDiscount) {
+                $bookingDiscount->update(['status' => UserRewardStatus::ACTIVE->value, 'booking_id' => null]);
             }
             $booking->seats()->detach();
             $booking->delete();

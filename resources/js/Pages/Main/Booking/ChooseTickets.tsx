@@ -4,9 +4,10 @@ import { Label } from "@/Components/ui/label";
 import { Separator } from "@/Components/ui/separator";
 import MainLayout from "@/Layouts/MainLayout";
 import { formatPrice, formatTime } from "@/lib/utils";
-import { Booking } from "@/types";
+import { Booking, UserReward } from "@/types";
 import { TicketType } from "@/types/enums";
 import { Head, router, useForm } from "@inertiajs/react";
+import clsx from "clsx";
 import { add, differenceInSeconds, format } from "date-fns";
 import { pl } from "date-fns/locale";
 import { LoaderCircle, Minus, MoveLeft, MoveRight, Plus } from "lucide-react";
@@ -17,9 +18,17 @@ type Props = {
     booking: Booking;
     token: string;
     prices: Record<TicketType, number>;
+    userDiscounts: UserReward[];
+    selectedDiscountId: number | null;
 };
 
-const ChooseTickets = ({ booking, token, prices }: Props) => {
+const ChooseTickets = ({
+    booking,
+    token,
+    prices,
+    userDiscounts,
+    selectedDiscountId,
+}: Props) => {
     const [isUpdating, setIsUpdating] = useState(false);
     const [isCanceling, setIsCanceling] = useState(false);
     const [isGoingBack, setIsGoingBack] = useState(false);
@@ -46,18 +55,19 @@ const ChooseTickets = ({ booking, token, prices }: Props) => {
 
         return () => clearInterval(interval);
     });
-    const normalCount = booking.seats?.filter(
-        (seat) => seat.pivot.type === TicketType.NORMAL
-    ).length || 0;
-    const reducedCount = booking.seats?.filter(
-        (seat) => seat.pivot.type === TicketType.REDUCED
-    ).length || 0;
+    const normalCount =
+        booking.seats?.filter((seat) => seat.pivot.type === TicketType.NORMAL)
+            .length || 0;
+    const reducedCount =
+        booking.seats?.filter((seat) => seat.pivot.type === TicketType.REDUCED)
+            .length || 0;
 
     const { data, setData, patch, errors } = useForm({
         normal:
             normalCount === 0 && reducedCount === 0 ? numPeople : normalCount,
         reduced: reducedCount || 0,
         prices: prices,
+        selected_discount_id: selectedDiscountId || (null as number | null),
         token: token,
     });
 
@@ -150,134 +160,245 @@ const ChooseTickets = ({ booking, token, prices }: Props) => {
                     </div>
                 </div>
             </div>
-            <h1 className="text-2xl mt-2 space-y-6 max-w-4xl mx-auto px-3 md:px-0">
-                Wybierz bilety
-            </h1>
-            <form
-                onSubmit={submit}
-                id="chooseTicketsForm"
-                className="mt-2 space-y-6 max-w-4xl bg-background p-2 sm:rounded-lg sm:p-4 border mx-auto mb-20"
+            <div
+                className={clsx(
+                    "flex flex-col md:flex-row mx-auto mb-20",
+                    userDiscounts.length > 0
+                        ? "lg:px-8 max-w-7xl gap-3"
+                        : "max-w-4xl"
+                )}
             >
-                <div className="flex flex-col w-full gap-3">
-                    <div className="flex-1 flex flex-col md:flex-row justify-between md:items-center gap-3 bg-secondary p-2 rounded-lg">
-                        <Label htmlFor="normal">Normalny</Label>
-                        <div className="flex items-center gap-5">
-                            <p className="text-sm">
-                                {formatPrice(prices.normal)}
-                            </p>
-                            <Separator orientation="vertical" className="h-8" />
-                            <div className="flex">
-                                <Button
-                                    type="button"
-                                    variant={"outline"}
-                                    className="w-12 h-12 !rounded-r-none"
-                                    onClick={() => {
-                                        if (data.normal > 0) {
-                                            setData({
-                                                ...data,
-                                                normal: data.normal - 1,
-                                                reduced: data.reduced + 1,
-                                            });
-                                        }
-                                    }}
-                                >
-                                    <Minus />
-                                </Button>
-                                <div className="text-2xl bg-background border shadow-xs flex items-center justify-center w-16 h-12">
-                                    {data.normal}
+                <div className="w-full">
+                    <h1 className="text-2xl mt-2 space-y-6 px-3 md:px-1">
+                        Wybierz bilety
+                    </h1>
+                    <form
+                        onSubmit={submit}
+                        id="chooseTicketsForm"
+                        className="mt-2 space-y-6 bg-background p-2 sm:rounded-lg sm:p-4 border"
+                    >
+                        <div className="flex flex-col w-full gap-3">
+                            <div className="flex-1 flex flex-col md:flex-row justify-between md:items-center gap-3 bg-secondary p-2 rounded-lg">
+                                <Label htmlFor="normal">Normalny</Label>
+                                <div className="flex items-center gap-5">
+                                    <p className="text-sm">
+                                        {formatPrice(prices.normal)}
+                                    </p>
+                                    <Separator
+                                        orientation="vertical"
+                                        className="h-8"
+                                    />
+                                    <div className="flex">
+                                        <Button
+                                            type="button"
+                                            variant={"outline"}
+                                            className="w-12 h-12 !rounded-r-none"
+                                            onClick={() => {
+                                                if (data.normal > 0) {
+                                                    setData({
+                                                        ...data,
+                                                        normal: data.normal - 1,
+                                                        reduced:
+                                                            data.reduced + 1,
+                                                    });
+                                                }
+                                            }}
+                                        >
+                                            <Minus />
+                                        </Button>
+                                        <div className="text-2xl bg-background border shadow-xs flex items-center justify-center w-16 h-12">
+                                            {data.normal}
+                                        </div>
+                                        <Button
+                                            type="button"
+                                            variant={"outline"}
+                                            className="w-12 h-12 !rounded-l-none"
+                                            onClick={() => {
+                                                if (data.normal < numPeople) {
+                                                    setData({
+                                                        ...data,
+                                                        normal: data.normal + 1,
+                                                        reduced:
+                                                            data.reduced - 1,
+                                                    });
+                                                }
+                                            }}
+                                        >
+                                            <Plus />
+                                        </Button>
+                                    </div>
                                 </div>
-                                <Button
-                                    type="button"
-                                    variant={"outline"}
-                                    className="w-12 h-12 !rounded-l-none"
-                                    onClick={() => {
-                                        if (data.normal < numPeople) {
-                                            setData({
-                                                ...data,
-                                                normal: data.normal + 1,
-                                                reduced: data.reduced - 1,
-                                            });
-                                        }
-                                    }}
+                            </div>
+                            <div className="flex-1 flex flex-col md:flex-row justify-between md:items-center gap-3 bg-secondary p-2 rounded-lg">
+                                <Label
+                                    htmlFor="reduced"
+                                    className="flex flex-col items-start gap-0 justify-start"
                                 >
-                                    <Plus />
-                                </Button>
+                                    Ulgowy
+                                    <p className="text-foreground/60 text-xs">
+                                        Dostępny dla dzieci, młodzieży,
+                                        studentów i seniorów za okazaniem ważnej
+                                        legitymacji.
+                                    </p>
+                                </Label>
+                                <div className="flex items-center gap-5">
+                                    <p className="text-sm">
+                                        {formatPrice(prices.reduced)}
+                                    </p>
+                                    <Separator
+                                        orientation="vertical"
+                                        className="h-8"
+                                    />
+                                    <div className="flex">
+                                        <Button
+                                            type="button"
+                                            variant={"outline"}
+                                            className="w-12 h-12 !rounded-r-none"
+                                            onClick={() => {
+                                                if (data.reduced > 0) {
+                                                    setData({
+                                                        ...data,
+                                                        reduced:
+                                                            data.reduced - 1,
+                                                        normal: data.normal + 1,
+                                                    });
+                                                }
+                                            }}
+                                        >
+                                            <Minus />
+                                        </Button>
+                                        <div className="text-2xl bg-background border shadow-xs flex items-center justify-center w-16 h-12">
+                                            {data.reduced}
+                                        </div>
+                                        <Button
+                                            type="button"
+                                            variant={"outline"}
+                                            className="w-12 h-12 !rounded-l-none"
+                                            onClick={() => {
+                                                if (data.reduced < numPeople) {
+                                                    setData({
+                                                        ...data,
+                                                        reduced:
+                                                            data.reduced + 1,
+                                                        normal: data.normal - 1,
+                                                    });
+                                                }
+                                            }}
+                                        >
+                                            <Plus />
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <p className="text-xl text-right">
+                            Łączna cena:{" "}
+                            <span className="font-semibold">
+                                {formatPrice(
+                                    prices.normal * data.normal +
+                                        prices.reduced * data.reduced
+                                )}
+                            </span>
+                        </p>
+                    </form>
+                </div>
+                {userDiscounts.length > 0 && (
+                    <div className="w-full md:w-1/2 md:max-h-[calc(100vh-25rem)] md:overflow-hidden flex flex-col">
+                        <h1 className="text-2xl mt-2 space-y-6 px-3 md:px-0">
+                            Dostępne zniżki
+                        </h1>
+                        <div className="flex flex-col mt-2 bg-background w-full sm:rounded-lg border mx-auto md:h-full md:overflow-hidden">
+                            <div className="space-y-2 p-2 w-full sm:rounded-lg sm:p-4 mx-auto md:overflow-y-auto">
+                                {userDiscounts.map((userDiscount) => (
+                                    <div
+                                        className={clsx(
+                                            "flex-1 flex flex-col md:flex-row md:items-center gap-3 p-2 rounded-lg cursor-pointer transition-all border border-transparent hover:ring-[3px] hover:ring-primary/30 hover:border-primary",
+                                            data.selected_discount_id ===
+                                                userDiscount.id
+                                                ? "bg-primary text-background"
+                                                : "bg-secondary"
+                                        )}
+                                        onClick={() => {
+                                            if (
+                                                data.selected_discount_id ===
+                                                userDiscount.id
+                                            ) {
+                                                setData({
+                                                    ...data,
+                                                    selected_discount_id: null,
+                                                });
+                                            } else {
+                                                setData({
+                                                    ...data,
+                                                    selected_discount_id:
+                                                        userDiscount.id,
+                                                });
+                                            }
+                                        }}
+                                    >
+                                        <div
+                                            className={clsx(
+                                                "flex items-center justify-center text-background rounded-full shrink-0 w-16 h-16",
+                                                data.selected_discount_id ===
+                                                    userDiscount.id
+                                                    ? "bg-secondary"
+                                                    : "bg-primary"
+                                            )}
+                                        >
+                                            <span
+                                                className={clsx(
+                                                    "text-lg font-bold",
+                                                    {
+                                                        "text-primary":
+                                                            data.selected_discount_id ===
+                                                            userDiscount.id,
+                                                        "text-background":
+                                                            data.selected_discount_id !==
+                                                            userDiscount.id,
+                                                    }
+                                                )}
+                                            >
+                                                {new Intl.NumberFormat(
+                                                    "pl-PL",
+                                                    {
+                                                        maximumFractionDigits: 2,
+                                                    }
+                                                ).format(
+                                                    userDiscount.reward?.value!
+                                                )}
+                                                {userDiscount.reward
+                                                    ?.value_type === "percent"
+                                                    ? " %"
+                                                    : " zł"}
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <p
+                                                className={
+                                                    "font-medium text-lg"
+                                                }
+                                            >
+                                                {userDiscount.reward?.name}
+                                            </p>
+                                            <p
+                                                className={clsx(
+                                                    "text-sm",
+                                                    data.selected_discount_id ===
+                                                        userDiscount.id
+                                                        ? "text-background/70"
+                                                        : "text-foreground/70"
+                                                )}
+                                            >
+                                                {userDiscount.reward?.details}
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     </div>
-                    <div className="flex-1 flex flex-col md:flex-row justify-between md:items-center gap-3 bg-secondary p-2 rounded-lg">
-                        <Label
-                            htmlFor="reduced"
-                            className="flex flex-col items-start gap-0 justify-start"
-                        >
-                            Ulgowy
-                            <p className="text-foreground/60 text-xs">
-                                Dostępny dla dzieci, młodzieży, studentów i
-                                seniorów za okazaniem ważnej legitymacji.
-                            </p>
-                        </Label>
-                        <div className="flex items-center gap-5">
-                            <p className="text-sm">
-                                {formatPrice(prices.reduced)}
-                            </p>
-                            <Separator orientation="vertical" className="h-8" />
-                            <div className="flex">
-                                <Button
-                                    type="button"
-                                    variant={"outline"}
-                                    className="w-12 h-12 !rounded-r-none"
-                                    onClick={() => {
-                                        if (data.reduced > 0) {
-                                            setData({
-                                                ...data,
-                                                reduced: data.reduced - 1,
-                                                normal: data.normal + 1,
-                                            });
-                                        }
-                                    }}
-                                >
-                                    <Minus />
-                                </Button>
-                                <div className="text-2xl bg-background border shadow-xs flex items-center justify-center w-16 h-12">
-                                    {data.reduced}
-                                </div>
-                                <Button
-                                    type="button"
-                                    variant={"outline"}
-                                    className="w-12 h-12 !rounded-l-none"
-                                    onClick={() => {
-                                        if (data.reduced < numPeople) {
-                                            setData({
-                                                ...data,
-                                                reduced: data.reduced + 1,
-                                                normal: data.normal - 1,
-                                            });
-                                        }
-                                    }}
-                                >
-                                    <Plus />
-                                </Button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-                    <Input
-                        name="discount_code"
-                        placeholder="Kod rabatowy"
-                        className="md:max-w-52"
-                    />
-                    <p className="text-xl text-right">
-                        Łączna cena:{" "}
-                        <span className="font-semibold">
-                            {formatPrice(
-                                prices.normal * data.normal +
-                                    prices.reduced * data.reduced
-                            )}
-                        </span>
-                    </p>
-                </div>
-            </form>
+                )}
+            </div>
             <div className="fixed bottom-0 w-full bg-background">
                 <div className="mx-auto max-w-7xl px-6 lg:px-8 py-4 w-full flex justify-between">
                     <Button

@@ -58,7 +58,14 @@ const Rewards = ({ rewards, userPoints }: Props) => {
                 {rewards.map((reward) => {
                     return (
                         <AlertDialog>
-                            <AlertDialogTrigger asChild>
+                            <AlertDialogTrigger
+                                asChild
+                                onClick={(e) => {
+                                    if (reward.cost_points > userPoints) {
+                                        e.preventDefault();
+                                    }
+                                }}
+                            >
                                 <div
                                     key={reward.id}
                                     className={clsx(

@@ -189,8 +189,15 @@ const EditBooking = ({ booking, token }: Props) => {
                         <Separator className="opacity-50 my-2" />
                         <div className="flex flex-row md:items-center md:text-md gap-1">
                             Łączna cena:
+                            {booking.discounted_price && (
+                                <span className="line-through opacity-70">
+                                    {formatPrice(booking.price)}
+                                </span>
+                            )}
                             <span className="font-semibold">
-                                {formatPrice(booking.price)}
+                                {formatPrice(
+                                    booking.discounted_price || booking.price
+                                )}
                             </span>
                         </div>
                     </div>
@@ -225,7 +232,7 @@ const EditBooking = ({ booking, token }: Props) => {
                             onChange={(e) => {
                                 setData("first_name", e.target.value);
                             }}
-                            className={`${
+                            className={`mt-1 ${
                                 errors.first_name ? "!border-destructive" : ""
                             }`}
                         />
@@ -256,7 +263,7 @@ const EditBooking = ({ booking, token }: Props) => {
                             onChange={(e) => {
                                 setData("last_name", e.target.value);
                             }}
-                            className={`${
+                            className={`mt-1 ${
                                 errors.last_name ? "!border-destructive" : ""
                             }`}
                         />
@@ -285,7 +292,7 @@ const EditBooking = ({ booking, token }: Props) => {
                         onChange={(e) => {
                             setData("email", e.target.value);
                         }}
-                        className={`${
+                        className={`mt-1 ${
                             errors.email ? "!border-destructive" : ""
                         }`}
                     />

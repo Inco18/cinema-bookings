@@ -10,8 +10,9 @@ import {
     SheetTrigger,
 } from "@/Components/ui/sheet";
 import MainLayout from "@/Layouts/MainLayout";
+import { formatPrice } from "@/lib/utils";
 import { Booking } from "@/types";
-import { BookingStatus } from "@/types/enums";
+import { BookingStatus, TicketType } from "@/types/enums";
 import { Head, router, WhenVisible } from "@inertiajs/react";
 import { format, isPast } from "date-fns";
 import { pl } from "date-fns/locale";
@@ -121,10 +122,22 @@ const Index = ({ bookings, page, isNextPageExists }: Props) => {
                                                     )}
                                                 </p>
                                             </div>
-                                            <div className="ml-auto">
-                                                {getBookingBadge(booking)}
-                                                <p className="md:text-lg font-semibold my-2 text-right">
-                                                    {booking.price} zł
+                                            <div className="ml-auto flex flex-col items-end">
+                                                <div className="">{getBookingBadge(booking)}</div>
+                                                <p className="md:text-lg font-semibold my-2 flex gap-1 items-center">
+                                                    {booking.discounted_price && (
+                                                        <span className="line-through opacity-70 text-base">
+                                                            {formatPrice(
+                                                                booking.price
+                                                            )}
+                                                        </span>
+                                                    )}
+                                                    <span className="font-semibold">
+                                                        {formatPrice(
+                                                            booking.discounted_price ||
+                                                                booking.price
+                                                        )}
+                                                    </span>
                                                 </p>
                                             </div>
                                         </div>
@@ -186,18 +199,22 @@ const Index = ({ bookings, page, isNextPageExists }: Props) => {
                                                                     <p>
                                                                         Cena:{" "}
                                                                         <span className="font-semibold">
-                                                                            {(
-                                                                                +seat.pivot.price
-                                                                            ).toFixed(
-                                                                                2
+                                                                            {formatPrice(
+                                                                                seat
+                                                                                    .pivot
+                                                                                    .price
                                                                             )}
-                                                                            zł
                                                                         </span>
                                                                     </p>
                                                                     <p>
                                                                         Bilet:{" "}
                                                                         <span className="font-semibold">
-                                                                            normalny
+                                                                            {seat
+                                                                                .pivot
+                                                                                .type ===
+                                                                            TicketType.NORMAL
+                                                                                ? "normalny"
+                                                                                : "ulgowy"}
                                                                         </span>
                                                                     </p>
                                                                 </div>
@@ -212,10 +229,20 @@ const Index = ({ bookings, page, isNextPageExists }: Props) => {
                                                     }
                                                 )}
                                             </div>
-                                            <p className="mt-5">
+                                            <p className="mt-5 flex gap-1">
                                                 Łączna cena:{" "}
-                                                <span className="font-semibold ">
-                                                    {booking.price as number} zł
+                                                {booking.discounted_price && (
+                                                    <span className="line-through opacity-70">
+                                                        {formatPrice(
+                                                            booking.price
+                                                        )}
+                                                    </span>
+                                                )}
+                                                <span className="font-semibold">
+                                                    {formatPrice(
+                                                        booking.discounted_price ||
+                                                            booking.price
+                                                    )}
                                                 </span>
                                             </p>
                                             <p className="mt-2">

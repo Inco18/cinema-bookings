@@ -16,6 +16,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('reward_id')->constrained()->onDelete('cascade');
+            $table->foreignId('booking_id')->nullable()->constrained()->onDelete('cascade');
             $table->enum('status', UserRewardStatus::toArray())->default(UserRewardStatus::ACTIVE->value);
             $table->timestamps();
         });

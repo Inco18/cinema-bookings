@@ -6,10 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- *
- *
  * @property int $id
  * @property int $showing_id
  * @property int|null $user_id
@@ -27,6 +26,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property-read int|null $seats_count
  * @property-read \App\Models\Showing $showing
  * @property-read \App\Models\User|null $user
+ *
  * @method static \Database\Factories\BookingFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Booking newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Booking newQuery()
@@ -44,9 +44,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Booking whereToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Booking whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Booking whereUserId($value)
+ *
  * @mixin \Eloquent
  */
-class Booking extends Model {
+class Booking extends Model
+{
     /** @use HasFactory<\Database\Factories\BookingFactory> */
     use HasFactory;
 
@@ -60,19 +62,28 @@ class Booking extends Model {
         'email',
         'status',
         'payment_id',
-        'token'
+        'token',
     ];
 
-    public function showing(): BelongsTo {
+    public function showing(): BelongsTo
+    {
         return $this->belongsTo(Showing::class);
     }
-    public function user(): BelongsTo {
+
+    public function user(): BelongsTo
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function seats(): BelongsToMany {
+    public function seats(): BelongsToMany
+    {
         return $this->belongsToMany(Seat::class, 'tickets', 'booking_id', 'seat_id')
             ->withPivot('price', 'type')
             ->withTimestamps();
+    }
+
+    public function userRewards(): HasMany
+    {
+        return $this->hasMany(UserReward::class);
     }
 }

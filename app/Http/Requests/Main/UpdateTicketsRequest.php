@@ -14,6 +14,7 @@ class UpdateTicketsRequest extends FormRequest {
         return [
             'normal' => ['required', 'integer', 'min:0'],
             'reduced' => ['required', 'integer', 'min:0'],
+            'selected_discount_id' => ['nullable', 'integer', 'exists:user_rewards,id'],
         ];
     }
 
@@ -22,6 +23,7 @@ class UpdateTicketsRequest extends FormRequest {
             'required' => 'To pole jest wymagane',
             'min' => "Wartość musi być większa lub równa 0",
             'integer' => 'Wartość musi być liczbą całkowitą',
+            'exists' => 'Wybrany rabat nie istnieje',
         ];
     }
 }

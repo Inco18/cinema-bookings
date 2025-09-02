@@ -14,8 +14,8 @@ export interface Booking {
     id: number;
     showing_id: number;
     user_id?: number;
-    num_people: number;
     price: any;
+    discounted_price?: any;
     first_name: string | null;
     last_name: string | null;
     email: string | null;
@@ -33,6 +33,7 @@ export interface Booking {
             type: TicketType;
         };
     })[];
+    userRewards?: UserReward[];
 }
 
 export interface Genre {
@@ -150,6 +151,7 @@ export type UserReward = {
     user?: User;
     reward?: Reward;
     pointsHistory?: PointsHistory;
+    booking?: Booking;
 };
 
 export interface User {
