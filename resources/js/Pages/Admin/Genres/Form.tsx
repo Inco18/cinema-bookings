@@ -133,7 +133,7 @@ const GenreForm = ({ genre }: Props) => {
                         onChange={(e) => {
                             setData("name", e.target.value);
                         }}
-                        className={`${
+                        className={`mt-1 ${
                             errors.name ? "!border-destructive" : ""
                         }`}
                     />

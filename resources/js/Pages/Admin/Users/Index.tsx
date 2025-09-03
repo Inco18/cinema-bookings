@@ -35,6 +35,7 @@ import { toast } from "react-toastify";
 import { translatedRoles } from "@/lib/utils";
 import { MultiSelect } from "@/Components/ui/multiple-select";
 import { RoleType } from "@/types/enums";
+import { FloatingInput, FloatingLabel } from "@/Components/ui/floating-input";
 
 type Props = {
     users: Paginated<User>;
@@ -246,14 +247,19 @@ const UsersIndex = ({
                         Użytkownicy
                     </h2>
                     <div className="flex items-center ml-8 min-w-80 gap-1">
-                        <Input
-                            placeholder="Wyszukaj imię, nazwisko lub email..."
-                            className="max-w-sm m-0 w-full"
-                            value={searchValue}
-                            onChange={(e) => {
-                                setSearchValue(e.target.value);
-                            }}
-                        />
+                        <div className="relative w-full">
+                            <FloatingInput
+                                id="search"
+                                className="m-0 w-full"
+                                value={searchValue}
+                                onChange={(e) => {
+                                    setSearchValue(e.target.value);
+                                }}
+                            />
+                            <FloatingLabel htmlFor="search">
+                                Imię, nazwisko lub email
+                            </FloatingLabel>
+                        </div>
                         <Button
                             variant={"ghost"}
                             size={"icon"}

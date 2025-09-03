@@ -131,7 +131,7 @@ const UserForm = ({ user, roles }: Props) => {
                         onChange={(e) => {
                             setData("first_name", e.target.value);
                         }}
-                        className={`${
+                        className={`mt-1 ${
                             errors.first_name ? "!border-destructive" : ""
                         }`}
                     />
@@ -161,7 +161,7 @@ const UserForm = ({ user, roles }: Props) => {
                         onChange={(e) => {
                             setData("last_name", e.target.value);
                         }}
-                        className={`${
+                        className={`mt-1 ${
                             errors.last_name ? "!border-destructive" : ""
                         }`}
                     />
@@ -188,7 +188,7 @@ const UserForm = ({ user, roles }: Props) => {
                         onChange={(e) => {
                             setData("email", e.target.value);
                         }}
-                        className={`${
+                        className={`mt-1 ${
                             errors.email ? "!border-destructive" : ""
                         }`}
                     />
@@ -213,7 +213,7 @@ const UserForm = ({ user, roles }: Props) => {
                         ref={(ref) =>
                             (inputsRef.current.roles = ref as HTMLInputElement)
                         }
-                        className={`${
+                        className={`mt-1 ${
                             errors.roles ? "!border-destructive" : ""
                         }`}
                         defaultValue={data.roles}

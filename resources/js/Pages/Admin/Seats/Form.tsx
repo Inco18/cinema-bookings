@@ -142,7 +142,7 @@ const SeatForm = ({ seat, halls }: Props) => {
                             onChange={(e) => {
                                 setData("row", Number(e.target.value));
                             }}
-                            className={`${
+                            className={`mt-1 ${
                                 errors.row ? "!border-destructive" : ""
                             }`}
                         />
@@ -172,7 +172,7 @@ const SeatForm = ({ seat, halls }: Props) => {
                             onChange={(e) => {
                                 setData("column", Number(e.target.value));
                             }}
-                            className={`${
+                            className={`mt-1 ${
                                 errors.column ? "!border-destructive" : ""
                             }`}
                         />
@@ -202,7 +202,7 @@ const SeatForm = ({ seat, halls }: Props) => {
                             onChange={(e) => {
                                 setData("number", Number(e.target.value));
                             }}
-                            className={`${
+                            className={`mt-1 ${
                                 errors.number ? "!border-destructive" : ""
                             }`}
                         />
@@ -236,7 +236,7 @@ const SeatForm = ({ seat, halls }: Props) => {
                                     (inputsRef.current.hall_id =
                                         ref as HTMLInputElement)
                                 }
-                                className={`${
+                                className={`mt-1 ${
                                     errors.hall_id ? "!border-destructive" : ""
                                 }`}
                             >
@@ -284,7 +284,7 @@ const SeatForm = ({ seat, halls }: Props) => {
                                     (inputsRef.current.type =
                                         ref as HTMLInputElement)
                                 }
-                                className={`${
+                                className={`mt-1 ${
                                     errors.type ? "!border-destructive" : ""
                                 }`}
                             >

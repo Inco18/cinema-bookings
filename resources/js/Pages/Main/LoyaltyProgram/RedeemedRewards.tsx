@@ -33,7 +33,7 @@ const RedeemedRewards = ({ redeemedRewards, userPoints }: Props) => {
                     {userPoints}
                 </div>
             </div>
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3 mb-5">
                 {redeemedRewards.map((redeemedReward) => {
                     return (
                         <Dialog>

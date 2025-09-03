@@ -34,6 +34,7 @@ import {
 import { toast } from "react-toastify";
 import { MultiSelect } from "@/Components/ui/multiple-select";
 import { SeatType } from "@/types/enums";
+import { FloatingInput, FloatingLabel } from "@/Components/ui/floating-input";
 
 type Props = {
     seats: Paginated<Seat>;
@@ -285,15 +286,18 @@ const SeatsIndex = ({
                     <h2 className="text-xl font-semibold leading-tight text-gray-800">
                         Siedzenia
                     </h2>
-                    <div className="flex items-center ml-8 min-w-80 max-w-96 gap-1">
-                        <Input
-                            placeholder="Sala"
-                            className="max-w-sm m-0"
-                            value={hallSearchValue}
-                            onChange={(e) => {
-                                setHallSearchValue(e.target.value);
-                            }}
-                        />
+                    <div className="flex items-center ml-8 min-w-80 gap-1">
+                        <div className="relative">
+                            <FloatingInput
+                                id="hall"
+                                className="w-26 m-0"
+                                value={hallSearchValue}
+                                onChange={(e) => {
+                                    setHallSearchValue(e.target.value);
+                                }}
+                            />
+                            <FloatingLabel htmlFor="hall">Sala</FloatingLabel>
+                        </div>
                         <Button
                             variant={"ghost"}
                             size={"icon"}
@@ -304,14 +308,17 @@ const SeatsIndex = ({
                         >
                             <X />
                         </Button>
-                        <Input
-                            placeholder="Rząd"
-                            className="max-w-sm m-0"
-                            value={rowSearchValue}
-                            onChange={(e) => {
-                                setRowSearchValue(e.target.value);
-                            }}
-                        />
+                        <div className="relative">
+                            <FloatingInput
+                                id="row"
+                                className="w-26 m-0"
+                                value={rowSearchValue}
+                                onChange={(e) => {
+                                    setRowSearchValue(e.target.value);
+                                }}
+                            />
+                            <FloatingLabel htmlFor="row">Rząd</FloatingLabel>
+                        </div>
                         <Button
                             variant={"ghost"}
                             size={"icon"}
@@ -322,14 +329,19 @@ const SeatsIndex = ({
                         >
                             <X />
                         </Button>
-                        <Input
-                            placeholder="Kolumna"
-                            className="max-w-sm m-0"
-                            value={colSearchValue}
-                            onChange={(e) => {
-                                setColSearchValue(e.target.value);
-                            }}
-                        />
+                        <div className="relative">
+                            <FloatingInput
+                                id="column"
+                                className="w-26 m-0"
+                                value={colSearchValue}
+                                onChange={(e) => {
+                                    setColSearchValue(e.target.value);
+                                }}
+                            />
+                            <FloatingLabel htmlFor="column">
+                                Kolumna
+                            </FloatingLabel>
+                        </div>
                         <Button
                             variant={"ghost"}
                             size={"icon"}

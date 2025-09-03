@@ -189,7 +189,7 @@ const ShowingForm = ({ showing, halls, movies }: Props) => {
                                     (inputsRef.current.hall_id =
                                         ref as HTMLInputElement)
                                 }
-                                className={`${
+                                className={`mt-1 ${
                                     errors.hall_id ? "!border-destructive" : ""
                                 }`}
                             >
@@ -237,7 +237,7 @@ const ShowingForm = ({ showing, halls, movies }: Props) => {
                                     (inputsRef.current.type =
                                         ref as HTMLInputElement)
                                 }
-                                className={`${
+                                className={`mt-1 ${
                                     errors.type ? "!border-destructive" : ""
                                 }`}
                             >
@@ -293,7 +293,7 @@ const ShowingForm = ({ showing, halls, movies }: Props) => {
                                     }),
                                 }));
                             }}
-                            className={`${
+                            className={`mt-1 ${
                                 errors.start_time ? "!border-destructive" : ""
                             }`}
                         />
@@ -320,7 +320,7 @@ const ShowingForm = ({ showing, halls, movies }: Props) => {
                             }
                             date={new Date(data.end_time)}
                             onChange={(date) => setData("end_time", date!)}
-                            className={`${
+                            className={`mt-1 ${
                                 errors.end_time ? "!border-destructive" : ""
                             }`}
                         />
@@ -354,7 +354,7 @@ const ShowingForm = ({ showing, halls, movies }: Props) => {
                             onChange={(e) => {
                                 setData("speech_lang", e.target.value);
                             }}
-                            className={`${
+                            className={`mt-1 ${
                                 errors.speech_lang ? "!border-destructive" : ""
                             }`}
                         />
@@ -386,7 +386,7 @@ const ShowingForm = ({ showing, halls, movies }: Props) => {
                             onChange={(e) => {
                                 setData("dubbing_lang", e.target.value);
                             }}
-                            className={`${
+                            className={`mt-1 ${
                                 errors.dubbing_lang ? "!border-destructive" : ""
                             }`}
                         />
@@ -418,7 +418,7 @@ const ShowingForm = ({ showing, halls, movies }: Props) => {
                             onChange={(e) => {
                                 setData("subtitles_lang", e.target.value);
                             }}
-                            className={`${
+                            className={`mt-1 ${
                                 errors.subtitles_lang
                                     ? "!border-destructive"
                                     : ""

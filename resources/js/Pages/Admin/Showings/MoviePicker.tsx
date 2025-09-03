@@ -37,11 +37,11 @@ const MoviePicker = forwardRef<HTMLButtonElement, Props>(function MoviePicker(
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild ref={ref}>
-                <Button
+                <Button id="movie"
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
-                    className="w-full justify-between"
+                    className="mt-1 w-full justify-between"
                 >
                     {value
                         ? moviesList.find((movie) => movie.value === value)

@@ -36,9 +36,9 @@
                             <p>DUBBING: {{ $booking->showing['dubbing_lang'] }}</p>
                         @endif
                     </div>
-                    <p class="mt-5">Bilet: <span class="font-semibold">normalny</span></p>
+                    <p class="mt-5">Bilet: <span class="font-semibold">{{ \App\Enums\TicketType::from($seat->pivot->type)->getLabel() }}</span></p>
                     <p>Cena: <span
-                            class="font-semibold">{{ number_format($booking->price / $booking->num_people, 2, ',', ' ') }}
+                            class="font-semibold">{{ number_format($seat->pivot->price, 2, ',', ' ') }}
                             zł</span></p>
                     <p class="mt-5">rząd: <span class="font-semibold">{{ $seat->row }}</span> miejsce:
                         <span class="font-semibold">{{ $seat->number }}</span>

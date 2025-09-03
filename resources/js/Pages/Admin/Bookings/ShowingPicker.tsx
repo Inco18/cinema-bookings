@@ -44,7 +44,7 @@ const ShowingPicker = forwardRef<HTMLButtonElement, Props>(
                         id={id}
                         role="combobox"
                         aria-expanded={open}
-                        className="w-full justify-between"
+                        className="mt-1 w-full justify-between"
                     >
                         <p className="line-clamp-1">
                             {value

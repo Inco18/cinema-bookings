@@ -259,7 +259,7 @@ const BookingForm = ({
                                     (inputsRef.current.status =
                                         ref as HTMLInputElement)
                                 }
-                                className={`${
+                                className={`mt-1 ${
                                     errors.status ? "!border-destructive" : ""
                                 }`}
                             >
@@ -311,7 +311,7 @@ const BookingForm = ({
                                         Number(e.target.value)
                                     );
                                 }}
-                                className={`${
+                                className={`mt-1 ${
                                     errors.num_people
                                         ? "!border-destructive"
                                         : ""
@@ -345,7 +345,7 @@ const BookingForm = ({
                                 onChange={(e) => {
                                     setData("price", Number(e.target.value));
                                 }}
-                                className={`${
+                                className={`mt-1 ${
                                     errors.price ? "!border-destructive" : ""
                                 }`}
                             />
@@ -378,7 +378,7 @@ const BookingForm = ({
                                 onChange={(e) => {
                                     setData("first_name", e.target.value);
                                 }}
-                                className={`${
+                                className={`mt-1 ${
                                     errors.first_name
                                         ? "!border-destructive"
                                         : ""
@@ -411,7 +411,7 @@ const BookingForm = ({
                                 onChange={(e) => {
                                     setData("last_name", e.target.value);
                                 }}
-                                className={`${
+                                className={`mt-1 ${
                                     errors.last_name
                                         ? "!border-destructive"
                                         : ""
@@ -445,7 +445,7 @@ const BookingForm = ({
                             onChange={(e) => {
                                 setData("email", e.target.value);
                             }}
-                            className={`${
+                            className={`mt-1 ${
                                 errors.email ? "!border-destructive" : ""
                             }`}
                         />

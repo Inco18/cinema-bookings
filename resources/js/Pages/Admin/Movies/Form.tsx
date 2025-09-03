@@ -151,7 +151,7 @@ const MovieForm = ({ movie, genres }: Props) => {
                         onChange={(e) => {
                             setData("title", e.target.value);
                         }}
-                        className={`${
+                        className={`mt-1 ${
                             errors.title ? "!border-destructive" : ""
                         }`}
                     />
@@ -181,7 +181,7 @@ const MovieForm = ({ movie, genres }: Props) => {
                         onChange={(e) => {
                             setData("director", e.target.value);
                         }}
-                        className={`${
+                        className={`mt-1 ${
                             errors.director ? "!border-destructive" : ""
                         }`}
                     />
@@ -213,7 +213,7 @@ const MovieForm = ({ movie, genres }: Props) => {
                                 (inputsRef.current.genre_id =
                                     ref as HTMLInputElement)
                             }
-                            className={`${
+                            className={`mt-1 w-full ${
                                 errors.genre_id ? "!border-destructive" : ""
                             }`}
                         >
@@ -267,7 +267,7 @@ const MovieForm = ({ movie, genres }: Props) => {
                                     setData("poster_image", e.target.files[0]);
                                 }
                             }}
-                            className={`${
+                            className={`mt-1 ${
                                 errors.poster_image ? "!border-destructive" : ""
                             }`}
                         />
@@ -334,7 +334,7 @@ const MovieForm = ({ movie, genres }: Props) => {
                         onChange={(seconds) => {
                             setData("duration_seconds", seconds);
                         }}
-                        className={`${
+                        className={`mt-1 ${
                             errors.duration_seconds ? "!border-destructive" : ""
                         }`}
                     />
@@ -426,7 +426,7 @@ const MovieForm = ({ movie, genres }: Props) => {
                         onChange={(e) => {
                             setData("age_rating", Number(e.target.value));
                         }}
-                        className={`${
+                        className={`mt-1 ${
                             errors.age_rating ? "!border-destructive" : ""
                         }`}
                     />
@@ -455,7 +455,7 @@ const MovieForm = ({ movie, genres }: Props) => {
                         onChange={(e) => {
                             setData("description", e.target.value);
                         }}
-                        className={`${
+                        className={`mt-1 ${
                             errors.description ? "!border-destructive" : ""
                         }`}
                     />

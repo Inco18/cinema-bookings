@@ -32,6 +32,7 @@ import {
     DialogTrigger,
 } from "@/Components/ui/dialog";
 import { toast } from "react-toastify";
+import { FloatingInput, FloatingLabel } from "@/Components/ui/floating-input";
 
 type Props = {
     movies: Paginated<Movie>;
@@ -279,14 +280,19 @@ const MoviesIndex = ({
                         Filmy
                     </h2>
                     <div className="flex items-center ml-8 min-w-80 gap-1">
-                        <Input
-                            placeholder="Wyszukaj tytuł lub reżysera..."
-                            className="max-w-sm m-0"
-                            value={searchValue}
-                            onChange={(e) => {
-                                setSearchValue(e.target.value);
-                            }}
-                        />
+                        <div className="relative">
+                            <FloatingInput
+                                id="search"
+                                className="w-70 m-0"
+                                value={searchValue}
+                                onChange={(e) => {
+                                    setSearchValue(e.target.value);
+                                }}
+                            />
+                            <FloatingLabel htmlFor="search">
+                                Tytuł lub reżyser
+                            </FloatingLabel>
+                        </div>
                         <Button
                             variant={"ghost"}
                             size={"icon"}

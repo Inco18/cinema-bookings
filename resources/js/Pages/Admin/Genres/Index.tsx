@@ -32,6 +32,7 @@ import {
     DialogTrigger,
 } from "@/Components/ui/dialog";
 import { toast } from "react-toastify";
+import { FloatingInput, FloatingLabel } from "@/Components/ui/floating-input";
 
 type Props = {
     genres: Paginated<Genre>;
@@ -189,14 +190,17 @@ const GenresIndex = ({
                         Gatunki
                     </h2>
                     <div className="flex items-center ml-8 min-w-80 gap-1">
-                        <Input
-                            placeholder="Wyszukaj nazwę..."
-                            className="max-w-sm m-0"
-                            value={searchValue}
-                            onChange={(e) => {
-                                setSearchValue(e.target.value);
-                            }}
-                        />
+                        <div className="relative">
+                            <FloatingInput
+                                id="name"
+                                className="w-70 m-0"
+                                value={searchValue}
+                                onChange={(e) => {
+                                    setSearchValue(e.target.value);
+                                }}
+                            />
+                            <FloatingLabel htmlFor="name">Nazwa</FloatingLabel>
+                        </div>
                         <Button
                             variant={"ghost"}
                             size={"icon"}

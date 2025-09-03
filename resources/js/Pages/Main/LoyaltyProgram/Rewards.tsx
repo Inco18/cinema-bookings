@@ -54,7 +54,7 @@ const Rewards = ({ rewards, userPoints }: Props) => {
                     {userPoints}
                 </div>
             </div>
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3 mb-5">
                 {rewards.map((reward) => {
                     return (
                         <AlertDialog>

@@ -36,7 +36,7 @@ export default function LoyaltyProgramIndex({
                 </TabsList>
 
                 <TabsContents>
-                    <TabsContent value="points" className="px-5">
+                    <TabsContent value="points" className="px-5 max-h-[calc(100vh-7rem)] overflow-y-auto">
                         <div className="flex mt-2 my-5 px-3 md:px-0 items-center justify-between gap-3">
                             <h1 className="text-2xl m-0">Twoje punkty</h1>
                             <div
@@ -47,7 +47,7 @@ export default function LoyaltyProgramIndex({
                                 {user.points_number}
                             </div>
                         </div>
-                        <div className="mt-2 space-y-6 bg-background p-2 sm:rounded-lg sm:p-4 border mb-20">
+                        <div className="mt-2 space-y-6 bg-background p-2 sm:rounded-lg sm:p-4 border">
                             <div className="flex flex-col w-full gap-3">
                                 <div className="flex-1 flex flex-col md:flex-row md:items-center gap-3 bg-primary text-background p-2 rounded-lg">
                                     <div className="flex flex-col items-start gap-0 justify-start">
@@ -110,13 +110,13 @@ export default function LoyaltyProgramIndex({
                             </div>
                         </div>
                     </TabsContent>
-                    <TabsContent value="rewardsShop" className="mb-5 px-5">
+                    <TabsContent value="rewardsShop" className="px-5 max-h-[calc(100vh-7rem)] overflow-y-auto">
                         <Rewards
                             rewards={rewards}
                             userPoints={user.points_number}
                         />
                     </TabsContent>
-                    <TabsContent value="redeemedRewards" className="mb-5 px-5">
+                    <TabsContent value="redeemedRewards" className="px-5 max-h-[calc(100vh-7rem)] overflow-y-auto">
                         <RedeemedRewards
                             redeemedRewards={redeemedRewards}
                             userPoints={user.points_number}

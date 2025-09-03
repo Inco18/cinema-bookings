@@ -43,7 +43,7 @@ const UserPicker = forwardRef<HTMLButtonElement, Props>(function UserPicker(
                     id={id}
                     role="combobox"
                     aria-expanded={open}
-                    className="w-full justify-between"
+                    className="mt-1 w-full justify-between"
                 >
                     {value
                         ? usersList.find((movie) => movie.value === value)
@@ -56,7 +56,7 @@ const UserPicker = forwardRef<HTMLButtonElement, Props>(function UserPicker(
                 <Command>
                     <CommandInput
                         placeholder="Szukaj użytkownika..."
-                        className="focus:ring-0 focus:border-indigo-700"
+                        className="border-input h-9 my-2 focus-visible:border-primary focus-visible:ring-primary/50 focus-visible:ring-[3px] transition-all"
                     />
                     <CommandList>
                         <CommandEmpty>Nie znaleziono użytkownika</CommandEmpty>
