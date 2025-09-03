@@ -2,6 +2,9 @@ import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
+import { Button } from "@/Components/ui/button";
+import { Input } from "@/Components/ui/input";
+import { Label } from "@/Components/ui/label";
 import { Transition } from "@headlessui/react";
 import { Link, useForm, usePage } from "@inertiajs/react";
 import { FormEventHandler } from "react";
@@ -26,7 +29,6 @@ export default function UpdateProfileInformation({
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-
         patch(route("profile.update"));
     };
 
@@ -42,30 +44,29 @@ export default function UpdateProfileInformation({
 
             <form onSubmit={submit} className="mt-6 space-y-6">
                 <div>
-                    <InputLabel htmlFor="first_name" value="Imię" />
+                    <Label htmlFor="first_name">Imię</Label>
 
-                    <TextInput
+                    <Input
                         id="first_name"
-                        className="mt-1 block w-full"
+                        className="mt-1 w-full"
                         value={data.first_name}
                         onChange={(e) => setData("first_name", e.target.value)}
                         required
-                        isFocused
+                        autoFocus
                         autoComplete="name"
                     />
 
                     <InputError className="mt-2" message={errors.first_name} />
                 </div>
                 <div>
-                    <InputLabel htmlFor="last_name" value="Nazwisko" />
+                    <Label htmlFor="last_name">Nazwisko</Label>
 
-                    <TextInput
+                    <Input
                         id="last_name"
-                        className="mt-1 block w-full"
+                        className="mt-1 w-full"
                         value={data.last_name}
                         onChange={(e) => setData("last_name", e.target.value)}
                         required
-                        isFocused
                         autoComplete="last_name"
                     />
 
@@ -73,12 +74,12 @@ export default function UpdateProfileInformation({
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="email" value="Email" />
+                    <Label htmlFor="email">Email</Label>
 
-                    <TextInput
+                    <Input
                         id="email"
                         type="email"
-                        className="mt-1 block w-full"
+                        className="mt-1 w-full"
                         value={data.email}
                         onChange={(e) => setData("email", e.target.value)}
                         required
@@ -113,7 +114,7 @@ export default function UpdateProfileInformation({
                 )}
 
                 <div className="flex items-center gap-4">
-                    <PrimaryButton disabled={processing}>Zapisz</PrimaryButton>
+                    <Button disabled={processing} type="submit">Zapisz</Button>
 
                     <Transition
                         show={recentlySuccessful}
