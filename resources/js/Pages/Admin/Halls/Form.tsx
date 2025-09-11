@@ -46,12 +46,14 @@ const HallForm = ({ hall, seats }: Props) => {
     } = useForm({
         number: hall?.number || "",
         type: hall?.type || "",
+        planFile: null as File | null,
     });
     const [didFail, setDidFail] = useState(false);
     const inputsRef = useRef<{
         number: HTMLInputElement | null;
         type: HTMLInputElement | null;
-    }>({ number: null, type: null });
+        planFile: HTMLInputElement | null;
+    }>({ number: null, type: null, planFile: null });
 
     const validateInputs = () => {
         const parsed = HallRequest.safeParse(data);
@@ -142,7 +144,7 @@ const HallForm = ({ hall, seats }: Props) => {
                             onChange={(e) => {
                                 setData("number", e.target.value);
                             }}
-                            className={`${
+                            className={`mt-1 ${
                                 errors.number ? "!border-destructive" : ""
                             }`}
                         />
@@ -152,51 +154,120 @@ const HallForm = ({ hall, seats }: Props) => {
                             </p>
                         )}
                     </div>
-                    <div>
-                        <Label
-                            htmlFor="type"
-                            className={`${
-                                errors.type ? "!text-destructive" : ""
-                            }`}
-                        >
-                            Typ
-                        </Label>
-                        <Select
-                            onValueChange={(val) => {
-                                clearErrors("type");
-                                setData("type", val);
-                            }}
-                            defaultValue={data.type}
-                        >
-                            <SelectTrigger
-                                id="type"
-                                ref={(ref) =>
-                                    (inputsRef.current.type =
-                                        ref as HTMLInputElement)
-                                }
+                    <div className="flex gap-3">
+                        <div>
+                            <Label
+                                htmlFor="type"
                                 className={`${
-                                    errors.type ? "!border-destructive" : ""
+                                    errors.type ? "!text-destructive" : ""
                                 }`}
                             >
-                                <SelectValue placeholder="Wybierz typ" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {Object.values(HallType).map((hallType) => {
-                                    return (
-                                        <SelectItem
-                                            key={hallType}
-                                            value={hallType}
+                                Typ
+                            </Label>
+                            <Select
+                                onValueChange={(val) => {
+                                    clearErrors("type");
+                                    setData("type", val);
+                                }}
+                                defaultValue={data.type}
+                            >
+                                <SelectTrigger
+                                    id="type"
+                                    ref={(ref) =>
+                                        (inputsRef.current.type =
+                                            ref as HTMLInputElement)
+                                    }
+                                    className={`mt-1 ${
+                                        errors.type ? "!border-destructive" : ""
+                                    }`}
+                                >
+                                    <SelectValue placeholder="Wybierz typ" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {Object.values(HallType).map((hallType) => {
+                                        return (
+                                            <SelectItem
+                                                key={hallType}
+                                                value={hallType}
+                                            >
+                                                {hallType}
+                                            </SelectItem>
+                                        );
+                                    })}
+                                </SelectContent>
+                            </Select>
+                            {errors.type && (
+                                <p className="text-sm text-destructive mt-1">
+                                    {errors.type}
+                                </p>
+                            )}
+                        </div>
+                        {!hall && (
+                            <div>
+                                <Label
+                                    htmlFor="poster_image"
+                                    className={`${
+                                        errors.planFile
+                                            ? "!text-destructive"
+                                            : ""
+                                    }`}
+                                >
+                                    Plan sali z pliku (.txt)
+                                </Label>
+                                <Input
+                                    type="file"
+                                    ref={(ref) =>
+                                        (inputsRef.current.planFile =
+                                            ref as HTMLInputElement)
+                                    }
+                                    id="planFile"
+                                    onChange={(e) => {
+                                        if (
+                                            e.target.files &&
+                                            e.target.files[0]
+                                        ) {
+                                            //@ts-ignore
+                                            setData(
+                                                "planFile",
+                                                e.target.files[0]
+                                            );
+                                        }
+                                    }}
+                                    className={`mt-1 ${
+                                        errors.planFile
+                                            ? "!border-destructive"
+                                            : ""
+                                    }`}
+                                />
+                                {errors.planFile && (
+                                    <p className="text-sm text-destructive mt-1">
+                                        {errors.planFile}
+                                    </p>
+                                )}
+
+                                {data.planFile && (
+                                    <div className="text-sm mt-1 flex items-center gap-2">
+                                        Wybrany plik:{" "}
+                                        {(data.planFile as File).name}
+                                        <Button
+                                            size={"icon"}
+                                            variant={"ghost"}
+                                            type="button"
+                                            onClick={() => {
+                                                setData("planFile", null);
+                                                if (
+                                                    inputsRef.current.planFile
+                                                ) {
+                                                    inputsRef.current.planFile.value =
+                                                        "";
+                                                }
+                                            }}
                                         >
-                                            {hallType}
-                                        </SelectItem>
-                                    );
-                                })}
-                            </SelectContent>
-                        </Select>
-                        {errors.type && (
-                            <p className="text-sm text-destructive mt-1">
-                                {errors.type}
-                            </p>
+                                            <X />
+                                        </Button>
+                                    </div>
+                                )}
+                            </div>
                         )}
                     </div>
                     <div className="flex justify-end gap-2">

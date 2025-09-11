@@ -152,18 +152,18 @@ export default function SeatPicker({
                                         });
                                     }}
                                     className={cn(
-                                        "relative w-3 h-3 md:w-5 md:h-5 cursor-pointer flex items-center justify-center text-xs text-primary-foreground",
+                                        "relative w-3 h-3 md:w-5 md:h-5 cursor-pointer flex items-center justify-center text-xs text-primary-foreground rounded-t-md",
                                         bookingsSeats.includes(seat.id) &&
                                             !selectedSeats.includes(seat.id)
                                             ? "bg-gray-400 cursor-not-allowed"
                                             : "bg-indigo-700",
                                         {
-                                            "bg-red-600 after:bg-red-600":
+                                            "!bg-red-600 after:!bg-red-600":
                                                 selectedSeats.includes(seat.id),
-                                            "wideToRight after:bg-indigo-700":
+                                            "wideToRight after:bg-indigo-700 !rounded-r-none":
                                                 seat.type ===
                                                 SeatType.WIDE_TO_RIGHT,
-                                            "wideToLeft after:bg-indigo-700":
+                                            "wideToLeft after:bg-indigo-700 !rounded-l-none":
                                                 seat.type ===
                                                 SeatType.WIDE_TO_LEFT,
                                         }

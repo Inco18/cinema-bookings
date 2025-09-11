@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin;
 
 use App\Enums\BookingStatus;
+use App\Rules\ValidSeatsForShowing;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -14,7 +15,6 @@ class BookingRequest extends FormRequest {
         return [
             'showing_id' => ['required', 'exists:showings,id'],
             'user_id' => ['nullable', 'exists:users,id'],
-            'num_people' => ['required', 'integer', 'min:1'],
             'price' => ['required', 'numeric', 'min:0'],
             'status' => ['required', Rule::in(BookingStatus::toArray())],
             'first_name' => ['required', 'regex:/^[\pL\s-]*$/u', 'max:255'],
@@ -24,11 +24,7 @@ class BookingRequest extends FormRequest {
                 'required',
                 'array',
                 'min:1',
-                function ($attribute, $value, $fail) {
-                    if (count($value) !== $this->input('num_people')) {
-                        $fail("Ilość wybranych miejsc musi być równa liczbie osób");
-                    }
-                }
+                new ValidSeatsForShowing($this->input(key: 'showing_id'))
             ],
             'seats.*' => [
                 'distinct',

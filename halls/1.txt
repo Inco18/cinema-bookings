@@ -1,0 +1,9 @@
+N N N N N N N N D D D D . . . . .
+N N N N N N N N N N N N . . . . .
+N N N N N N N N N N N N . . . . .
+N N N N N N N N N N N N . . . N N
+N N N N N N N N N N N N . . . N N
+N N N N N N N N N N N N N N N N N
+N N N N N N N N N N N N N N N N N
+L R L R L R L R L R L R L R L R N
+N L R L R L R L R L R L R L R L R

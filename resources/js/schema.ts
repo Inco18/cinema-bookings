@@ -84,6 +84,11 @@ export const HallRequest = z.object({
         .int({ message: "To pole może zawierać tylko liczby całkowite" })
         .min(1, { message: "To pole nie może być mniejsze niż 1" }),
     type: z.nativeEnum(HallType, { message: "Niedopuszczalna zawartość pola" }),
+    planFile: z
+        .any()
+        .refine((file) => file.type === "text/plain", "Wyślij poprawny plik")
+        .optional()
+        .nullable(),
 });
 
 export const SeatRequest = z.object({
