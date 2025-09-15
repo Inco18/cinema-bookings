@@ -117,7 +117,7 @@ class MovieController extends Controller {
      * Remove the specified resource from storage.
      */
     public function destroy(Movie $movie) {
-        Gate::authorize('delete', Movie::class);
+        Gate::authorize('delete', $movie);
         $oldPoster = $movie['poster_image'];
         if ($oldPoster) {
             Storage::delete($oldPoster);
