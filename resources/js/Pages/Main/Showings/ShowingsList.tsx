@@ -18,7 +18,7 @@ const ShowingsList = ({ showings }: Props) => {
                 return (
                     <div
                         key={movie?.id}
-                        className="bg-background p-4 rounded-md flex flex-col md:flex-row gap-5"
+                        className="flex flex-col gap-5 p-4 rounded-md bg-background md:flex-row"
                     >
                         <div className="flex gap-5 md:block">
                             <div className="w-24 md:w-28 shrink-0">
@@ -32,7 +32,7 @@ const ShowingsList = ({ showings }: Props) => {
                                 />
                             </div>
                             <div>
-                                <h1 className="font-medium text-2xl block md:hidden">
+                                <h1 className="block text-2xl font-medium md:hidden">
                                     {movie?.title}
                                 </h1>
                                 <p className="line-clamp-2 md:hidden">
@@ -40,8 +40,8 @@ const ShowingsList = ({ showings }: Props) => {
                                 </p>
                             </div>
                         </div>
-                        <div>
-                            <h1 className="font-medium text-2xl hidden md:flex items-center gap-4">
+                        <div className="w-full">
+                            <h1 className="items-center hidden gap-4 text-2xl font-medium md:flex">
                                 {movie?.title}{" "}
                                 <Badge variant={"secondary"}>
                                     Od {movie?.age_rating} lat
@@ -74,7 +74,7 @@ const ShowingsList = ({ showings }: Props) => {
                                                     ),
                                                     "HH:mm"
                                                 )}{" "}
-                                                <span className="font-normal text-sm opacity-60">
+                                                <span className="text-sm font-normal opacity-60">
                                                     -{" "}
                                                     {format(
                                                         new Date(
