@@ -29,4 +29,7 @@ enum PermissionType: string {
     case BOOKING_ACCESS = 'booking_access';
     case BOOKING_MANAGE = 'booking_manage';
 
+    case REWARD_ACCESS = 'reward_access';
+    case REWARD_MANAGE = 'reward_manage';
+
 }

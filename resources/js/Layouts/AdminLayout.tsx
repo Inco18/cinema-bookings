@@ -13,8 +13,8 @@ import { hasRole } from "@/lib/utils";
 import { RoleType } from "@/types/enums";
 import { Link, usePage } from "@inertiajs/react";
 import { ChevronDown } from "lucide-react";
-import { PropsWithChildren, ReactNode, useState } from "react";
-import { ToastContainer } from "react-toastify";
+import { PropsWithChildren, ReactNode, useEffect, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -27,16 +27,21 @@ export default function Admin({
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
 
+    const { flash }: any = usePage().props;
+    useEffect(() => {
+        if (flash.success) toast.success(flash.success);
+        if (flash.error) toast.error(flash.error);
+    }, [flash]);
     return (
         <>
             <div className="min-h-screen bg-gray-100">
-                <nav className="border-b border-gray-100 bg-white">
+                <nav className="bg-white border-b border-gray-100">
                     <div className="mx-auto max-w-(--breakpoint-2xl) px-4 sm:px-6 lg:px-8">
-                        <div className="flex h-16 justify-between">
+                        <div className="flex justify-between h-16">
                             <div className="flex">
-                                <div className="flex shrink-0 items-center">
+                                <div className="flex items-center shrink-0">
                                     <Link href="/">
-                                        <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
+                                        <ApplicationLogo className="block w-auto text-gray-800 fill-current h-9" />
                                     </Link>
                                 </div>
 
@@ -111,6 +116,16 @@ export default function Admin({
                                             Rezerwacje
                                         </NavLink>
                                     )}
+                                    {hasRole(user, RoleType.ADMIN) && (
+                                        <NavLink
+                                            href={route("rewards.index")}
+                                            active={route().current(
+                                                "rewards.*"
+                                            )}
+                                        >
+                                            Nagrody
+                                        </NavLink>
+                                    )}
                                 </div>
                             </div>
 
@@ -157,17 +172,17 @@ export default function Admin({
                                 </div>
                             </div>
 
-                            <div className="-me-2 flex items-center sm:hidden">
+                            <div className="flex items-center -me-2 sm:hidden">
                                 <button
                                     onClick={() =>
                                         setShowingNavigationDropdown(
                                             (previousState) => !previousState
                                         )
                                     }
-                                    className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none"
+                                    className="inline-flex items-center justify-center p-2 text-gray-400 transition duration-150 ease-in-out rounded-md hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none"
                                 >
                                     <svg
-                                        className="h-6 w-6"
+                                        className="w-6 h-6"
                                         stroke="currentColor"
                                         fill="none"
                                         viewBox="0 0 24 24"
@@ -206,7 +221,7 @@ export default function Admin({
                             " sm:hidden"
                         }
                     >
-                        <div className="space-y-1 pb-3 pt-2">
+                        <div className="pt-2 pb-3 space-y-1">
                             {hasRole(user, RoleType.ADMIN) && (
                                 <ResponsiveNavLink
                                     href={route("dashboard")}
@@ -271,9 +286,17 @@ export default function Admin({
                                     Rezerwacje
                                 </ResponsiveNavLink>
                             )}
+                            {hasRole(user, RoleType.ADMIN) && (
+                                <ResponsiveNavLink
+                                    href={route("rewards.index")}
+                                    active={route().current("rewards.*")}
+                                >
+                                    Nagrody
+                                </ResponsiveNavLink>
+                            )}
                         </div>
 
-                        <div className="border-t border-gray-200 pb-1 pt-4">
+                        <div className="pt-4 pb-1 border-t border-gray-200">
                             <div className="px-4">
                                 <div className="text-base font-medium text-gray-800">
                                     {user.first_name} {user.last_name}

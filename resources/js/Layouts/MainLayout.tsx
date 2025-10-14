@@ -30,20 +30,19 @@ export default function MainLayout({
 
     const { flash }: any = usePage().props;
     useEffect(() => {
-        console.log(flash);
         if (flash.success) toast.success(flash.success);
         if (flash.error) toast.error(flash.error);
     }, [flash]);
     return (
         <>
-            <div className="min-h-screen bg-gray-100 flex flex-col">
-                <nav className="bg-white z-50 sticky top-0">
-                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                        <div className="flex h-16 justify-between">
+            <div className="flex flex-col min-h-screen bg-gray-100">
+                <nav className="sticky top-0 z-50 bg-white">
+                    <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+                        <div className="flex justify-between h-16">
                             <div className="flex">
-                                <div className="flex shrink-0 items-center">
+                                <div className="flex items-center shrink-0">
                                     <Link href="/">
-                                        <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
+                                        <ApplicationLogo className="block w-auto text-gray-800 fill-current h-9" />
                                     </Link>
                                 </div>
 
@@ -91,7 +90,7 @@ export default function MainLayout({
 
                                             <DropdownMenuContent>
                                                 <div
-                                                    className="bg-secondary py-1 px-4 -mt-1 -mx-1 mb-1 rounded-t-md cursor-default flex gap-2 text-amber-600"
+                                                    className="flex gap-2 px-4 py-1 mb-1 -mx-1 -mt-1 cursor-default bg-secondary rounded-t-md text-amber-600"
                                                     title="Punkty programu lojalnościowego"
                                                 >
                                                     <HandCoins />
@@ -170,7 +169,7 @@ export default function MainLayout({
                                     <div className="flex h-max sm:mt-3">
                                         <Link
                                             href={route("login")}
-                                            className="flex items-center gap-3 rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-indigo-700"
+                                            className="flex items-center gap-3 px-3 py-2 text-black transition rounded-md ring-1 ring-transparent hover:text-indigo-700"
                                         >
                                             <UserRound className="rounded-full" />
                                             Zaloguj się
@@ -181,7 +180,7 @@ export default function MainLayout({
                                         />
                                         <Link
                                             href={route("register")}
-                                            className="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-indigo-700"
+                                            className="px-3 py-2 text-black transition rounded-md ring-1 ring-transparent hover:text-indigo-700"
                                         >
                                             Zarejestruj się
                                         </Link>
@@ -189,17 +188,17 @@ export default function MainLayout({
                                 </div>
                             )}
 
-                            <div className="-me-2 flex items-center sm:hidden">
+                            <div className="flex items-center -me-2 sm:hidden">
                                 <button
                                     onClick={() =>
                                         setShowingNavigationDropdown(
                                             (previousState) => !previousState
                                         )
                                     }
-                                    className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none"
+                                    className="inline-flex items-center justify-center p-2 text-gray-400 transition duration-150 ease-in-out rounded-md hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none"
                                 >
                                     <svg
-                                        className="h-6 w-6"
+                                        className="w-6 h-6"
                                         stroke="currentColor"
                                         fill="none"
                                         viewBox="0 0 24 24"
@@ -238,7 +237,7 @@ export default function MainLayout({
                             " sm:hidden"
                         }
                     >
-                        <div className="space-y-1 pb-3 pt-2">
+                        <div className="pt-2 pb-3 space-y-1">
                             <ResponsiveNavLink
                                 href={route("main.showings.index")}
                                 active={route().current("main.showings.index")}
@@ -254,7 +253,7 @@ export default function MainLayout({
                         </div>
 
                         {user ? (
-                            <div className="border-t border-gray-200 pb-1 pt-4">
+                            <div className="pt-4 pb-1 border-t border-gray-200">
                                 <div className="px-4">
                                     <div className="text-base font-medium text-gray-800">
                                         {user.first_name} {user.last_name}
@@ -264,7 +263,7 @@ export default function MainLayout({
                                     </div>
                                 </div>
                                 <div
-                                    className="bg-secondary py-1 px-4 mt-2 cursor-default flex gap-2 text-amber-600"
+                                    className="flex gap-2 px-4 py-1 mt-2 cursor-default bg-secondary text-amber-600"
                                     title="Punkty programu lojalnościowego"
                                 >
                                     <HandCoins />

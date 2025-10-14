@@ -1,6 +1,6 @@
 import AuthenticatedLayout from "@/Layouts/AdminLayout";
-import { Movie, Paginated } from "@/types";
-import React, { useEffect, useState } from "react";
+import { Paginated, Reward } from "@/types";
+import { useEffect, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import DataTable from "../../../Components/DataTable";
 import { Button } from "@/Components/ui/button";
@@ -13,7 +13,6 @@ import {
     X,
 } from "lucide-react";
 import { Head, Link, router, usePage } from "@inertiajs/react";
-import { Input } from "@/Components/ui/input";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -35,7 +34,7 @@ import { toast } from "react-toastify";
 import { FloatingInput, FloatingLabel } from "@/Components/ui/floating-input";
 
 type Props = {
-    movies: Paginated<Movie>;
+    rewards: Paginated<Reward>;
     rowCount: number;
     page: number;
     sortBy: string;
@@ -43,99 +42,31 @@ type Props = {
     search: string;
 };
 
-const columns: ColumnDef<Movie>[] = [
+const columns: ColumnDef<Reward>[] = [
     {
-        accessorKey: "title",
-        header: ({ column }) => {
-            return (
-                <Button variant="ghost" onClick={() => column.toggleSorting()}>
-                    Tytuł
-                    {column.getIsSorted() === "asc" && (
-                        <ArrowDown className="w-4 h-4 ml-2" />
-                    )}
-                    {column.getIsSorted() === "desc" && (
-                        <ArrowUp className="w-4 h-4 ml-2" />
-                    )}
-                    {!column.getIsSorted() && (
-                        <ArrowUpDown className="w-4 h-4 ml-2" />
-                    )}
-                </Button>
-            );
-        },
-        size: 250,
-    },
-    {
-        accessorKey: "director",
-        header: ({ column }) => {
-            return (
-                <Button variant="ghost" onClick={() => column.toggleSorting()}>
-                    Reżyser
-                    {column.getIsSorted() === "asc" && (
-                        <ArrowDown className="w-4 h-4 ml-2" />
-                    )}
-                    {column.getIsSorted() === "desc" && (
-                        <ArrowUp className="w-4 h-4 ml-2" />
-                    )}
-                    {!column.getIsSorted() && (
-                        <ArrowUpDown className="w-4 h-4 ml-2" />
-                    )}
-                </Button>
-            );
-        },
+        accessorKey: "name",
+        header: ({ column }) => (
+            <Button variant="ghost" onClick={() => column.toggleSorting()}>
+                Nazwa
+                {column.getIsSorted() === "asc" && (
+                    <ArrowDown className="w-4 h-4 ml-2" />
+                )}
+                {column.getIsSorted() === "desc" && (
+                    <ArrowUp className="w-4 h-4 ml-2" />
+                )}
+                {!column.getIsSorted() && (
+                    <ArrowUpDown className="w-4 h-4 ml-2" />
+                )}
+            </Button>
+        ),
         size: 200,
     },
     {
-        accessorKey: "duration_seconds",
+        accessorKey: "cost_points",
         header: ({ column }) => {
             return (
                 <Button variant="ghost" onClick={() => column.toggleSorting()}>
-                    Czas trwania
-                    {column.getIsSorted() === "asc" && (
-                        <ArrowDown className="w-4 h-4 ml-2" />
-                    )}
-                    {column.getIsSorted() === "desc" && (
-                        <ArrowUp className="w-4 h-4 ml-2" />
-                    )}
-                    {!column.getIsSorted() && (
-                        <ArrowUpDown className="w-4 h-4 ml-2" />
-                    )}
-                </Button>
-            );
-        },
-        cell: ({ row }) => {
-            return new Date((row.getValue("duration_seconds") as number) * 1000)
-                .toISOString()
-                .substring(11, 16);
-        },
-        sortDescFirst: false,
-        maxSize: 100,
-    },
-    {
-        accessorKey: "release_date",
-        header: ({ column }) => {
-            return (
-                <Button variant="ghost" onClick={() => column.toggleSorting()}>
-                    Data premiery
-                    {column.getIsSorted() === "asc" && (
-                        <ArrowDown className="w-4 h-4 ml-2" />
-                    )}
-                    {column.getIsSorted() === "desc" && (
-                        <ArrowUp className="w-4 h-4 ml-2" />
-                    )}
-                    {!column.getIsSorted() && (
-                        <ArrowUpDown className="w-4 h-4 ml-2" />
-                    )}
-                </Button>
-            );
-        },
-        maxSize: 100,
-    },
-    {
-        accessorKey: "age_rating",
-        header: ({ column }) => {
-            return (
-                <Button variant="ghost" onClick={() => column.toggleSorting()}>
-                    Ograniczenia wiekowe
+                    Koszt (pkt)
                     {column.getIsSorted() === "asc" && (
                         <ArrowDown className="w-4 h-4 ml-2" />
                     )}
@@ -151,9 +82,41 @@ const columns: ColumnDef<Movie>[] = [
         size: 100,
     },
     {
-        accessorKey: "genre.name",
-        header: "Gatunek",
-        size: 150,
+        accessorKey: "type",
+        header: "Typ",
+        size: 100,
+    },
+    {
+        accessorKey: "value",
+        header: "Wartość",
+        size: 100,
+    },
+    {
+        accessorKey: "value_type",
+        header: "Typ wartości",
+        size: 100,
+    },
+    {
+        accessorKey: "details",
+        header: "Szczegóły",
+        size: 200,
+    },
+    {
+        accessorKey: "image",
+        header: "Obraz",
+        cell: ({ row }: any) =>
+            row.original.image ? (
+                <img
+                    src={
+                        row.original.image.startsWith("http")
+                            ? row.original.image
+                            : `/storage/${row.original.image}`
+                    }
+                    alt="Obraz"
+                    className="max-h-12"
+                />
+            ) : null,
+        size: 80,
     },
     {
         id: "actions",
@@ -161,15 +124,13 @@ const columns: ColumnDef<Movie>[] = [
         cell: ({ row }) => {
             const [isDeleting, setIsDeleting] = useState(false);
             const [modalOpen, setModalOpen] = useState(false);
-            const movie = row.original;
-            const deleteMovie = () => {
+            const reward = row.original;
+            const deleteReward = () => {
                 setIsDeleting(false);
-                router.delete(route("movies.destroy", { movie }), {
+                router.delete(route("rewards.destroy", { reward }), {
                     preserveScroll: true,
-                    onSuccess: () =>
-                        toast.success("Wybrany film został usunięty"),
                     onError: () =>
-                        toast.error("Nie udało się usunąć wybranego filmu"),
+                        toast.error("Nie udało się usunąć wybranej nagrody"),
                     onFinish: () => {
                         setIsDeleting(false);
                         setModalOpen(false);
@@ -190,8 +151,8 @@ const columns: ColumnDef<Movie>[] = [
                             <DropdownMenuLabel>Akcje</DropdownMenuLabel>
                             <DropdownMenuItem asChild>
                                 <Link
-                                    href={route("movies.edit", {
-                                        movie,
+                                    href={route("rewards.edit", {
+                                        reward,
                                         ...route().queryParams,
                                     })}
                                 >
@@ -206,12 +167,12 @@ const columns: ColumnDef<Movie>[] = [
                     <DialogContent>
                         <DialogHeader>
                             <DialogTitle>
-                                Czy jesteś pewny że chcesz usunąć film:{" "}
-                                {movie.title}
+                                Czy jesteś pewny że chcesz usunąć nagrodę:{" "}
+                                {reward.name}
                             </DialogTitle>
                             <DialogDescription>
                                 Tej czynności nie można cofnąć. Czy na pewno
-                                chcesz trwale usunąć ten film?
+                                chcesz trwale usunąć tę nagrodę?
                             </DialogDescription>
                         </DialogHeader>
                         <DialogFooter>
@@ -223,7 +184,7 @@ const columns: ColumnDef<Movie>[] = [
                             <Button
                                 type="submit"
                                 variant={"destructive"}
-                                onClick={deleteMovie}
+                                onClick={deleteReward}
                                 disabled={isDeleting}
                             >
                                 Usuń
@@ -240,8 +201,8 @@ const columns: ColumnDef<Movie>[] = [
     },
 ];
 
-const MoviesIndex = ({
-    movies,
+const RewardsIndex = ({
+    rewards,
     rowCount,
     page,
     sortBy,
@@ -249,26 +210,16 @@ const MoviesIndex = ({
     search,
 }: Props) => {
     const [searchValue, setSearchValue] = useState<string>(search || "");
-    const { flash }: any = usePage().props;
-
-    useEffect(() => {
-        if (flash.message) {
-            if (flash.type === "success") toast.success(flash.message);
-        }
-    }, []);
 
     useEffect(() => {
         if ((!search && !searchValue) || search === searchValue) return;
         const timeout = setTimeout(() => {
             router.get(
-                route("movies.index", {
-                    search: searchValue || null,
-                }),
-                {},
+                route("rewards.index"),
+                { search: searchValue },
                 { preserveState: true }
             );
         }, 500);
-
         return () => clearTimeout(timeout);
     }, [searchValue]);
 
@@ -277,7 +228,7 @@ const MoviesIndex = ({
             header={
                 <>
                     <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                        Filmy
+                        Nagrody
                     </h2>
                     <div className="flex items-center gap-1 ml-8 min-w-80">
                         <div className="relative">
@@ -290,7 +241,7 @@ const MoviesIndex = ({
                                 }}
                             />
                             <FloatingLabel htmlFor="search">
-                                Tytuł lub reżyser
+                                Nazwa
                             </FloatingLabel>
                         </div>
                         <Button
@@ -305,25 +256,25 @@ const MoviesIndex = ({
                         </Button>
                     </div>
                     <Button className="ml-auto" asChild>
-                        <Link href={route("movies.create")}>
+                        <Link href={route("rewards.create")}>
                             <Plus /> Dodaj
                         </Link>
                     </Button>
                 </>
             }
         >
-            <Head title="Filmy" />
+            <Head title="Nagrody" />
             <DataTable
                 columns={columns}
-                data={movies.data}
+                data={rewards.data}
                 rowCount={rowCount}
                 page={page}
                 sortBy={sortBy}
                 sortDesc={sortDesc}
-                routeName="movies.index"
+                routeName="rewards.index"
             />
         </AuthenticatedLayout>
     );
 };
 
-export default MoviesIndex;
+export default RewardsIndex;

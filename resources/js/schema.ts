@@ -186,3 +186,24 @@ export const MainBookingRequest = z.object({
         .email({ message: "Podaj poprawny adres email" })
         .max(255, { message: "Przekroczono maksymalną długość pola" }),
 });
+
+export const RewardRequest = z.object({
+    name: z.string().min(1, { message: "To pole jest wymagane" }),
+    cost_points: z
+        .number()
+        .int({ message: "To pole może zawierać tylko liczby całkowite" })
+        .min(0, { message: "To pole nie może być mniejsze niż 0" }),
+    type: z.string().min(1, { message: "To pole jest wymagane" }),
+    value_type: z.string().min(1, { message: "To pole jest wymagane" }),
+    image: z
+        .any()
+        .refine(
+            (file) => ACCEPTED_IMAGE_MIME_TYPES.includes(file.type),
+            "Wyślij poprawny obraz"
+        )
+        .optional()
+        .nullable(),
+    value: z
+        .number()
+        .min(0, { message: "To pole nie może być mniejsze niż 0" }),
+});

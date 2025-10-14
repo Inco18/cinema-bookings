@@ -132,7 +132,7 @@ const MovieForm = ({ movie, genres }: Props) => {
             <Head title={movie ? "Filmy - Edycja" : "Filmy - Tworzenie"} />
             <form
                 onSubmit={submit}
-                className="mt-2 space-y-6 max-w-lg m-auto bg-background p-4 sm:rounded-lg sm:p-8 border"
+                className="max-w-lg p-4 m-auto mt-2 space-y-6 border bg-background sm:rounded-lg sm:p-8"
             >
                 <div>
                     <Label
@@ -156,7 +156,7 @@ const MovieForm = ({ movie, genres }: Props) => {
                         }`}
                     />
                     {errors.title && (
-                        <p className="text-sm text-destructive mt-1">
+                        <p className="mt-1 text-sm text-destructive">
                             {errors.title}
                         </p>
                     )}
@@ -186,7 +186,7 @@ const MovieForm = ({ movie, genres }: Props) => {
                         }`}
                     />
                     {errors.director && (
-                        <p className="text-sm text-destructive mt-1">
+                        <p className="mt-1 text-sm text-destructive">
                             {errors.director}
                         </p>
                     )}
@@ -233,12 +233,12 @@ const MovieForm = ({ movie, genres }: Props) => {
                         </SelectContent>
                     </Select>
                     {errors.genre_id && (
-                        <p className="text-sm text-destructive mt-1">
+                        <p className="mt-1 text-sm text-destructive">
                             {errors.genre_id}
                         </p>
                     )}
                 </div>
-                <div className="flex gap-2 justify-center items-center">
+                <div className="flex items-center justify-center gap-2">
                     {movie?.poster_image && (
                         <img
                             className="max-w-[40%] rounded-sm"
@@ -272,12 +272,12 @@ const MovieForm = ({ movie, genres }: Props) => {
                             }`}
                         />
                         {errors.poster_image && (
-                            <p className="text-sm text-destructive mt-1">
+                            <p className="mt-1 text-sm text-destructive">
                                 {errors.poster_image}
                             </p>
                         )}
                         {movie?.poster_image && !data.poster_image && (
-                            <div className="flex items-center space-x-2 mt-2">
+                            <div className="flex items-center mt-2 space-x-2">
                                 <Checkbox
                                     id="removePoster"
                                     checked={data.removePoster}
@@ -295,7 +295,7 @@ const MovieForm = ({ movie, genres }: Props) => {
                         )}
 
                         {data.poster_image && (
-                            <div className="text-sm mt-1 flex items-center gap-2">
+                            <div className="flex items-center gap-2 mt-1 text-sm">
                                 Wybrany plik: {(data.poster_image as File).name}
                                 <Button
                                     size={"icon"}
@@ -340,7 +340,7 @@ const MovieForm = ({ movie, genres }: Props) => {
                     />
 
                     {errors.duration_seconds && (
-                        <p className="text-sm text-destructive mt-1">
+                        <p className="mt-1 text-sm text-destructive">
                             {errors.duration_seconds}
                         </p>
                     )}
@@ -399,7 +399,7 @@ const MovieForm = ({ movie, genres }: Props) => {
                         </PopoverContent>
                     </Popover>
                     {errors.release_date && (
-                        <p className="text-sm text-destructive mt-1">
+                        <p className="mt-1 text-sm text-destructive">
                             {errors.release_date}
                         </p>
                     )}
@@ -431,7 +431,7 @@ const MovieForm = ({ movie, genres }: Props) => {
                         }`}
                     />
                     {errors.age_rating && (
-                        <p className="text-sm text-destructive mt-1">
+                        <p className="mt-1 text-sm text-destructive">
                             {errors.age_rating}
                         </p>
                     )}
@@ -460,7 +460,7 @@ const MovieForm = ({ movie, genres }: Props) => {
                         }`}
                     />
                     {errors.description && (
-                        <p className="text-sm text-destructive mt-1">
+                        <p className="mt-1 text-sm text-destructive">
                             {errors.description}
                         </p>
                     )}
