@@ -1,5 +1,5 @@
 import AuthenticatedLayout from "@/Layouts/AdminLayout";
-import { Paginated, Reward } from "@/types";
+import { Paginated, Reward, UserReward } from "@/types";
 import { useEffect, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import DataTable from "../../../Components/DataTable";
@@ -32,42 +32,82 @@ import {
 } from "@/Components/ui/dialog";
 import { toast } from "react-toastify";
 import { FloatingInput, FloatingLabel } from "@/Components/ui/floating-input";
-import { RewardType } from "@/types/enums";
+import { RewardType, UserRewardStatus } from "@/types/enums";
+import { UserRewardRequest } from "@/schema";
+import { MultiSelect } from "@/Components/ui/multiple-select";
 
 type Props = {
-    rewards: Paginated<Reward>;
+    userRewards: Paginated<UserReward>;
     rowCount: number;
     page: number;
     sortBy: string;
     sortDesc: number;
-    search: string;
+    userSearch: string;
+    rewardSearch: string;
+    statusFilter: string[];
 };
 
-const columns: ColumnDef<Reward>[] = [
+const columns: ColumnDef<UserReward>[] = [
     {
-        accessorKey: "name",
-        header: ({ column }) => (
-            <Button variant="ghost" onClick={() => column.toggleSorting()}>
-                Nazwa
-                {column.getIsSorted() === "asc" && (
-                    <ArrowDown className="w-4 h-4 ml-2" />
-                )}
-                {column.getIsSorted() === "desc" && (
-                    <ArrowUp className="w-4 h-4 ml-2" />
-                )}
-                {!column.getIsSorted() && (
-                    <ArrowUpDown className="w-4 h-4 ml-2" />
-                )}
-            </Button>
-        ),
-        size: 200,
+        accessorKey: "user.first_name",
+        header: "Imię użytkownika",
+        size: 100,
     },
     {
-        accessorKey: "cost_points",
+        accessorKey: "user.last_name",
+        header: "Nazwisko użytkownika",
+        size: 100,
+    },
+    {
+        accessorKey: "image",
+        header: "Obraz",
+        cell: ({ row }: any) => {
+            const userReward = row.original;
+            return (
+                <>
+                    {userReward.reward.type !== RewardType.DISCOUNT && (
+                        <div className="w-12 h-12 shrink-0">
+                            <img
+                                src={
+                                    userReward.reward?.image
+                                        ? `/storage/${userReward.reward?.image}`
+                                        : "/reward-placeholder.jpg"
+                                }
+                                className="rounded-full"
+                            />
+                        </div>
+                    )}
+                    {userReward.reward.type === RewardType.DISCOUNT && (
+                        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary text-background shrink-0">
+                            <span className="text-sm font-bold">
+                                {new Intl.NumberFormat("pl-PL", {
+                                    maximumFractionDigits: 2,
+                                }).format(userReward.reward.value)}
+                                {userReward.reward.value_type === "percent"
+                                    ? " %"
+                                    : " zł"}
+                            </span>
+                        </div>
+                    )}
+                </>
+            );
+        },
+        meta: {
+            myCustomClass: "py-2",
+        },
+        size: 80,
+    },
+    {
+        accessorKey: "reward.name",
+        header: "Nazwa nagrody",
+        size: 150,
+    },
+    {
+        accessorKey: "status",
         header: ({ column }) => {
             return (
                 <Button variant="ghost" onClick={() => column.toggleSorting()}>
-                    Koszt (pkt)
+                    Status
                     {column.getIsSorted() === "asc" && (
                         <ArrowDown className="w-4 h-4 ml-2" />
                     )}
@@ -83,72 +123,20 @@ const columns: ColumnDef<Reward>[] = [
         size: 100,
     },
     {
-        accessorKey: "type",
-        header: "Typ",
-        size: 100,
-    },
-    {
-        accessorKey: "value",
-        header: "Wartość",
-        size: 100,
-    },
-    {
-        accessorKey: "value_type",
-        header: "Typ wartości",
-        size: 100,
-    },
-    {
-        accessorKey: "details",
-        header: "Szczegóły",
-        size: 200,
-    },
-    {
-        accessorKey: "image",
-        header: "Obraz",
-        cell: ({ row }: any) => {
-            const reward = row.original;
-            return (
-                <>
-                    {reward.type !== RewardType.DISCOUNT && (
-                        <div className="w-12 h-12 shrink-0">
-                            <img
-                                src={
-                                    reward?.image
-                                        ? `/storage/${reward?.image}`
-                                        : "/reward-placeholder.jpg"
-                                }
-                                className="rounded-full"
-                            />
-                        </div>
-                    )}
-                    {reward.type === RewardType.DISCOUNT && (
-                        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary text-background shrink-0">
-                            <span className="text-sm font-bold">
-                                {new Intl.NumberFormat("pl-PL", {
-                                    maximumFractionDigits: 2,
-                                }).format(reward.value)}
-                                {reward.value_type === "percent" ? " %" : " zł"}
-                            </span>
-                        </div>
-                    )}
-                </>
-            );
-        },
-        size: 80,
-    },
-    {
         id: "actions",
         enableHiding: false,
         cell: ({ row }) => {
             const [isDeleting, setIsDeleting] = useState(false);
             const [modalOpen, setModalOpen] = useState(false);
-            const reward = row.original;
+            const userReward = row.original;
             const deleteReward = () => {
                 setIsDeleting(false);
-                router.delete(route("rewards.destroy", { reward }), {
+                router.delete(route("userRewards.destroy", { userReward }), {
                     preserveScroll: true,
                     onError: () =>
-                        toast.error("Nie udało się usunąć wybranej nagrody"),
+                        toast.error(
+                            "Nie udało się usunąć wybranej nagrody użytkownika"
+                        ),
                     onFinish: () => {
                         setIsDeleting(false);
                         setModalOpen(false);
@@ -169,8 +157,8 @@ const columns: ColumnDef<Reward>[] = [
                             <DropdownMenuLabel>Akcje</DropdownMenuLabel>
                             <DropdownMenuItem asChild>
                                 <Link
-                                    href={route("rewards.edit", {
-                                        reward,
+                                    href={route("userRewards.edit", {
+                                        userReward,
                                         ...route().queryParams,
                                     })}
                                 >
@@ -185,8 +173,8 @@ const columns: ColumnDef<Reward>[] = [
                     <DialogContent>
                         <DialogHeader>
                             <DialogTitle>
-                                Czy jesteś pewny że chcesz usunąć nagrodę:{" "}
-                                {reward.name}
+                                Czy jesteś pewny że chcesz usunąć nagrodę
+                                użytkownika: {userReward.reward?.name}
                             </DialogTitle>
                             <DialogDescription>
                                 Tej czynności nie można cofnąć. Czy na pewno
@@ -214,32 +202,41 @@ const columns: ColumnDef<Reward>[] = [
         },
         size: 50,
         meta: {
-            myCustomClass: "py-0",
+            myCustomClass: "py-0 text-right",
         },
     },
 ];
 
-const RewardsIndex = ({
-    rewards,
+const UserRewardsIndex = ({
+    userRewards,
     rowCount,
     page,
     sortBy,
     sortDesc,
-    search,
+    userSearch,
+    rewardSearch,
+    statusFilter,
 }: Props) => {
-    const [searchValue, setSearchValue] = useState<string>(search || "");
+    const [userSearchValue, setUserSearchValue] = useState<string>(
+        userSearch || ""
+    );
+    const [rewardSearchValue, setRewardSearchValue] = useState<string>(
+        rewardSearch || ""
+    );
 
     useEffect(() => {
-        if ((!search && !searchValue) || search === searchValue) return;
         const timeout = setTimeout(() => {
             router.get(
-                route("rewards.index"),
-                { search: searchValue },
+                route("userRewards.index"),
+                {
+                    userSearch: userSearchValue,
+                    rewardSearch: rewardSearchValue,
+                },
                 { preserveState: true }
             );
         }, 500);
         return () => clearTimeout(timeout);
-    }, [searchValue]);
+    }, [userSearchValue, rewardSearchValue]);
 
     return (
         <AuthenticatedLayout
@@ -251,48 +248,98 @@ const RewardsIndex = ({
                     <div className="flex items-center gap-1 ml-8 min-w-80">
                         <div className="relative">
                             <FloatingInput
-                                id="search"
+                                id="userSearch"
                                 className="m-0 w-70"
-                                value={searchValue}
+                                value={userSearchValue}
                                 onChange={(e) => {
-                                    setSearchValue(e.target.value);
+                                    setUserSearchValue(e.target.value);
                                 }}
                             />
-                            <FloatingLabel htmlFor="search">
-                                Nazwa
+                            <FloatingLabel htmlFor="userSearch">
+                                Imię lub nazwisko użytkownika
                             </FloatingLabel>
                         </div>
                         <Button
                             variant={"ghost"}
                             size={"icon"}
                             className={`aspect-square ${
-                                searchValue ? "visible" : "invisible"
+                                userSearchValue ? "visible" : "invisible"
                             }`}
-                            onClick={() => setSearchValue("")}
+                            onClick={() => setUserSearchValue("")}
                         >
                             <X />
                         </Button>
+                        <div className="relative">
+                            <FloatingInput
+                                id="rewardSearch"
+                                className="m-0 w-70"
+                                value={rewardSearchValue}
+                                onChange={(e) => {
+                                    setRewardSearchValue(e.target.value);
+                                }}
+                            />
+                            <FloatingLabel htmlFor="rewardSearch">
+                                Nazwa nagrody
+                            </FloatingLabel>
+                        </div>
+                        <Button
+                            variant={"ghost"}
+                            size={"icon"}
+                            className={`aspect-square ${
+                                rewardSearchValue ? "visible" : "invisible"
+                            }`}
+                            onClick={() => setRewardSearchValue("")}
+                        >
+                            <X />
+                        </Button>
+                        <div>
+                            <MultiSelect
+                                onValueChange={(value) =>
+                                    router.get(
+                                        route("userRewards.index", {
+                                            userSearch: userSearchValue || null,
+                                            rewardSearch:
+                                                rewardSearchValue || null,
+                                            statusFilter: value || null,
+                                        }),
+                                        {},
+                                        { preserveState: true }
+                                    )
+                                }
+                                value={statusFilter || []}
+                                placeholder="Status"
+                                variant="inverted"
+                                options={Object.values(UserRewardStatus).map(
+                                    (status) => {
+                                        return {
+                                            label: status,
+                                            value: status,
+                                        };
+                                    }
+                                )}
+                            />
+                        </div>
                     </div>
                     <Button className="ml-auto" asChild>
-                        <Link href={route("rewards.create")}>
+                        <Link href={route("userRewards.create")}>
                             <Plus /> Dodaj
                         </Link>
                     </Button>
                 </>
             }
         >
-            <Head title="Nagrody" />
+            <Head title="Nagrody użytkowników" />
             <DataTable
                 columns={columns}
-                data={rewards.data}
+                data={userRewards.data}
                 rowCount={rowCount}
                 page={page}
                 sortBy={sortBy}
                 sortDesc={sortDesc}
-                routeName="rewards.index"
+                routeName="userRewards.index"
             />
         </AuthenticatedLayout>
     );
 };
 
-export default RewardsIndex;
+export default UserRewardsIndex;

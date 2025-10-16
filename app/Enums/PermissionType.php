@@ -31,5 +31,7 @@ enum PermissionType: string {
 
     case REWARD_ACCESS = 'reward_access';
     case REWARD_MANAGE = 'reward_manage';
+    case USER_REWARD_ACCESS = 'user_reward_access';
+    case USER_REWARD_MANAGE = 'user_reward_manage';
 
 }

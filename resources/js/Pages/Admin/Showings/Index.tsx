@@ -72,13 +72,13 @@ const columns: ColumnDef<Showing>[] = [
                 <Button variant="ghost" onClick={() => column.toggleSorting()}>
                     Data rozpoczęcia
                     {column.getIsSorted() === "asc" && (
-                        <ArrowDown className="ml-2 h-4 w-4" />
+                        <ArrowDown className="w-4 h-4 ml-2" />
                     )}
                     {column.getIsSorted() === "desc" && (
-                        <ArrowUp className="ml-2 h-4 w-4" />
+                        <ArrowUp className="w-4 h-4 ml-2" />
                     )}
                     {!column.getIsSorted() && (
-                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                        <ArrowUpDown className="w-4 h-4 ml-2" />
                     )}
                 </Button>
             );
@@ -92,13 +92,13 @@ const columns: ColumnDef<Showing>[] = [
                 <Button variant="ghost" onClick={() => column.toggleSorting()}>
                     Data zakończenia
                     {column.getIsSorted() === "asc" && (
-                        <ArrowDown className="ml-2 h-4 w-4" />
+                        <ArrowDown className="w-4 h-4 ml-2" />
                     )}
                     {column.getIsSorted() === "desc" && (
-                        <ArrowUp className="ml-2 h-4 w-4" />
+                        <ArrowUp className="w-4 h-4 ml-2" />
                     )}
                     {!column.getIsSorted() && (
-                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                        <ArrowUpDown className="w-4 h-4 ml-2" />
                     )}
                 </Button>
             );
@@ -112,13 +112,13 @@ const columns: ColumnDef<Showing>[] = [
                 <Button variant="ghost" onClick={() => column.toggleSorting()}>
                     Mowa
                     {column.getIsSorted() === "asc" && (
-                        <ArrowDown className="ml-2 h-4 w-4" />
+                        <ArrowDown className="w-4 h-4 ml-2" />
                     )}
                     {column.getIsSorted() === "desc" && (
-                        <ArrowUp className="ml-2 h-4 w-4" />
+                        <ArrowUp className="w-4 h-4 ml-2" />
                     )}
                     {!column.getIsSorted() && (
-                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                        <ArrowUpDown className="w-4 h-4 ml-2" />
                     )}
                 </Button>
             );
@@ -132,13 +132,13 @@ const columns: ColumnDef<Showing>[] = [
                 <Button variant="ghost" onClick={() => column.toggleSorting()}>
                     Dubbing
                     {column.getIsSorted() === "asc" && (
-                        <ArrowDown className="ml-2 h-4 w-4" />
+                        <ArrowDown className="w-4 h-4 ml-2" />
                     )}
                     {column.getIsSorted() === "desc" && (
-                        <ArrowUp className="ml-2 h-4 w-4" />
+                        <ArrowUp className="w-4 h-4 ml-2" />
                     )}
                     {!column.getIsSorted() && (
-                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                        <ArrowUpDown className="w-4 h-4 ml-2" />
                     )}
                 </Button>
             );
@@ -152,13 +152,13 @@ const columns: ColumnDef<Showing>[] = [
                 <Button variant="ghost" onClick={() => column.toggleSorting()}>
                     Napisy
                     {column.getIsSorted() === "asc" && (
-                        <ArrowDown className="ml-2 h-4 w-4" />
+                        <ArrowDown className="w-4 h-4 ml-2" />
                     )}
                     {column.getIsSorted() === "desc" && (
-                        <ArrowUp className="ml-2 h-4 w-4" />
+                        <ArrowUp className="w-4 h-4 ml-2" />
                     )}
                     {!column.getIsSorted() && (
-                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                        <ArrowUpDown className="w-4 h-4 ml-2" />
                     )}
                 </Button>
             );
@@ -172,13 +172,13 @@ const columns: ColumnDef<Showing>[] = [
                 <Button variant="ghost" onClick={() => column.toggleSorting()}>
                     Typ
                     {column.getIsSorted() === "asc" && (
-                        <ArrowDown className="ml-2 h-4 w-4" />
+                        <ArrowDown className="w-4 h-4 ml-2" />
                     )}
                     {column.getIsSorted() === "desc" && (
-                        <ArrowUp className="ml-2 h-4 w-4" />
+                        <ArrowUp className="w-4 h-4 ml-2" />
                     )}
                     {!column.getIsSorted() && (
-                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                        <ArrowUpDown className="w-4 h-4 ml-2" />
                     )}
                 </Button>
             );
@@ -211,9 +211,9 @@ const columns: ColumnDef<Showing>[] = [
                 <Dialog open={modalOpen} onOpenChange={setModalOpen}>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
+                            <Button variant="ghost" className="w-8 h-8 p-0">
                                 <span className="sr-only">Otwórz menu</span>
-                                <MoreVertical className="h-4 w-4" />
+                                <MoreVertical className="w-4 h-4" />
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">

@@ -41,13 +41,13 @@ const MoviePicker = forwardRef<HTMLButtonElement, Props>(function MoviePicker(
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
-                    className="mt-1 w-full justify-between"
+                    className="justify-between w-full mt-1"
                 >
                     {value
                         ? moviesList.find((movie) => movie.value === value)
                               ?.label
                         : "Wybierz film..."}
-                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    <ChevronsUpDown className="w-4 h-4 ml-2 opacity-50 shrink-0" />
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="w-full p-0">

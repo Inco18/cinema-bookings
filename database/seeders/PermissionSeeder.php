@@ -37,5 +37,8 @@ class PermissionSeeder extends Seeder {
 
         Permission::create(['name' => PermissionType::REWARD_ACCESS->value]);
         Permission::create(['name' => PermissionType::REWARD_MANAGE->value]);
+
+        Permission::create(['name' => PermissionType::USER_REWARD_ACCESS->value]);
+        Permission::create(['name' => PermissionType::USER_REWARD_MANAGE->value]);
     }
 }

@@ -145,6 +145,7 @@ export type UserReward = {
     id: number;
     user_id: number;
     reward_id: number;
+    booking_id?: number;
     status: UserRewardStatus;
     created_at: string;
     updated_at: string;

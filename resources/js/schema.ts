@@ -207,3 +207,15 @@ export const RewardRequest = z.object({
         .number()
         .min(0, { message: "To pole nie może być mniejsze niż 0" }),
 });
+
+export const UserRewardRequest = z.object({
+    reward_id: z.coerce
+        .number()
+        .int({ message: "To pole może zawierać tylko liczby całkowite" })
+        .min(1, { message: "To pole jest wymagane" }),
+    user_id: z.coerce
+        .number()
+        .int({ message: "To pole może zawierać tylko liczby całkowite" })
+        .min(1, { message: "To pole jest wymagane" }),
+    status: z.string().min(1, { message: "To pole jest wymagane" }),
+});

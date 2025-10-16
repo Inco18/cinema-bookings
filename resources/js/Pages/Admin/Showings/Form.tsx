@@ -130,7 +130,7 @@ const ShowingForm = ({ showing, halls, movies }: Props) => {
             <Head title={showing ? "Seanse - Edycja" : "Seanse - Tworzenie"} />
             <form
                 onSubmit={submit}
-                className="mt-2 space-y-6 max-w-xl m-auto bg-background p-4 sm:rounded-lg sm:p-8 border"
+                className="max-w-xl p-4 m-auto mt-2 space-y-6 border bg-background sm:rounded-lg sm:p-8"
             >
                 <div>
                     <Label
@@ -161,7 +161,7 @@ const ShowingForm = ({ showing, halls, movies }: Props) => {
                         }}
                     />
                     {errors.movie_id && (
-                        <p className="text-sm text-destructive mt-1">
+                        <p className="mt-1 text-sm text-destructive">
                             {errors.movie_id}
                         </p>
                     )}
@@ -210,7 +210,7 @@ const ShowingForm = ({ showing, halls, movies }: Props) => {
                             </SelectContent>
                         </Select>
                         {errors.hall_id && (
-                            <p className="text-sm text-destructive mt-1">
+                            <p className="mt-1 text-sm text-destructive">
                                 {errors.hall_id}
                             </p>
                         )}
@@ -259,7 +259,7 @@ const ShowingForm = ({ showing, halls, movies }: Props) => {
                             </SelectContent>
                         </Select>
                         {errors.type && (
-                            <p className="text-sm text-destructive mt-1">
+                            <p className="mt-1 text-sm text-destructive">
                                 {errors.type}
                             </p>
                         )}
@@ -299,7 +299,7 @@ const ShowingForm = ({ showing, halls, movies }: Props) => {
                         />
 
                         {errors.start_time && (
-                            <p className="text-sm text-destructive mt-1">
+                            <p className="mt-1 text-sm text-destructive">
                                 {errors.start_time}
                             </p>
                         )}
@@ -326,7 +326,7 @@ const ShowingForm = ({ showing, halls, movies }: Props) => {
                         />
 
                         {errors.end_time && (
-                            <p className="text-sm text-destructive mt-1">
+                            <p className="mt-1 text-sm text-destructive">
                                 {errors.end_time}
                             </p>
                         )}
@@ -360,7 +360,7 @@ const ShowingForm = ({ showing, halls, movies }: Props) => {
                         />
 
                         {errors.speech_lang && (
-                            <p className="text-sm text-destructive mt-1">
+                            <p className="mt-1 text-sm text-destructive">
                                 {errors.speech_lang}
                             </p>
                         )}
@@ -392,7 +392,7 @@ const ShowingForm = ({ showing, halls, movies }: Props) => {
                         />
 
                         {errors.dubbing_lang && (
-                            <p className="text-sm text-destructive mt-1">
+                            <p className="mt-1 text-sm text-destructive">
                                 {errors.dubbing_lang}
                             </p>
                         )}
@@ -426,7 +426,7 @@ const ShowingForm = ({ showing, halls, movies }: Props) => {
                         />
 
                         {errors.subtitles_lang && (
-                            <p className="text-sm text-destructive mt-1">
+                            <p className="mt-1 text-sm text-destructive">
                                 {errors.subtitles_lang}
                             </p>
                         )}

@@ -37,22 +37,22 @@ const UserPicker = forwardRef<HTMLButtonElement, Props>(function UserPicker(
     });
     return (
         <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild ref={ref}>
+            <PopoverTrigger asChild ref={ref} className="w-full">
                 <Button
                     variant="outline"
                     id={id}
                     role="combobox"
                     aria-expanded={open}
-                    className="mt-1 w-full justify-between"
+                    className="justify-between w-full mt-1"
                 >
                     {value
                         ? usersList.find((movie) => movie.value === value)
                               ?.label
                         : "Wybierz użytkownika..."}
-                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    <ChevronsUpDown className="w-4 h-4 ml-2 opacity-50 shrink-0" />
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-full p-0">
+            <PopoverContent className="p-0 w-[28rem]">
                 <Command>
                     <CommandInput
                         placeholder="Szukaj użytkownika..."
