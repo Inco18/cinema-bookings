@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\BookingController;
 use App\Http\Controllers\Admin\GenreController;
 use App\Http\Controllers\Admin\HallController;
 use App\Http\Controllers\Admin\MovieController;
+use App\Http\Controllers\Admin\PointsHistoryController;
 use App\Http\Controllers\Admin\RewardController;
 use App\Http\Controllers\Admin\SeatController;
 use App\Http\Controllers\Admin\ShowingController;
@@ -21,6 +22,7 @@ Route::prefix('admin')->group(function () {
     Route::resource('/users', UserController::class)->except(['show'])->middleware(['auth', 'admin']);
     Route::resource('/rewards', RewardController::class)->except(['show'])->middleware(['auth', 'admin']);
     Route::resource('/userRewards', UserRewardController::class)->except(['show'])->middleware(['auth', 'admin']);
+    Route::resource('/pointsHistory', PointsHistoryController::class)->except(['show'])->middleware(['auth', 'admin']);
 });
 
 require __DIR__.'/auth.php';

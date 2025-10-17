@@ -219,3 +219,27 @@ export const UserRewardRequest = z.object({
         .min(1, { message: "To pole jest wymagane" }),
     status: z.string().min(1, { message: "To pole jest wymagane" }),
 });
+
+export const PointsHistoryRequest = z.object({
+    user_id: z.coerce
+        .number()
+        .int({ message: "To pole może zawierać tylko liczby całkowite" })
+        .min(1, { message: "To pole jest wymagane" }),
+    booking_id: z.coerce
+        .number()
+        .int({ message: "To pole może zawierać tylko liczby całkowite" })
+        .optional()
+        .nullable(),
+    user_reward_id: z.coerce
+        .number()
+        .int({ message: "To pole może zawierać tylko liczby całkowite" })
+        .optional()
+        .nullable(),
+    points_change: z.coerce
+        .number()
+        .int({ message: "To pole może zawierać tylko liczby całkowite" }),
+    description: z
+        .string()
+        .min(1, { message: "To pole jest wymagane" })
+        .max(255, { message: "Przekroczono maksymalną długość pola" }),
+});

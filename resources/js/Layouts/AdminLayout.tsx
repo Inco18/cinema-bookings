@@ -136,6 +136,16 @@ export default function Admin({
                                             Nagrody użytkowników
                                         </NavLink>
                                     )}
+                                    {hasRole(user, RoleType.ADMIN) && (
+                                        <NavLink
+                                            href={route("pointsHistory.index")}
+                                            active={route().current(
+                                                "pointsHistory.*"
+                                            )}
+                                        >
+                                            Historia punktów
+                                        </NavLink>
+                                    )}
                                 </div>
                             </div>
 
@@ -310,6 +320,14 @@ export default function Admin({
                                     active={route().current("userRewards.*")}
                                 >
                                     Nagrody użytkowników
+                                </ResponsiveNavLink>
+                            )}
+                            {hasRole(user, RoleType.ADMIN) && (
+                                <ResponsiveNavLink
+                                    href={route("pointsHistory.index")}
+                                    active={route().current("pointsHistory.*")}
+                                >
+                                    Historia punktów
                                 </ResponsiveNavLink>
                             )}
                         </div>
