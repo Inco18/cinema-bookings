@@ -243,3 +243,31 @@ export const PointsHistoryRequest = z.object({
         .min(1, { message: "To pole jest wymagane" })
         .max(255, { message: "Przekroczono maksymalną długość pola" }),
 });
+
+export const PriceRequest = z
+    .object({
+        base_price: z.coerce
+            .number({ message: "To pole musi być liczbą" })
+            .min(0, { message: "Cena nie może być ujemna" })
+            .max(9999.99, { message: "Cena nie może przekraczać 9999.99 zł" }),
+        min_price: z.coerce
+            .number({ message: "To pole musi być liczbą" })
+            .min(0, { message: "Cena nie może być ujemna" })
+            .max(9999.99, { message: "Cena nie może przekraczać 9999.99 zł" }),
+        max_price: z.coerce
+            .number({ message: "To pole musi być liczbą" })
+            .min(0, { message: "Cena nie może być ujemna" })
+            .max(9999.99, { message: "Cena nie może przekraczać 9999.99 zł" }),
+        description: z
+            .string()
+            .max(1000, { message: "Opis nie może przekraczać 1000 znaków" })
+            .optional(),
+    })
+    .refine((data) => data.min_price <= data.base_price, {
+        message: "Cena minimalna nie może być wyższa niż cena bazowa",
+        path: ["min_price"],
+    })
+    .refine((data) => data.max_price >= data.base_price, {
+        message: "Cena maksymalna nie może być niższa niż cena bazowa",
+        path: ["max_price"],
+    });

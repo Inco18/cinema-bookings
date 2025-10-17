@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\TicketType;
 use Illuminate\Database\Eloquent\Model;
 
 class Price extends Model
@@ -12,6 +11,7 @@ class Price extends Model
         'base_price',
         'min_price',
         'max_price',
+        'description',
     ];
 
     protected $casts = [

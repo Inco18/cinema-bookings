@@ -45,7 +45,7 @@ export default function Admin({
                                     </Link>
                                 </div>
 
-                                <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <div className="hidden space-x-4 sm:-my-px sm:ms-10 sm:flex">
                                     {hasRole(user, RoleType.ADMIN) && (
                                         <NavLink
                                             href={route("dashboard")}
@@ -144,6 +144,16 @@ export default function Admin({
                                             )}
                                         >
                                             Historia punktów
+                                        </NavLink>
+                                    )}
+                                    {hasRole(user, RoleType.ADMIN) && (
+                                        <NavLink
+                                            href={route("prices.index")}
+                                            active={route().current(
+                                                "prices.*"
+                                            )}
+                                        >
+                                            Cennik
                                         </NavLink>
                                     )}
                                 </div>
@@ -328,6 +338,14 @@ export default function Admin({
                                     active={route().current("pointsHistory.*")}
                                 >
                                     Historia punktów
+                                </ResponsiveNavLink>
+                            )}
+                            {hasRole(user, RoleType.ADMIN) && (
+                                <ResponsiveNavLink
+                                    href={route("prices.index")}
+                                    active={route().current("prices.*")}
+                                >
+                                    Cennik
                                 </ResponsiveNavLink>
                             )}
                         </div>

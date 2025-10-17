@@ -31,9 +31,14 @@ enum PermissionType: string {
 
     case REWARD_ACCESS = 'reward_access';
     case REWARD_MANAGE = 'reward_manage';
+
     case USER_REWARD_ACCESS = 'user_reward_access';
     case USER_REWARD_MANAGE = 'user_reward_manage';
+
     case POINTS_HISTORY_ACCESS = 'points_history_access';
     case POINTS_HISTORY_MANAGE = 'points_history_manage';
+
+    case PRICE_ACCESS = 'price_access';
+    case PRICE_MANAGE = 'price_manage';
 
 }

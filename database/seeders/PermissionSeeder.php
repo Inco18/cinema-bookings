@@ -45,5 +45,8 @@ class PermissionSeeder extends Seeder
 
         Permission::create(['name' => PermissionType::POINTS_HISTORY_ACCESS->value]);
         Permission::create(['name' => PermissionType::POINTS_HISTORY_MANAGE->value]);
+
+        Permission::create(['name' => PermissionType::PRICE_ACCESS->value]);
+        Permission::create(['name' => PermissionType::PRICE_MANAGE->value]);
     }
 }

@@ -127,6 +127,17 @@ export type PointsHistory = {
     userReward?: UserReward;
 };
 
+export type Price = {
+    id: number;
+    ticket_type: TicketType;
+    base_price: number;
+    min_price: number;
+    max_price: number;
+    description?: string;
+    created_at: string;
+    updated_at: string;
+};
+
 export type Reward = {
     id: number;
     name: string;
