@@ -6,6 +6,7 @@ use App\Http\Controllers\Main\PointsController;
 use App\Http\Controllers\Main\PricesController;
 use App\Http\Controllers\Main\ShowingsController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Admin\DashboardController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -25,9 +26,7 @@ Route::patch('/bookings/{booking}/update_seats', [BookingController::class, 'upd
 Route::get('/bookings/{booking}/handle_payment_response', [BookingController::class, 'handlePaymentResponse'])->name('main.bookings.handle_payment_response');
 Route::get('/bookings/{booking}/retry_payment', [BookingController::class, 'retryPayment'])->name('main.bookings.retry_payment');
 
-Route::get('/admin', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified', 'admin'])->name('dashboard');
+Route::get('/admin', [DashboardController::class, 'index'])->middleware(['auth', 'verified', 'admin'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

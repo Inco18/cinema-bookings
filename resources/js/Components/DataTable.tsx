@@ -101,7 +101,7 @@ const DataTable = <TData, TValue>({
     }
 
     return (
-        <div className="rounded-md border max-w-(--breakpoint-2xl) mt-2 m-auto bg-white">
+        <div className="rounded-md border max-w-(--breakpoint-2xl) mt-2 m-auto bg-white shadow-sm">
             <Table>
                 <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (
@@ -164,27 +164,27 @@ const DataTable = <TData, TValue>({
                     )}
                 </TableBody>
             </Table>
-            <div className="flex items-center justify-end space-x-2 p-4">
-                <p className="text-sm mr-5 text-muted-foreground">
+            <div className="flex items-center justify-end p-4 space-x-2">
+                <p className="mr-5 text-sm text-muted-foreground">
                     Strona {page} z {table.getPageCount() || 1}
                 </p>
                 <Button
                     variant="outline"
-                    className="hidden h-8 w-8 p-0 lg:flex"
+                    className="hidden w-8 h-8 p-0 lg:flex"
                     onClick={() => table.setPageIndex(0)}
                     disabled={!table.getCanPreviousPage()}
                 >
                     <span className="sr-only">Go to first page</span>
-                    <RxDoubleArrowLeft className="h-4 w-4" />
+                    <RxDoubleArrowLeft className="w-4 h-4" />
                 </Button>
                 <Button
                     variant="outline"
-                    className="h-8 w-8 p-0"
+                    className="w-8 h-8 p-0"
                     onClick={() => table.previousPage()}
                     disabled={!table.getCanPreviousPage()}
                 >
                     <span className="sr-only">Go to previous page</span>
-                    <BiChevronLeft className="h-4 w-4" />
+                    <BiChevronLeft className="w-4 h-4" />
                 </Button>
                 <div className="flex items-center gap-2">
                     {Array.from(
@@ -196,7 +196,7 @@ const DataTable = <TData, TValue>({
                             variant="outline"
                             onClick={() => table.setPageIndex(pageIndex)}
                             disabled={currentPage === pageIndex}
-                            className="h-8 w-8 flex items-center justify-center"
+                            className="flex items-center justify-center w-8 h-8"
                         >
                             {pageIndex + 1}
                         </Button>
@@ -204,21 +204,21 @@ const DataTable = <TData, TValue>({
                 </div>
                 <Button
                     variant="outline"
-                    className="h-8 w-8 p-0"
+                    className="w-8 h-8 p-0"
                     onClick={() => table.nextPage()}
                     disabled={!table.getCanNextPage()}
                 >
                     <span className="sr-only">Go to next page</span>
-                    <BiChevronRight className="h-4 w-4" />
+                    <BiChevronRight className="w-4 h-4" />
                 </Button>
                 <Button
                     variant="outline"
-                    className="hidden h-8 w-8 p-0 lg:flex"
+                    className="hidden w-8 h-8 p-0 lg:flex"
                     onClick={() => table.setPageIndex(table.getPageCount() - 1)}
                     disabled={!table.getCanNextPage()}
                 >
                     <span className="sr-only">Go to last page</span>
-                    <RxDoubleArrowRight className="h-4 w-4" />
+                    <RxDoubleArrowRight className="w-4 h-4" />
                 </Button>
             </div>
         </div>
