@@ -65,6 +65,7 @@ type Props = {
         start_time: string;
         bookings_count: number;
         movie_poster?: string;
+        occupancy: number;
     }>;
     bookingsByStatus: Array<{
         status: string;
@@ -101,6 +102,8 @@ const Dashboard = ({
         };
         return labels[status] || status;
     };
+
+    console.log(newUsersLast30Days);
 
     return (
         <AuthenticatedLayout
@@ -173,7 +176,11 @@ const Dashboard = ({
                                     {stats.totalUsers}
                                 </div>
                                 <p className="text-xs text-muted-foreground">
-                                    {newUsersLast30Days.length} nowych w tym miesiącu
+                                    {newUsersLast30Days.reduce(
+                                        (acc, user) => acc + user.users,
+                                        0
+                                    )}{" "}
+                                    nowych w tym miesiącu
                                 </p>
                             </CardContent>
                         </Card>
@@ -199,7 +206,7 @@ const Dashboard = ({
                     {/* Wykresy */}
                     <div className="grid gap-4 md:grid-cols-2">
                         {/* Rezerwacje i przychody z ostatnich 7 dni */}
-                        <Card className="md:col-span-2">
+                        <Card>
                             <CardHeader>
                                 <CardTitle>
                                     Rezerwacje i przychody (ostatnie 7 dni)
@@ -243,7 +250,9 @@ const Dashboard = ({
                                             />
                                             <ChartTooltip
                                                 content={
-                                                    <ChartTooltipContent hideIndicator/>
+                                                    <ChartTooltipContent
+                                                        hideIndicator
+                                                    />
                                                 }
                                             />
                                             <Legend />
@@ -264,6 +273,57 @@ const Dashboard = ({
                                         </BarChart>
                                     </ResponsiveContainer>
                                 </ChartContainer>
+                            </CardContent>
+                        </Card>
+
+                        {/* Ilość rejestracji */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                    <Users className="w-5 h-5" />
+                                    Ilość rejestracji
+                                </CardTitle>
+                                <CardDescription>
+                                    Dzienny przegląd ilości nowych użytkowników
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-4">
+                                    {newUsersLast30Days.length > 0 ? (
+                                        newUsersLast30Days
+                                            .slice(-4)
+                                            .reverse()
+                                            .map((usersForDate) => (
+                                                <div
+                                                    key={usersForDate.date}
+                                                    className="flex items-center justify-between px-4 py-1 transition-colors border rounded-lg hover:bg-accent/50"
+                                                >
+                                                    <div className="flex items-center gap-4">
+                                                        <div>
+                                                            <h4 className="font-semibold">
+                                                                {
+                                                                    usersForDate.date
+                                                                }
+                                                            </h4>
+                                                        </div>
+                                                    </div>
+                                                    <div className="text-right">
+                                                        <div className="text-xl font-bold text-primary">
+                                                            {usersForDate.users}
+                                                        </div>
+                                                        <div className="text-xs text-muted-foreground">
+                                                            rejestracji
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))
+                                    ) : (
+                                        <div className="py-8 text-center text-muted-foreground">
+                                            Brak nowych rejestracji w ciągu
+                                            ostatnich 30 dni
+                                        </div>
+                                    )}
+                                </div>
                             </CardContent>
                         </Card>
 
@@ -397,7 +457,9 @@ const Dashboard = ({
                                             />
                                             <ChartTooltip
                                                 content={
-                                                    <ChartTooltipContent hideIndicator/>
+                                                    <ChartTooltipContent
+                                                        hideIndicator
+                                                    />
                                                 }
                                             />
                                             <Bar
@@ -470,12 +532,31 @@ const Dashboard = ({
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className="text-right">
-                                                <div className="text-2xl font-bold text-primary">
-                                                    {showing.bookings_count}
+                                            <div className="flex gap-5">
+                                                <div className="text-right">
+                                                    <div className="text-2xl font-bold text-primary">
+                                                        {showing.bookings_count}
+                                                    </div>
+                                                    <div className="text-xs text-muted-foreground">
+                                                        rezerwacji
+                                                    </div>
                                                 </div>
-                                                <div className="text-xs text-muted-foreground">
-                                                    rezerwacji
+                                                <div className="text-right">
+                                                    <div className="text-2xl font-bold text-primary">
+                                                        {new Intl.NumberFormat(
+                                                            "pl-PL",
+                                                            {
+                                                                style: "percent",
+                                                                minimumFractionDigits: 0,
+                                                                maximumFractionDigits: 1,
+                                                            }
+                                                        ).format(
+                                                            showing.occupancy
+                                                        )}
+                                                    </div>
+                                                    <div className="text-xs text-muted-foreground">
+                                                        zajętości sali
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

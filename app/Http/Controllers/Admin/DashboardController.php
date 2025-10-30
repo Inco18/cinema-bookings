@@ -88,6 +88,10 @@ class DashboardController extends Controller
             ->limit(5)
             ->get()
             ->map(function ($showing) {
+                $seatsCount = $showing->hall->seats()->count();
+                $bookedSeats = $showing->bookings()->withCount('seats')->get()->sum('seats_count');
+                $occupancy = $seatsCount > 0 ? $bookedSeats / $seatsCount : 0;
+
                 return [
                     'id' => $showing->id,
                     'movie_title' => $showing->movie->title,
@@ -95,6 +99,7 @@ class DashboardController extends Controller
                     'start_time' => $showing->start_time,
                     'bookings_count' => $showing->bookings()->count(),
                     'movie_poster' => $showing->movie->poster_image,
+                    'occupancy' => $occupancy,
                 ];
             });
 
