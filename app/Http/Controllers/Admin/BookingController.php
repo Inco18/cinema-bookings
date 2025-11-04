@@ -10,6 +10,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
@@ -86,10 +87,18 @@ class BookingController extends Controller {
         $users = User::orderBy('first_name')->orderBy('last_name')->get();
         $showing_id = $request->input('showing_id') ?? $showings[0]->id;
 
+        // Pobierz ceny bazowe
+        $prices = \App\Models\Price::all()->keyBy('ticket_type');
+        $pricesArray = [
+            'normal' => $prices->get('normal')?->base_price ?? 30,
+            'reduced' => $prices->get('reduced')?->base_price ?? 24,
+        ];
+
         return Inertia::render('Admin/Bookings/Form', [
             'showings' => $showings,
             'users' => $users,
             'showing_id' => $showing_id,
+            'prices' => $pricesArray,
             'hall' => fn() => Showing::find($showing_id)->hall()->with('seats')->first(),
             'bookings' => fn() => Showing::find($showing_id)->bookings()->with('seats')->get()]);
     }
@@ -100,16 +109,42 @@ class BookingController extends Controller {
     public function store(BookingRequest $request) {
         Gate::authorize('create', Booking::class);
         try {
-            $booking = Booking::create($request->validated());
-            $booking->seats()->sync($request->input('seats'));
+            DB::beginTransaction();
+
+            $token = \Str::random(32);
+
+            $booking = Booking::create([
+                'showing_id' => $request->input('showing_id'),
+                'user_id' => $request->input('user_id'),
+                'price' => $request->input('price'),
+                'status' => $request->input('status'),
+                'first_name' => $request->input('first_name'),
+                'last_name' => $request->input('last_name'),
+                'email' => $request->input('email'),
+                'token' => $token,
+            ]);
+
+            $seatPrices = $request->input('seat_prices', []);
+            $syncData = [];
+
+            foreach ($seatPrices as $seatPrice) {
+                $syncData[$seatPrice['seat_id']] = [
+                    'price' => $seatPrice['price'],
+                    'type' => $seatPrice['type'],
+                ];
+            }
+
+            $booking->seats()->sync($syncData);
+
+            DB::commit();
         } catch (Exception $e) {
+            DB::rollBack();
             return redirect()->back()->withErrors([
-                'create' => 'Nie udało się dodać rezerwacji'
+                'create' => 'Nie udało się dodać rezerwacji: ' . $e->getMessage()
             ]);
         }
         return redirect(route('bookings.index'))->with([
-            'message' => "Rezerwacja została dodana",
-            'messageType' => 'success'
+            'success' => "Rezerwacja została dodana"
         ]);
     }
 
@@ -122,10 +157,17 @@ class BookingController extends Controller {
         $users = User::orderBy('first_name')->orderBy('last_name')->get();
         $showing_id = $request->input('showing_id') ?? $booking->showing_id;
 
+        $prices = \App\Models\Price::all()->keyBy('ticket_type');
+        $pricesArray = [
+            'normal' => $prices->get('normal')?->base_price ?? 30,
+            'reduced' => $prices->get('reduced')?->base_price ?? 24,
+        ];
+
         return Inertia::render('Admin/Bookings/Form', ['booking' => $booking->load('seats'),
             'showings' => $showings,
             'users' => $users,
             'showing_id' => $showing_id,
+            'prices' => $pricesArray,
             'hall' => fn() => Showing::find($showing_id)->hall()->with('seats')->first(),
             'bookings' => fn() => Showing::find($showing_id)->bookings()->with('seats')->get()]);
     }
@@ -136,16 +178,39 @@ class BookingController extends Controller {
     public function update(BookingRequest $request, Booking $booking) {
         Gate::authorize('update', $booking);
         try {
-            $booking->update($request->validated());
-            $booking->seats()->sync($request->input('seats'));
+            DB::beginTransaction();
+
+            $booking->update([
+                'showing_id' => $request->input('showing_id'),
+                'user_id' => $request->input('user_id'),
+                'price' => $request->input('price'),
+                'status' => $request->input('status'),
+                'first_name' => $request->input('first_name'),
+                'last_name' => $request->input('last_name'),
+                'email' => $request->input('email'),
+            ]);
+
+            $seatPrices = $request->input('seat_prices', []);
+            $syncData = [];
+
+            foreach ($seatPrices as $seatPrice) {
+                $syncData[$seatPrice['seat_id']] = [
+                    'price' => $seatPrice['price'],
+                    'type' => $seatPrice['type'],
+                ];
+            }
+
+            $booking->seats()->sync($syncData);
+
+            DB::commit();
         } catch (Exception $e) {
+            DB::rollBack();
             return redirect()->back()->withErrors([
-                'update' => 'Nie udało się zaktualizować rezerwacji'
+                'update' => 'Nie udało się zaktualizować rezerwacji: ' . $e->getMessage()
             ]);
         }
         return redirect(route('bookings.index'))->with([
-            'message' => "Rezerwacja została zaktualizowana",
-            'messageType' => 'success'
+            'success' => "Rezerwacja została zaktualizowana"
         ]);
     }
 
@@ -155,9 +220,27 @@ class BookingController extends Controller {
     public function destroy(Booking $booking) {
         Gate::authorize('delete', $booking);
         try {
+            DB::beginTransaction();
+
+            // Zwolnij nagrody jeśli były użyte
+            $bookingDiscount = $booking->userRewards()->first();
+            if ($bookingDiscount) {
+                $bookingDiscount->update([
+                    'status' => \App\Enums\UserRewardStatus::ACTIVE->value,
+                    'booking_id' => null
+                ]);
+            }
+
             $booking->seats()->detach();
             $booking->delete();
+
+            DB::commit();
+
+            return back()->with([
+                'success' => 'Rezerwacja została usunięta'
+            ]);
         } catch (Exception $e) {
+            DB::rollBack();
             return redirect()->back()->withErrors([
                 'delete' => 'Nie udało się usunąć wybranej rezerwacji'
             ]);

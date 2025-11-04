@@ -134,10 +134,6 @@ export const ShowingRequest = z
     });
 
 export const BookingRequest = z.object({
-    num_people: z.coerce
-        .number()
-        .int({ message: "To pole może zawierać tylko liczby całkowite" })
-        .min(1, { message: "To pole nie może być mniejsze niż 1" }),
     price: z.coerce
         .number()
         .min(0, { message: "To pole nie może być mniejsze niż 0" }),

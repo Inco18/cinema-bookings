@@ -3,8 +3,8 @@ import { Label } from "@/Components/ui/label";
 
 import AuthenticatedLayout from "@/Layouts/AdminLayout";
 import { BookingRequest } from "@/schema";
-import { Booking, Hall, Showing, User } from "@/types";
-import { BookingStatus } from "@/types/enums";
+import { Booking, Hall, Showing, User, Price } from "@/types";
+import { BookingStatus, TicketType } from "@/types/enums";
 import { Head, router, useForm } from "@inertiajs/react";
 import { FormEventHandler, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
@@ -28,9 +28,8 @@ type Props = {
     showing_id: number;
     hall: Hall;
     bookings: Booking[];
+    prices: { normal: number; reduced: number };
 };
-
-export const TICKET_PRICE = 31.5;
 
 const BookingForm = ({
     booking,
@@ -39,7 +38,31 @@ const BookingForm = ({
     showing_id,
     hall,
     bookings,
+    prices,
 }: Props) => {
+    const [normalTickets, setNormalTickets] = useState(0);
+    const [reducedTickets, setReducedTickets] = useState(0);
+
+    // Przygotuj dane seat_prices z booking
+    const prepareSeatPrices = () => {
+        if (!booking || !booking.seats) return [];
+        return booking.seats.map(seat => ({
+            seat_id: seat.id,
+            price: seat.pivot?.price || 0,
+            type: seat.pivot?.type || TicketType.NORMAL,
+        }));
+    };
+
+    // Policz bilety z booking
+    useEffect(() => {
+        if (booking?.seats) {
+            const normal = booking.seats.filter(s => s.pivot?.type === TicketType.NORMAL).length;
+            const reduced = booking.seats.filter(s => s.pivot?.type === TicketType.REDUCED).length;
+            setNormalTickets(normal);
+            setReducedTickets(reduced);
+        }
+    }, [booking]);
+
     const {
         data,
         setData,
@@ -50,21 +73,25 @@ const BookingForm = ({
         setError,
         processing,
     } = useForm({
+        id: booking?.id || null,
         showing_id: booking?.showing_id || showing_id || showings[0].id,
         user_id: booking?.user_id || null,
-        num_people: booking?.num_people || 0,
         price: booking?.price || 0,
         first_name: booking?.first_name || "",
         last_name: booking?.last_name || "",
         email: booking?.email || "",
         status: booking?.status || BookingStatus.PAID,
         seats: booking?.seats?.map((seat) => seat.id) || [],
+        normal_tickets: 0,
+        reduced_tickets: 0,
+        seat_prices: prepareSeatPrices(),
     });
     const [didFail, setDidFail] = useState(false);
     const inputsRef = useRef<{
         showing_id: HTMLButtonElement | null;
         user_id: HTMLButtonElement | null;
-        num_people: HTMLInputElement | null;
+        normal_tickets: HTMLInputElement | null;
+        reduced_tickets: HTMLInputElement | null;
         price: HTMLInputElement | null;
         first_name: HTMLInputElement | null;
         last_name: HTMLInputElement | null;
@@ -73,13 +100,37 @@ const BookingForm = ({
     }>({
         showing_id: null,
         user_id: null,
-        num_people: null,
+        normal_tickets: null,
+        reduced_tickets: null,
         price: null,
         first_name: null,
         last_name: null,
         email: null,
         status: null,
     });
+
+    useEffect(() => {
+        if (data.seats.length === 0) {
+            setData('seat_prices', []);
+            return;
+        }
+
+        const totalTickets = normalTickets + reducedTickets;
+        if (totalTickets !== data.seats.length) {
+            return;
+        }
+
+        const newSeatPrices = data.seats.map((seatId, index) => ({
+            seat_id: seatId,
+            price: index < normalTickets ? prices.normal : prices.reduced,
+            type: index < normalTickets ? TicketType.NORMAL : TicketType.REDUCED,
+        }));
+
+        setData('seat_prices', newSeatPrices);
+
+        const totalPrice = newSeatPrices.reduce((sum, sp) => sum + Number(sp.price), 0);
+        setData('price', totalPrice);
+    }, [data.seats, normalTickets, reducedTickets]);
 
     const validateInputs = () => {
         const parsed = BookingRequest.safeParse(data);
@@ -110,6 +161,15 @@ const BookingForm = ({
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
+
+        if (normalTickets + reducedTickets !== data.seats.length) {
+            toast.error("Liczba biletów musi odpowiadać liczbie wybranych miejsc");
+            return;
+        }
+
+        setData('normal_tickets', normalTickets);
+        setData('reduced_tickets', reducedTickets);
+
         const zodErrors = validateInputs();
         if (Object.keys(zodErrors).length !== 0) {
             inputsRef.current[
@@ -118,15 +178,23 @@ const BookingForm = ({
             setDidFail(true);
             return;
         }
+
+        const submitData = {
+            ...data,
+            normal_tickets: normalTickets,
+            reduced_tickets: reducedTickets,
+        };
+
         if (booking) {
-            patch(route("bookings.update", { booking }, false), {
-                onError: () => {
+            router.patch(route("bookings.update", { booking }), submitData, {
+                onError: (e) => {
                     setDidFail(true);
+                    console.log(e);
                     toast.error("Nie udało się zaktualizować rezerwacji");
                 },
             });
         } else {
-            post(route("bookings.store"), {
+            router.post(route("bookings.store"), submitData, {
                 onError: () => {
                     setDidFail(true);
                     toast.error("Nie udało się dodać rezerwacji");
@@ -134,6 +202,7 @@ const BookingForm = ({
             });
         }
     };
+
 
     return (
         <AuthenticatedLayout
@@ -152,10 +221,10 @@ const BookingForm = ({
                     booking ? "Rezerwacje - Edycja" : "Rezerwacje - Tworzenie"
                 }
             />
-            <div className="flex justify-center gap-5 items-start">
+            <div className="flex items-start justify-center gap-5">
                 <form
                     onSubmit={submit}
-                    className="mt-2 space-y-6 max-w-xl bg-background p-4 sm:rounded-lg sm:p-8 border"
+                    className="max-w-xl p-4 mt-2 space-y-6 border bg-background sm:rounded-lg sm:p-8"
                 >
                     <div>
                         <Label
@@ -179,8 +248,9 @@ const BookingForm = ({
                                     ...data,
                                     showing_id: Number(value),
                                     seats: [],
-                                    num_people: 0,
                                 }));
+                                setNormalTickets(0);
+                                setReducedTickets(0);
                                 router.visit(
                                     route(
                                         `bookings.${
@@ -203,7 +273,7 @@ const BookingForm = ({
                             }}
                         />
                         {errors.showing_id && (
-                            <p className="text-sm text-destructive mt-1">
+                            <p className="mt-1 text-sm text-destructive">
                                 {errors.showing_id}
                             </p>
                         )}
@@ -232,7 +302,7 @@ const BookingForm = ({
                             }}
                         />
                         {errors.user_id && (
-                            <p className="text-sm text-destructive mt-1">
+                            <p className="mt-1 text-sm text-destructive">
                                 {errors.user_id}
                             </p>
                         )}
@@ -281,7 +351,7 @@ const BookingForm = ({
                             </SelectContent>
                         </Select>
                         {errors.status && (
-                            <p className="text-sm text-destructive mt-1">
+                            <p className="mt-1 text-sm text-destructive">
                                 {errors.status}
                             </p>
                         )}
@@ -289,40 +359,85 @@ const BookingForm = ({
                     <div className="flex items-start w-full gap-5">
                         <div className="flex-1">
                             <Label
-                                htmlFor="num_people"
+                                htmlFor="normal_tickets"
                                 className={`${
-                                    errors.num_people ? "!text-destructive" : ""
+                                    errors.normal_tickets ? "!text-destructive" : ""
                                 }`}
                             >
-                                Liczba osób
+                                Bilety normalne
+                            </Label>
+                            <Input
+                                type="number"
+                                ref={(ref) =>
+                                    (inputsRef.current.normal_tickets =
+                                        ref as HTMLInputElement)
+                                }
+                                id="normal_tickets"
+                                value={normalTickets}
+                                onChange={(e) => {
+                                    setNormalTickets(Number(e.target.value));
+                                }}
+                                className={`mt-1 ${
+                                    errors.normal_tickets
+                                        ? "!border-destructive"
+                                        : ""
+                                }`}
+                                min="0"
+                            />
+
+                            {errors.normal_tickets && (
+                                <p className="mt-1 text-sm text-destructive">
+                                    {errors.normal_tickets}
+                                </p>
+                            )}
+                        </div>
+                        <div className="flex-1">
+                            <Label
+                                htmlFor="reduced_tickets"
+                                className={`${
+                                    errors.reduced_tickets ? "!text-destructive" : ""
+                                }`}
+                            >
+                                Bilety ulgowe
+                            </Label>
+                            <Input
+                                type="number"
+                                ref={(ref) =>
+                                    (inputsRef.current.reduced_tickets =
+                                        ref as HTMLInputElement)
+                                }
+                                id="reduced_tickets"
+                                value={reducedTickets}
+                                onChange={(e) => {
+                                    setReducedTickets(Number(e.target.value));
+                                }}
+                                className={`mt-1 ${
+                                    errors.reduced_tickets
+                                        ? "!border-destructive"
+                                        : ""
+                                }`}
+                                min="0"
+                            />
+
+                            {errors.reduced_tickets && (
+                                <p className="mt-1 text-sm text-destructive">
+                                    {errors.reduced_tickets}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                    <div className="flex items-start w-full gap-5">
+                        <div className="flex-1">
+                            <Label htmlFor="seats_info" className="text-muted-foreground">
+                                Wybrane miejsca
                             </Label>
                             <Input
                                 disabled
                                 type="number"
-                                ref={(ref) =>
-                                    (inputsRef.current.num_people =
-                                        ref as HTMLInputElement)
-                                }
-                                id="num_people"
-                                value={data.num_people}
-                                onChange={(e) => {
-                                    setData(
-                                        "num_people",
-                                        Number(e.target.value)
-                                    );
-                                }}
-                                className={`mt-1 ${
-                                    errors.num_people
-                                        ? "!border-destructive"
-                                        : ""
-                                }`}
+                                id="seats_info"
+                                value={data.seats.length}
+                                className="mt-1"
                             />
-
-                            {errors.num_people && (
-                                <p className="text-sm text-destructive mt-1">
-                                    {errors.num_people}
-                                </p>
-                            )}
                         </div>
                         <div className="flex-1">
                             <Label
@@ -331,7 +446,7 @@ const BookingForm = ({
                                     errors.price ? "!text-destructive" : ""
                                 }`}
                             >
-                                Cena
+                                Cena całkowita (zł)
                             </Label>
                             <Input
                                 type="number"
@@ -351,7 +466,7 @@ const BookingForm = ({
                             />
 
                             {errors.price && (
-                                <p className="text-sm text-destructive mt-1">
+                                <p className="mt-1 text-sm text-destructive">
                                     {errors.price}
                                 </p>
                             )}
@@ -386,7 +501,7 @@ const BookingForm = ({
                             />
 
                             {errors.first_name && (
-                                <p className="text-sm text-destructive mt-1">
+                                <p className="mt-1 text-sm text-destructive">
                                     {errors.first_name}
                                 </p>
                             )}
@@ -419,7 +534,7 @@ const BookingForm = ({
                             />
 
                             {errors.last_name && (
-                                <p className="text-sm text-destructive mt-1">
+                                <p className="mt-1 text-sm text-destructive">
                                     {errors.last_name}
                                 </p>
                             )}
@@ -451,7 +566,7 @@ const BookingForm = ({
                         />
 
                         {errors.email && (
-                            <p className="text-sm text-destructive mt-1">
+                            <p className="mt-1 text-sm text-destructive">
                                 {errors.email}
                             </p>
                         )}
@@ -486,14 +601,12 @@ const BookingForm = ({
                                 return {
                                     ...data,
                                     seats: newSeats,
-                                    num_people: newSeats.length,
-                                    price: newSeats.length * TICKET_PRICE,
                                 };
                             });
                         }}
                     />
                     {errors.seats && (
-                        <p className="text-sm text-destructive mt-1">
+                        <p className="mt-1 text-sm text-destructive">
                             {errors.seats}
                         </p>
                     )}

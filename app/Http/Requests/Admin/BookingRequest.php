@@ -30,6 +30,12 @@ class BookingRequest extends FormRequest {
                 'distinct',
                 'exists:seats,id'
             ],
+            'normal_tickets' => ['required', 'integer', 'min:0'],
+            'reduced_tickets' => ['required', 'integer', 'min:0'],
+            'seat_prices' => ['required', 'array'],
+            'seat_prices.*.seat_id' => ['required', 'exists:seats,id'],
+            'seat_prices.*.price' => ['required', 'numeric', 'min:0'],
+            'seat_prices.*.type' => ['required', Rule::in(['normal', 'reduced'])],
         ];
     }
 
@@ -48,5 +54,20 @@ class BookingRequest extends FormRequest {
             'seats.*.distinct' => 'Tablica siedzeń nie może zawierać duplikatów',
             'seats.*.exists' => 'Jedno lub więcej siedzeń nie istnieje',
         ];
+    }
+
+    protected function prepareForValidation()
+    {
+        // Walidacja: suma biletów musi równać się liczbie miejsc
+        $normalTickets = $this->input('normal_tickets', 0);
+        $reducedTickets = $this->input('reduced_tickets', 0);
+        $seatsCount = count($this->input('seats', []));
+
+        if ($normalTickets + $reducedTickets !== $seatsCount) {
+            $this->merge([
+                'normal_tickets' => 0,
+                'reduced_tickets' => 0,
+            ]);
+        }
     }
 }
