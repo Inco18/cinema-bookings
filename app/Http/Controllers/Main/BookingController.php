@@ -22,6 +22,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 use Str;
@@ -88,6 +89,8 @@ class BookingController extends Controller
             );
             $booking->seats()->syncWithPivotValues($request->input('seats'), ['price' => 0, 'type' => TicketType::NORMAL->value]);
         } catch (Exception $e) {
+            Log::error('Error creating booking: '.$e->getMessage());
+
             return redirect()->back()->withErrors([
                 'create' => 'Nie udało się dodać rezerwacji',
             ]);
@@ -135,6 +138,8 @@ class BookingController extends Controller
             $booking->seats()->detach();
             $booking->delete();
 
+            Log::error('Error updating booking seats: '.$e->getMessage());
+
             return redirect(route('main.showings.index'))->with([
                 'error' => 'Wystąpił błąd, rezerwacja została anulowana',
             ]);
@@ -155,11 +160,11 @@ class BookingController extends Controller
         $user = Auth::user();
 
         $dynamicPrices = $this->calculateDynamicPrices($booking->showing);
-        $userDiscounts = $user->userRewards()->with('reward')->where('status', '=', UserRewardStatus::ACTIVE->value)->orWhere(function ($query) use ($booking) {
+        $userDiscounts = $user ? $user->userRewards()->with('reward')->where('status', '=', UserRewardStatus::ACTIVE->value)->orWhere(function ($query) use ($booking) {
             $query->where('status', '=', UserRewardStatus::USED->value)->where('booking_id', '=', $booking->id);
         })->whereHas('reward', function ($query) {
             $query->where('type', '=', RewardType::DISCOUNT->value);
-        })->orderBy('created_at', 'desc')->get();
+        })->orderBy('created_at', 'desc')->get() : collect();
         $selectedDiscountId = $booking->userRewards()->first()?->id;
 
         return Inertia::render('Main/Booking/ChooseTickets', [
@@ -237,6 +242,8 @@ class BookingController extends Controller
             $booking->seats()->detach();
             $booking->delete();
 
+            Log::error('Error updating booking tickets: '.$e->getMessage());
+
             return redirect(route('main.showings.index'))->with([
                 'error' => 'Wystąpił błąd, rezerwacja została anulowana',
             ]);
@@ -296,6 +303,8 @@ class BookingController extends Controller
             $booking->seats()->detach();
             $booking->delete();
 
+            Log::error('Error updating booking: '.$e->getMessage());
+
             return redirect(route('main.showings.index'))->with([
                 'error' => 'Wystąpił błąd, rezerwacja została anulowana',
             ]);
@@ -326,7 +335,7 @@ class BookingController extends Controller
                 ]);
             }
 
-            return redirect(route('main.bookings.confirmation', ['booking' => $booking, 'token' => urlencode($booking->token), 'points' => $pointsToAdd]));
+            return redirect(route('main.bookings.confirmation', ['booking' => $booking, 'token' => urlencode($booking->token), 'points' => $pointsToAdd ?? 0]));
         }
 
         if ($paymentStatus == 'PENDING') {
@@ -366,6 +375,8 @@ class BookingController extends Controller
         } catch (Exception $e) {
             $booking->seats()->detach();
             $booking->delete();
+
+            Log::error('Error updating booking: '.$e->getMessage());
 
             return redirect(route('main.showings.index'))->with([
                 'error' => 'Wystąpił błąd, rezerwacja została anulowana',
@@ -433,6 +444,8 @@ class BookingController extends Controller
             }
 
         } catch (Exception $e) {
+            Log::error('Error deleting booking: '.$e->getMessage());
+
             return redirect()->back()->withErrors([
                 'delete' => 'Nie udało się usunąć wybranej rezerwacji',
             ]);
@@ -448,23 +461,23 @@ class BookingController extends Controller
         $occupancy = $seatsCount > 0 ? $bookedSeats / $seatsCount : 0;
 
         foreach ($priceModels as $ticketType => $price) {
-            // Domyślnie base_price
+            // Default base_price
             $finalPrice = $price->base_price;
 
-            // Jeśli obłożenie > 70% lub seans za < 24h, podnieś cenę do max 10% powyżej base_price, ale nie więcej niż max_price
+            // If occupancy > 70% or screening < 24h, raise price to max 10% above base_price, but no more than max_price
             $soon = (strtotime($showing->start_time) - time()) < 60 * 60 * 24;
             if ($occupancy > 0.7 || $soon) {
                 $dynamic = $price->base_price * 1.1;
                 $finalPrice = min($dynamic, $price->max_price);
             }
 
-            // Jeśli obłożenie < 20%, obniż cenę do min 10% poniżej base_price, ale nie mniej niż min_price
+            // If occupancy < 20%, lower price to min 10% below base_price, but no less than min_price
             if ($occupancy < 0.2) {
                 $dynamic = $price->base_price * 0.9;
                 $finalPrice = max($dynamic, $price->min_price);
             }
 
-            // Zaokrąglij do dwóch miejsc
+            // Round to two decimal places
             $prices[$ticketType] = round($finalPrice, 2);
         }
 

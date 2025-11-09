@@ -17,6 +17,8 @@ return new class extends Migration {
             $table->decimal('price', 6, 2);
             $table->enum('type', TicketType::toArray());
             $table->timestamps();
+
+            $table->unique(['booking_id', 'seat_id']);
         });
     }
 
