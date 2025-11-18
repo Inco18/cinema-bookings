@@ -51,8 +51,8 @@ export default function Login({
                         type="email"
                         name="email"
                         value={data.email}
-                        className="mt-1 block w-full"
-                        autoComplete="username"
+                        className="block w-full mt-1"
+                        autoComplete="email"
                         autoFocus
                         onChange={(e) => setData("email", e.target.value)}
                     />
@@ -68,7 +68,7 @@ export default function Login({
                         type="password"
                         name="password"
                         value={data.password}
-                        className="mt-1 block w-full"
+                        className="block w-full mt-1"
                         autoComplete="current-password"
                         onChange={(e) => setData("password", e.target.value)}
                     />
@@ -76,7 +76,7 @@ export default function Login({
                     <InputError message={errors.password} className="mt-2" />
                 </div>
 
-                <div className="mt-4 flex flex-row items-center gap-2">
+                <div className="flex flex-row items-center gap-2 mt-4">
                     <Checkbox
                         name="remember"
                         id="remember"
@@ -88,11 +88,11 @@ export default function Login({
                     <Label htmlFor="remember" className="text-gray-700">Zapamiętaj mnie</Label>
                 </div>
 
-                <div className="mt-4 flex items-center justify-end">
+                <div className="flex items-center justify-end mt-4">
                     {canResetPassword && (
                         <Link
                             href={route("password.request")}
-                            className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                            className="text-sm text-gray-600 underline rounded-md hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                         >
                             Nie pamiętasz hasła?
                         </Link>

@@ -1,7 +1,4 @@
 import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
-import PrimaryButton from "@/Components/PrimaryButton";
-import TextInput from "@/Components/TextInput";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
@@ -48,7 +45,7 @@ export default function UpdateProfileInformation({
 
                     <Input
                         id="first_name"
-                        className="mt-1 w-full"
+                        className="w-full mt-1"
                         value={data.first_name}
                         onChange={(e) => setData("first_name", e.target.value)}
                         required
@@ -63,7 +60,7 @@ export default function UpdateProfileInformation({
 
                     <Input
                         id="last_name"
-                        className="mt-1 w-full"
+                        className="w-full mt-1"
                         value={data.last_name}
                         onChange={(e) => setData("last_name", e.target.value)}
                         required
@@ -79,7 +76,7 @@ export default function UpdateProfileInformation({
                     <Input
                         id="email"
                         type="email"
-                        className="mt-1 w-full"
+                        className="w-full mt-1"
                         value={data.email}
                         onChange={(e) => setData("email", e.target.value)}
                         required
@@ -97,7 +94,7 @@ export default function UpdateProfileInformation({
                                 href={route("verification.send")}
                                 method="post"
                                 as="button"
-                                className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                className="text-sm text-gray-600 underline rounded-md hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                             >
                                 Kliknij tutaj aby ponownie wysłać email
                                 weryfikacyjny.

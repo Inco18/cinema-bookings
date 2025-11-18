@@ -1,7 +1,4 @@
 import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
-import PrimaryButton from "@/Components/PrimaryButton";
-import TextInput from "@/Components/TextInput";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
@@ -76,7 +73,7 @@ export default function UpdatePasswordForm({
                             setData("current_password", e.target.value)
                         }
                         type="password"
-                        className="mt-1 w-full"
+                        className="w-full mt-1"
                         autoComplete="current-password"
                     />
 
@@ -95,7 +92,7 @@ export default function UpdatePasswordForm({
                         value={data.password}
                         onChange={(e) => setData("password", e.target.value)}
                         type="password"
-                        className="mt-1 w-full"
+                        className="w-full mt-1"
                         autoComplete="new-password"
                     />
 
@@ -114,7 +111,7 @@ export default function UpdatePasswordForm({
                             setData("password_confirmation", e.target.value)
                         }
                         type="password"
-                        className="mt-1 w-full"
+                        className="w-full mt-1"
                         autoComplete="new-password"
                     />
 

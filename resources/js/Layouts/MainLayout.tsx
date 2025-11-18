@@ -1,8 +1,6 @@
 import ApplicationLogo from "@/Components/ApplicationLogo";
-import Dropdown from "@/Components/Dropdown";
-import NavLink from "@/Components/NavLink";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
-import { Button, buttonVariants } from "@/Components/ui/button";
+import { buttonVariants } from "@/Components/ui/button";
 import {
     DropdownMenu,
     DropdownMenuContent,

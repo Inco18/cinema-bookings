@@ -1,7 +1,7 @@
 import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
-import PrimaryButton from "@/Components/PrimaryButton";
-import TextInput from "@/Components/TextInput";
+import { Button } from "@/Components/ui/button";
+import { Input } from "@/Components/ui/input";
+import { Label } from "@/Components/ui/label";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { Head, Link, useForm } from "@inertiajs/react";
 import { FormEventHandler } from "react";
@@ -29,15 +29,15 @@ export default function Register() {
 
             <form onSubmit={submit}>
                 <div>
-                    <InputLabel htmlFor="first_name" value="Imię" />
+                    <Label htmlFor="first_name">Imię</Label>
 
-                    <TextInput
+                    <Input
                         id="first_name"
                         name="first_name"
                         value={data.first_name}
-                        className="mt-1 block w-full"
-                        autoComplete="first_name"
-                        isFocused={true}
+                        className="block w-full mt-1"
+                        autoComplete="given-name"
+                        autoFocus
                         onChange={(e) => setData("first_name", e.target.value)}
                         required
                     />
@@ -45,14 +45,14 @@ export default function Register() {
                     <InputError message={errors.first_name} className="mt-2" />
                 </div>
                 <div className="mt-4">
-                    <InputLabel htmlFor="last_name" value="Nazwisko" />
+                    <Label htmlFor="last_name">Nazwisko</Label>
 
-                    <TextInput
+                    <Input
                         id="last_name"
                         name="last_name"
                         value={data.last_name}
-                        className="mt-1 block w-full"
-                        autoComplete="last_name"
+                        className="block w-full mt-1"
+                        autoComplete="family-name"
                         onChange={(e) => setData("last_name", e.target.value)}
                         required
                     />
@@ -61,15 +61,15 @@ export default function Register() {
                 </div>
 
                 <div className="mt-4">
-                    <InputLabel htmlFor="email" value="Email" />
+                    <Label htmlFor="email">Email</Label>
 
-                    <TextInput
+                    <Input
                         id="email"
                         type="email"
                         name="email"
                         value={data.email}
-                        className="mt-1 block w-full"
-                        autoComplete="username"
+                        className="block w-full mt-1"
+                        autoComplete="email"
                         onChange={(e) => setData("email", e.target.value)}
                         required
                     />
@@ -78,14 +78,14 @@ export default function Register() {
                 </div>
 
                 <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Hasło" />
+                    <Label htmlFor="password">Hasło</Label>
 
-                    <TextInput
+                    <Input
                         id="password"
                         type="password"
                         name="password"
                         value={data.password}
-                        className="mt-1 block w-full"
+                        className="block w-full mt-1"
                         autoComplete="new-password"
                         onChange={(e) => setData("password", e.target.value)}
                         required
@@ -95,17 +95,14 @@ export default function Register() {
                 </div>
 
                 <div className="mt-4">
-                    <InputLabel
-                        htmlFor="password_confirmation"
-                        value="Powtórz hasło"
-                    />
+                    <Label htmlFor="password_confirmation">Powtórz hasło</Label>
 
-                    <TextInput
+                    <Input
                         id="password_confirmation"
                         type="password"
                         name="password_confirmation"
                         value={data.password_confirmation}
-                        className="mt-1 block w-full"
+                        className="block w-full mt-1"
                         autoComplete="new-password"
                         onChange={(e) =>
                             setData("password_confirmation", e.target.value)
@@ -119,17 +116,17 @@ export default function Register() {
                     />
                 </div>
 
-                <div className="mt-4 flex items-center justify-end">
+                <div className="flex items-center justify-end mt-4">
                     <Link
                         href={route("login")}
-                        className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        className="text-sm text-gray-600 underline rounded-md hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                     >
                         Masz już konto?
                     </Link>
 
-                    <PrimaryButton className="ms-4" disabled={processing}>
+                    <Button className="ms-4" disabled={processing}>
                         Zarejestruj
-                    </PrimaryButton>
+                    </Button>
                 </div>
             </form>
         </GuestLayout>
