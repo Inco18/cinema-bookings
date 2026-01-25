@@ -8,7 +8,7 @@ import {
     DropdownMenuTrigger,
 } from "@/Components/ui/dropdown-menu";
 import { Separator } from "@/Components/ui/separator";
-import { hasRole } from "@/lib/utils";
+import { doesntHaveRole, hasRole } from "@/lib/utils";
 import { RoleType } from "@/types/enums";
 import { Link, usePage } from "@inertiajs/react";
 import { ChevronDown, HandCoins, UserRound } from "lucide-react";
@@ -39,24 +39,32 @@ export default function MainLayout({
                         <div className="flex justify-between h-16">
                             <div className="flex">
                                 <div className="flex items-center shrink-0">
-                                    <Link href="/">
+                                    <Link
+                                        href={
+                                            doesntHaveRole(user, RoleType.ADMIN)
+                                                ? "/"
+                                                : route("prices.index")
+                                        }
+                                    >
                                         <ApplicationLogo className="block w-auto text-gray-800 fill-current h-9" />
                                     </Link>
                                 </div>
 
                                 <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                    <Link
-                                        href={route("main.showings.index")}
-                                        className={`inline-flex items-center hover:text-indigo-700 transition ${
-                                            route().current(
-                                                "main.showings.index"
-                                            )
-                                                ? "text-indigo-700 font-semibold"
-                                                : ""
-                                        }`}
-                                    >
-                                        Repertuar
-                                    </Link>
+                                    {doesntHaveRole(user, RoleType.ADMIN) && (
+                                        <Link
+                                            href={route("main.showings.index")}
+                                            className={`inline-flex items-center hover:text-indigo-700 transition ${
+                                                route().current(
+                                                    "main.showings.index",
+                                                )
+                                                    ? "text-indigo-700 font-semibold"
+                                                    : ""
+                                            }`}
+                                        >
+                                            Repertuar
+                                        </Link>
+                                    )}
                                     <Link
                                         href={route("main.prices.index")}
                                         className={`inline-flex items-center hover:text-indigo-700 transition ${
@@ -96,12 +104,12 @@ export default function MainLayout({
                                                 </div>
                                                 {hasRole(
                                                     user,
-                                                    RoleType.ADMIN
+                                                    RoleType.ADMIN,
                                                 ) && (
                                                     <DropdownMenuItem asChild>
                                                         <Link
                                                             href={route(
-                                                                "dashboard"
+                                                                "dashboard",
                                                             )}
                                                             className={
                                                                 "cursor-pointer"
@@ -111,34 +119,45 @@ export default function MainLayout({
                                                         </Link>
                                                     </DropdownMenuItem>
                                                 )}
+                                                {doesntHaveRole(
+                                                    user,
+                                                    RoleType.ADMIN,
+                                                ) && (
+                                                    <DropdownMenuItem asChild>
+                                                        <Link
+                                                            href={route(
+                                                                "main.loyaltyProgram.index",
+                                                            )}
+                                                            className={
+                                                                "cursor-pointer"
+                                                            }
+                                                        >
+                                                            Program
+                                                            lojalnościowy
+                                                        </Link>
+                                                    </DropdownMenuItem>
+                                                )}
+                                                {doesntHaveRole(
+                                                    user,
+                                                    RoleType.ADMIN,
+                                                ) && (
+                                                    <DropdownMenuItem asChild>
+                                                        <Link
+                                                            href={route(
+                                                                "main.bookings.index",
+                                                            )}
+                                                            className={
+                                                                "cursor-pointer"
+                                                            }
+                                                        >
+                                                            Rezerwacje
+                                                        </Link>
+                                                    </DropdownMenuItem>
+                                                )}
                                                 <DropdownMenuItem asChild>
                                                     <Link
                                                         href={route(
-                                                            "main.loyaltyProgram.index"
-                                                        )}
-                                                        className={
-                                                            "cursor-pointer"
-                                                        }
-                                                    >
-                                                        Program lojalnościowy
-                                                    </Link>
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem asChild>
-                                                    <Link
-                                                        href={route(
-                                                            "main.bookings.index"
-                                                        )}
-                                                        className={
-                                                            "cursor-pointer"
-                                                        }
-                                                    >
-                                                        Rezerwacje
-                                                    </Link>
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem asChild>
-                                                    <Link
-                                                        href={route(
-                                                            "profile.edit"
+                                                            "profile.edit",
                                                         )}
                                                         className={
                                                             "cursor-pointer"
@@ -190,7 +209,7 @@ export default function MainLayout({
                                 <button
                                     onClick={() =>
                                         setShowingNavigationDropdown(
-                                            (previousState) => !previousState
+                                            (previousState) => !previousState,
                                         )
                                     }
                                     className="inline-flex items-center justify-center p-2 text-gray-400 transition duration-150 ease-in-out rounded-md hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none"
@@ -278,7 +297,7 @@ export default function MainLayout({
                                     )}
                                     <ResponsiveNavLink
                                         href={route(
-                                            "main.loyaltyProgram.index"
+                                            "main.loyaltyProgram.index",
                                         )}
                                     >
                                         Program lojalnościowy

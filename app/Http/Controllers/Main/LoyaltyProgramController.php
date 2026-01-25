@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Reward;
 use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
@@ -16,6 +17,9 @@ class LoyaltyProgramController extends Controller
      */
     public function index(Request $request)
     {
+        if (Auth::user()->hasRole('admin')) {
+            abort(403);
+        }
         $points = $request->user()->pointsHistory()->latest()->get();
         $rewards = Reward::query()->orderBy('cost_points')->get();
         $redeemedRewards = $request->user()->userRewards()->with('reward')->orderBy('status')->latest()->get();
@@ -25,13 +29,15 @@ class LoyaltyProgramController extends Controller
 
     public function redeemReward(Request $request)
     {
+        if (Auth::user()->hasRole('admin')) {
+            abort(403);
+        }
         $reward = Reward::findOrFail($request->input('reward_id'));
         $user = $request->user();
 
         if ($user->points_number < $reward->cost_points) {
             return redirect()->back()->with('error', 'Nie masz wystarczającej liczby punktów, aby odebrać tę nagrodę.');
         }
-
 
         try {
             DB::beginTransaction();

@@ -7,6 +7,7 @@ use App\Models\Genre;
 use App\Models\Showing;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class ShowingsController extends Controller
@@ -16,6 +17,9 @@ class ShowingsController extends Controller
      */
     public function index(Request $request)
     {
+        if (Auth::user()?->hasRole('admin')) {
+            abort(403);
+        }
         $day = $request->input('day') ?? Carbon::now()->toDateString();
         $subtitles_lang = $request->input('subtitles_lang');
         $speech_lang = $request->input('speech_lang');

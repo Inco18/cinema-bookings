@@ -50,13 +50,20 @@ cp .env.example .env
 
 Update .env file with database credentials and PayNow API keys.
 
-4. Run migrations:
+4. Generate app key and link storage
+
+```
+php artisan key:generate
+php artisan storage:link
+```
+
+5. Run migrations:
 
 ```
 php artisan migrate --seed
 ```
 
-5. Start the development server:
+6. Start the development server:
 
 ```
 php artisan serve

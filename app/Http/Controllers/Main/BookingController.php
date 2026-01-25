@@ -37,6 +37,9 @@ class BookingController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
+        if ($user?->hasRole('admin')) {
+            abort(403);
+        }
         if (! $user) {
             return redirect(route('main.showings.index'));
         }
@@ -55,6 +58,9 @@ class BookingController extends Controller
      */
     public function create(Request $request)
     {
+        if (Auth::user()?->hasRole('admin')) {
+            abort(403);
+        }
         $showingId = $request->input('showing_id');
         if (! $showingId) {
             return redirect(route('main.showings.index'))->with([
@@ -79,6 +85,9 @@ class BookingController extends Controller
     {
         try {
             $user = Auth::user();
+            if ($user?->hasRole('admin')) {
+                abort(403);
+            }
             $booking = Booking::create([
                 'showing_id' => $request->input('showing_id'),
                 'price' => 0,
@@ -101,6 +110,9 @@ class BookingController extends Controller
 
     public function editSeats(Booking $booking, Request $request)
     {
+        if (Auth::user()?->hasRole('admin')) {
+            abort(403);
+        }
         if ($request->input('token') != $booking->token) {
             abort(403, 'Nieprawidłowy token');
         }
@@ -116,6 +128,9 @@ class BookingController extends Controller
 
     public function updateSeats(Booking $booking, UpdateBookingSeatsRequest $request)
     {
+        if (Auth::user()?->hasRole('admin')) {
+            abort(403);
+        }
         if ($request->input('token') != $booking->token) {
             abort(403, 'Nieprawidłowy token');
         }
@@ -150,6 +165,9 @@ class BookingController extends Controller
 
     public function showChooseTickets(Booking $booking, Request $request)
     {
+        if (Auth::user()?->hasRole('admin')) {
+            abort(403);
+        }
         if ($request->input('token') != $booking->token) {
             abort(403, 'Nieprawidłowy token');
         }
@@ -178,6 +196,9 @@ class BookingController extends Controller
 
     public function updateTickets(Booking $booking, UpdateTicketsRequest $request)
     {
+        if (Auth::user()?->hasRole('admin')) {
+            abort(403);
+        }
         if ($request->input('token') != $booking->token) {
             abort(403, 'Nieprawidłowy token');
         }
@@ -257,6 +278,9 @@ class BookingController extends Controller
      */
     public function edit(Booking $booking, Request $request)
     {
+        if (Auth::user()?->hasRole('admin')) {
+            abort(403);
+        }
         if ($request->input('token') != $booking->token) {
             abort(403, 'Nieprawidłowy token');
         }
@@ -273,6 +297,9 @@ class BookingController extends Controller
      */
     public function update(UpdateBookingRequest $request, Booking $booking, PaynowService $paynowService)
     {
+        if (Auth::user()?->hasRole('admin')) {
+            abort(403);
+        }
         if ($request->input('token') != $booking->token) {
             abort(403, 'Nieprawidłowy token');
         }
@@ -313,6 +340,9 @@ class BookingController extends Controller
 
     public function handlePaymentResponse(Booking $booking, Request $request, PaynowService $paynowService)
     {
+        if (Auth::user()?->hasRole('admin')) {
+            abort(403);
+        }
         if ($request->input('token') != $booking->token) {
             abort(403, 'Nieprawidłowy token');
         }
@@ -356,6 +386,9 @@ class BookingController extends Controller
 
     public function retryPayment(Booking $booking, Request $request, PaynowService $paynowService)
     {
+        if (Auth::user()?->hasRole('admin')) {
+            abort(403);
+        }
         if ($request->input('token') != $booking->token) {
             abort(403, 'Nieprawidłowy token');
         }
@@ -386,6 +419,9 @@ class BookingController extends Controller
 
     public function showConfirmation(Request $request, Booking $booking)
     {
+        if (Auth::user()?->hasRole('admin')) {
+            abort(403);
+        }
         if ($request->input('token') != $booking->token) {
             abort(403, 'Nieprawidłowy token');
         }
@@ -398,6 +434,9 @@ class BookingController extends Controller
 
     public function downloadTickets(Request $request, Booking $booking)
     {
+        if (Auth::user()?->hasRole('admin')) {
+            abort(403);
+        }
         if ($request->input('token') != $booking->token) {
             abort(403, 'Nieprawidłowy token');
         }
@@ -414,6 +453,9 @@ class BookingController extends Controller
      */
     public function destroy(Request $request, Booking $booking)
     {
+        if (Auth::user()?->hasRole('admin')) {
+            abort(403);
+        }
         if ($request->input('token') != $booking->token) {
             abort(403, 'Nieprawidłowy token');
         }

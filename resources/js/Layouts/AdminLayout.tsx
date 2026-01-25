@@ -39,7 +39,7 @@ export default function Admin({
                         <div className="flex justify-between h-16">
                             <div className="flex">
                                 <div className="flex items-center shrink-0">
-                                    <Link href="/">
+                                    <Link href={route("main.prices.index")}>
                                         <ApplicationLogo className="block w-auto text-gray-800 fill-current h-9" />
                                     </Link>
                                 </div>
@@ -49,7 +49,7 @@ export default function Admin({
                                         <NavLink
                                             href={route("dashboard")}
                                             active={route().current(
-                                                "dashboard"
+                                                "dashboard",
                                             )}
                                         >
                                             Panel kontrolny
@@ -99,7 +99,7 @@ export default function Admin({
                                         <NavLink
                                             href={route("showings.index")}
                                             active={route().current(
-                                                "showings.*"
+                                                "showings.*",
                                             )}
                                         >
                                             Seanse
@@ -109,7 +109,7 @@ export default function Admin({
                                         <NavLink
                                             href={route("bookings.index")}
                                             active={route().current(
-                                                "bookings.*"
+                                                "bookings.*",
                                             )}
                                         >
                                             Rezerwacje
@@ -119,7 +119,7 @@ export default function Admin({
                                         <NavLink
                                             href={route("rewards.index")}
                                             active={route().current(
-                                                "rewards.*"
+                                                "rewards.*",
                                             )}
                                         >
                                             Nagrody
@@ -129,7 +129,7 @@ export default function Admin({
                                         <NavLink
                                             href={route("userRewards.index")}
                                             active={route().current(
-                                                "userRewards.*"
+                                                "userRewards.*",
                                             )}
                                         >
                                             Nagrody użytkowników
@@ -139,7 +139,7 @@ export default function Admin({
                                         <NavLink
                                             href={route("pointsHistory.index")}
                                             active={route().current(
-                                                "pointsHistory.*"
+                                                "pointsHistory.*",
                                             )}
                                         >
                                             Historia punktów
@@ -148,9 +148,7 @@ export default function Admin({
                                     {hasRole(user, RoleType.ADMIN) && (
                                         <NavLink
                                             href={route("prices.index")}
-                                            active={route().current(
-                                                "prices.*"
-                                            )}
+                                            active={route().current("prices.*")}
                                         >
                                             Cennik
                                         </NavLink>
@@ -205,7 +203,7 @@ export default function Admin({
                                 <button
                                     onClick={() =>
                                         setShowingNavigationDropdown(
-                                            (previousState) => !previousState
+                                            (previousState) => !previousState,
                                         )
                                     }
                                     className="inline-flex items-center justify-center p-2 text-gray-400 transition duration-150 ease-in-out rounded-md hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none"
