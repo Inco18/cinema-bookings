@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\PointsHistoryRequest;
-use App\Models\User;
 use App\Models\PointsHistory;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -80,7 +80,13 @@ class PointsHistoryController extends Controller
     {
         Gate::authorize('create', PointsHistory::class);
         try {
+            $userId = $request->get('user_id');
             PointsHistory::create($request->validated());
+            if ($request->points_change > 0) {
+                User::where('id', $userId)->increment('points_number', $request->points_change);
+            } else {
+                User::where('id', $userId)->decrement('points_number', abs($request->points_change));
+            }
         } catch (Exception $e) {
             return redirect()->back()->withErrors([
                 'create' => 'Nie udało się dodać wpisu historii punktów',
