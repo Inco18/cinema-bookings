@@ -33,6 +33,7 @@ const ShowingForm = ({ showing, halls, movies }: Props) => {
         clearErrors,
         setError,
         processing,
+        transform,
     } = useForm({
         hall_id: showing?.hall_id || 1,
         movie_id: showing?.movie_id || 1,
@@ -64,6 +65,24 @@ const ShowingForm = ({ showing, halls, movies }: Props) => {
         type: null,
     });
 
+    transform((data) => {
+        const startDate = new Date(data.start_time);
+        const endDate = new Date(data.end_time);
+        const timeZoneDifference = (startDate.getTimezoneOffset() / 60) * -1;
+        startDate.setTime(
+            startDate.getTime() + timeZoneDifference * 60 * 60 * 1000,
+        );
+        endDate.setTime(
+            endDate.getTime() + timeZoneDifference * 60 * 60 * 1000,
+        );
+
+        return {
+            ...data,
+            start_time: startDate.toISOString(),
+            end_time: endDate.toISOString(),
+        };
+    });
+
     const validateInputs = () => {
         const parsed = ShowingRequest.safeParse(data);
         const zodErrors =
@@ -77,7 +96,7 @@ const ShowingForm = ({ showing, halls, movies }: Props) => {
                 setError(
                     key as keyof typeof zodErrors,
                     //@ts-ignore
-                    zodErrors[key as keyof typeof zodErrors][0].message
+                    zodErrors[key as keyof typeof zodErrors][0].message,
                 );
             } else {
                 clearErrors(key as keyof typeof zodErrors);
@@ -154,7 +173,7 @@ const ShowingForm = ({ showing, halls, movies }: Props) => {
                                 movie_id: Number(value),
                                 end_time: add(data.start_time, {
                                     seconds: movies.find(
-                                        (movie) => movie.id === Number(value)
+                                        (movie) => movie.id === Number(value),
                                     )?.duration_seconds,
                                 }),
                             }));
@@ -254,7 +273,7 @@ const ShowingForm = ({ showing, halls, movies }: Props) => {
                                                 {showingType}
                                             </SelectItem>
                                         );
-                                    }
+                                    },
                                 )}
                             </SelectContent>
                         </Select>
@@ -288,7 +307,7 @@ const ShowingForm = ({ showing, halls, movies }: Props) => {
                                     end_time: add(date!, {
                                         seconds: movies.find(
                                             (movie) =>
-                                                movie.id === data.movie_id
+                                                movie.id === data.movie_id,
                                         )?.duration_seconds,
                                     }),
                                 }));
@@ -438,7 +457,7 @@ const ShowingForm = ({ showing, halls, movies }: Props) => {
                         type="button"
                         onClick={() =>
                             router.get(
-                                route("showings.index", route().queryParams)
+                                route("showings.index", route().queryParams),
                             )
                         }
                     >
