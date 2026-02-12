@@ -95,13 +95,18 @@ export default function MainLayout({
                                             </DropdownMenuTrigger>
 
                                             <DropdownMenuContent>
-                                                <div
-                                                    className="flex gap-2 px-4 py-1 mb-1 -mx-1 -mt-1 cursor-default bg-secondary rounded-t-md text-amber-600"
-                                                    title="Punkty programu lojalnościowego"
-                                                >
-                                                    <HandCoins />
-                                                    {user.points_number}
-                                                </div>
+                                                {doesntHaveRole(
+                                                    user,
+                                                    RoleType.ADMIN,
+                                                ) && (
+                                                    <div
+                                                        className="flex gap-2 px-4 py-1 mb-1 -mx-1 -mt-1 cursor-default bg-secondary rounded-t-md text-amber-600"
+                                                        title="Punkty programu lojalnościowego"
+                                                    >
+                                                        <HandCoins />
+                                                        {user.points_number}
+                                                    </div>
+                                                )}
                                                 {hasRole(
                                                     user,
                                                     RoleType.ADMIN,
