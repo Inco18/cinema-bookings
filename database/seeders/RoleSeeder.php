@@ -43,6 +43,8 @@ class RoleSeeder extends Seeder
         $userRole->givePermissionTo(PermissionType::USER_REWARD_MANAGE->value);
         $userRole->givePermissionTo(PermissionType::POINTS_HISTORY_ACCESS->value);
         $userRole->givePermissionTo(PermissionType::POINTS_HISTORY_MANAGE->value);
+        $userRole->givePermissionTo(PermissionType::PRICE_ACCESS->value);
+        $userRole->givePermissionTo(PermissionType::PRICE_MANAGE->value);
 
         // WORKER
         $userRole = Role::findByName(RoleType::WORKER->value);
