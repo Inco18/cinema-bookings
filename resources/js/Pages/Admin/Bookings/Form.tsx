@@ -189,7 +189,6 @@ const BookingForm = ({
             router.patch(route("bookings.update", { booking }), submitData, {
                 onError: (e) => {
                     setDidFail(true);
-                    console.log(e);
                     toast.error("Nie udało się zaktualizować rezerwacji");
                 },
             });

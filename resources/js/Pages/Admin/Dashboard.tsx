@@ -103,8 +103,6 @@ const Dashboard = ({
         return labels[status] || status;
     };
 
-    console.log(newUsersLast30Days);
-
     return (
         <AuthenticatedLayout
             header={
